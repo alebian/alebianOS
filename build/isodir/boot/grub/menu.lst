@@ -1,0 +1,5 @@
+default 0
+timeout 10
+
+title alebianOS
+kernel  /boot/kernel.bin

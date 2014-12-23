@@ -1,0 +1,24 @@
+sudo ./buildproject
+
+sudo mkdir -p isodir
+sudo mkdir -p isodir/boot
+
+if [ -f bin/kernel.bin ] && [ -f img/alebianOS.img ] && [ -f isodir/boot/grub/menu.lst ]; then
+	sudo cp bin/kernel.bin isodir/boot/kernel.bin;
+	sudo mkdir -p isodir/boot/grub;
+	sudo cp grub.cfg isodir/boot/grub/grub.cfg;
+	sudo mkdir -p tmp;
+	#sudo grub-mkrescue -o kernel.iso isodir;
+
+	sudo cp /usr/lib/grub/i386-pc/stage2_eltorito  ./isodir/boot/grub/;
+	echo " ";
+	echo "Generating ISO...";
+	echo " ";
+	sudo genisoimage -R -input-charset iso8859-1 -b boot/grub/stage2_eltorito -no-emul-boot -boot-load-size 4 -boot-info-table -o alebianOS.iso isodir;
+	echo " ";
+	echo "ISO created.";
+	echo " ";
+else
+echo "Error creating ISO";
+echo "";
+fi

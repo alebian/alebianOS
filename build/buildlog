@@ -1,0 +1,13 @@
+Compiling ASM...
+Compiling C...
+../../src/lib/time.c:4:8: error: conflicting types for ‘time’
+../../src/lib/../../include/lib/time.h:19:8: note: previous declaration of ‘time’ was here
+../../src/lib/time.c: In function ‘time’:
+../../src/lib/time.c:13:5: warning: ‘return’ with no value, in function returning non-void [-Wreturn-type]
+../../src/lib/time.c: In function ‘asctime’:
+../../src/lib/time.c:27:5: warning: function returns address of local variable [enabled by default]
+../../src/lib/time.c: In function ‘difftime’:
+../../src/lib/time.c:35:1: error: parameter name omitted
+../../src/lib/time.c:35:1: error: parameter name omitted
+Disk Image not found.
+Error creating ISO
