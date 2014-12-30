@@ -1,5 +1,5 @@
 #include "../../include/lib/time.h"
-#include "../../include/kernel/kasm.h"
+#include "../../include/kernel/k_libasm.h"
 
 time_t time(time_t * tp) {
     /*tm aux;

@@ -8,6 +8,22 @@ void * memcpy(void * s, const void * ct, size_t n) {
     return s;
 }
 
+void * memset(void * s, int c, size_t n){
+    int i;
+    for (i = 0; i < n; i++) {
+        *((byte *)s + i) = (unsigned char)c;
+    }
+    return s;
+}
+
+void * memsetw(void * s, int c, size_t n){
+    int i;
+    for (i = 0; i < n; i++) {
+        *((short *)s + i) = (unsigned short) c;
+    }
+    return s;
+}
+
 char * strcpy(char * s, const char * ct) {
     char * aux = s;
     while (*ct) {

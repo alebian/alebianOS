@@ -6,11 +6,11 @@
 #define MAX_STRING_LENGTH 80
 
 /* Input */
-int getchar(void);
+char getchar(void);
 int scanf(char *fmt, ...);
 
 /* Output */
-int putchar(int c);
+int putchar(char c);
 int printf(char *fmt, ...);
 int puts(char * stream);
 

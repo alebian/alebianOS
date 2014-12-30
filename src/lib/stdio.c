@@ -1,4 +1,4 @@
-#include "../../include/kernel/kc.h"
+#include "../../include/kernel/k_libc.h"
 #include "../../include/lib/stdio.h"
 #include "../../include/lib/stdarg.h"
 #include "../../include/lib/stdlib.h"
@@ -114,10 +114,10 @@ int scanf(char *fmt, ...) {
     return read;
 }
 
-int getchar(void) {
+char getchar(void) {
     char c;
     __read(1,&c,1);
-    return (int)c;
+    return c;
 }
 
 /* Output */
@@ -161,9 +161,8 @@ int printf(char *fmt, ...) {
     return 0;
 }
 
-int putchar(int c) {
-    char aux = (char)c;
-    __write(1,&aux,1);
+int putchar(char c) {
+    __write(1,&c,1);
     return 1;
 }
 

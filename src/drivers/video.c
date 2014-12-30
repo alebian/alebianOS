@@ -1,7 +1,11 @@
 #include "../../include/drivers/video.h"
-#include "../../include/kernel/kasm.h"
+#include "../../include/kernel/k_libasm.h"
+#include "../../include/kernel/k_libc.h"
+#include "../../include/shell.h"
+#include "../../include/lib/stdio.h"
 
 int cursor_pos = 0;
+int times_scrolled_up = 0;
 
 void clearScreen(){
 	char *vidmem = (char*) VGA_PORT;
@@ -14,6 +18,8 @@ void clearScreen(){
 		i++;
 	};
 	cursor_pos=0;
+	update_cursor(cursor_pos);
+	times_scrolled_up = 0;
 	return;
 }
 
@@ -60,25 +66,34 @@ void print(char c){
 	char *vidmem = (char*) VGA_PORT;
 	switch(c) {
 	    case '\t': {
-	    	cursor_pos+=TAB;
+	    	cursor_pos += TAB;
+	    	break;
 	    }
 	    case '\n':{
 	    	if(cursor_pos > 78*25*2){
-	    	    scrollScreen();
+	    	    k_scrollScreen();
 	    	    cursor_pos=160*24;
 	    	} else {
 	    		cursor_pos += 160 - cursor_pos%160;
 	    	}
+	    	break;
 	    }
 	    case '\b': {
-	    	if(cursor_pos!=0){            
+	    	int i, canDelete=1;
+	    	for(i=0; i<25 ;i++){
+	    	    if(cursor_pos==(SHELL_PROMPT_SIZE*2+160*i))
+	    	        canDelete=0;
+	    	}
+	    	if(canDelete){            
 	    	    cursor_pos -=2;
 	    	    vidmem[cursor_pos] = ' ';
 	    	}
+	    	break;
 	    }
 	    default: {
 	    	vidmem[cursor_pos] = c;
 	    	cursor_pos += 2;
+	    	break;
 	    }
 	}
 	update_cursor(cursor_pos);
@@ -93,5 +108,33 @@ void update_cursor(int position) {
 		_outb(0x3D5, (unsigned char)aux); 
 		_outb(0x3D4, 0x0E); 
 		_outb(0x3D5, (unsigned char )((aux>>8)));
+	}
+}
+
+void scrollup(){
+	int saved = 160 * ++times_scrolled_up;
+	int total = saved + TOTAL_CHARS;
+	char * start = (char*) VGA_PORT - saved;
+	int i;
+	for (i = 0; i <= total; i++)
+	{
+		start[i]=start[i+160];
+	}
+	cursor_pos-=160;
+	update_cursor(cursor_pos);
+}
+
+void scrolldown(){
+	if(times_scrolled_up > 0 && (cursor_pos+160) < TOTAL_CHARS){
+		int saved = 160 * times_scrolled_up--;
+		int total = saved + TOTAL_CHARS;
+		char * start = (char*) VGA_PORT - saved;
+		int i;
+		for (i = total; i >= 0; i--)
+		{
+			start[i]=start[i-160];
+		}
+		cursor_pos+=160;
+		update_cursor(cursor_pos);
 	}
 }

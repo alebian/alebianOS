@@ -4,6 +4,7 @@
 #define VGA_PORT 0xB8000
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 25
+#define TOTAL_CHARS 4000
 
 #define TAB 4;
 #define SPACE 1;
@@ -52,5 +53,7 @@ void changeBackgroundColor(char charcolor, char backcolor);
 void printxy(char c, int x, int y);
 void print(char c);
 void update_cursor(int position);
+void scrollup();
+void scrolldown();
 
 #endif
