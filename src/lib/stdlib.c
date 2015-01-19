@@ -2,7 +2,7 @@
 #include "../../include/lib/ctype.h"
 #include "../../include/lib/string.h"
 
-int atoi(const char * s) {
+int atoi(const char * s){
     int i, n, sign;
     for (i = 0; isspace(s[i]); i++){} /* skip white space */
     sign = (s[i] == '-') ? -1 : 1;
@@ -15,7 +15,7 @@ int atoi(const char * s) {
     return sign * n;
 }
 
-char * itoa(char * s, int n, int base) {
+char * itoa(char * s, int n, int base){
     int i, sign;
     if ((sign = n) < 0) /* record sign */
         n = -n;         /* make n positive */
@@ -23,10 +23,10 @@ char * itoa(char * s, int n, int base) {
     if(base == 2)
         s[i++] = 'b';
     do {     /* generate digits in reverse order */
-        if(base >= 2 && base <= 10) {
+        if(base >= 2 && base <= 10){
             s[i++] = n % base + '0'; /* get next digit */
         }
-        else if(base == 16) {
+        else if(base == 16){
             int aux = n % base;
             if(aux < 10)
                 s[i++] = aux + '0';
@@ -36,7 +36,7 @@ char * itoa(char * s, int n, int base) {
     } while ((n /= base) > 0);   /* delete it */
     if(base == 10 && sign < 0)
         s[i++] = '-';
-    if(base == 16) {
+    if(base == 16){
         s[i++] = 'x';
         s[i++] = '0';
     }

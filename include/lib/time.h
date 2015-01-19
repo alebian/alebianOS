@@ -16,9 +16,4 @@ typedef struct {
 	int tm_isdst;       /* daylight saving time             */
 } tm;
 
-time_t time(time_t *);
-char * asctime(tm *);
-clock_t clock(void);
-double difftime(time_t, time_t);
-
 #endif

@@ -1,14 +1,15 @@
 #ifndef _asm_
 #define _asm_
 
-#include "defs.h"
+#include "idt.h"
 
-unsigned int	_read_msw();
+unsigned int	_read_msw(void);
 
-void	_lidt (IDTR *idtr);
+void	_lidt (IDTR *);
 
-void	_maskPIC1 (byte mask);
-void	_maskPIC2 (byte mask);
+/* PIC masks handlers */
+void	_maskPIC1 (byte);
+void	_maskPIC2 (byte);
 
 unsigned long	_read_cr0(void);
 void			_write_cr0(unsigned long);
@@ -18,16 +19,17 @@ void			_write_cr3(unsigned long);
 void	_Cli(void);
 void	_Sti(void);
 
-void	_int_08_hand();
-void	_int_09_hand();
+/* Interrupt handlers */
+void	_int_14_hand(void);
+void	_irq_00_hand(void);
+void	_irq_01_hand(void);
+void	_irq_12_hand(void);
 
 /* Outport */
-void 	_outb(word port, byte source);
-void 	_outb32(word port, dword source);
+void 	_outb(word, byte);
+void 	_outdw(word, dword);
 /* Inport */
-byte 	_inb(word port);
-dword 	_inb32(word port);
-
-void	_debug (void);
+byte 	_inb(word);
+dword 	_indw(word);
 
 #endif

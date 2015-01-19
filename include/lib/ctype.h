@@ -1,9 +1,9 @@
 #ifndef _ctype_
 #define _ctype_
 
-int isspace(int c);
-int isdigit(int c);
-int isxdigit(int c);
-int isalpha(int c);
+int isspace(int);
+int isdigit(int);
+int isxdigit(int);
+int isalpha(int);
 
 #endif

@@ -1,4 +1,5 @@
 #include "../../include/kernel/k_libc.h"
+#include "../../include/drivers/sound.h"
 #include "../../include/lib/stdio.h"
 #include "../../include/lib/stdarg.h"
 #include "../../include/lib/stdlib.h"
@@ -6,7 +7,7 @@
 
 /* Input */
 
-int scanf(char *fmt, ...) {
+int scanf(char *fmt, ...){
     va_list ap;
     char *p, *sval, *cval;
     int *ival;
@@ -28,7 +29,7 @@ int scanf(char *fmt, ...) {
                     putchar(c); 
                 }
                 if(i == MAX_BUFFER - 1){
-                    //genericBeep();
+                    beep();
                 }
             }
         }
@@ -114,7 +115,7 @@ int scanf(char *fmt, ...) {
     return read;
 }
 
-char getchar(void) {
+char getchar(void){
     char c;
     __read(1,&c,1);
     return c;
@@ -122,7 +123,7 @@ char getchar(void) {
 
 /* Output */
 
-int printf(char *fmt, ...) {
+int printf(char *fmt, ...){
     va_list ap;
     va_start(ap, fmt);
     char *p, *sval;
@@ -161,7 +162,7 @@ int printf(char *fmt, ...) {
     return 0;
 }
 
-int putchar(char c) {
+int putchar(char c){
     __write(1,&c,1);
     return 1;
 }

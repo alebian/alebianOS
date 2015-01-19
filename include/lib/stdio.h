@@ -7,11 +7,11 @@
 
 /* Input */
 char getchar(void);
-int scanf(char *fmt, ...);
+int scanf(char *, ...);
 
 /* Output */
-int putchar(char c);
-int printf(char *fmt, ...);
-int puts(char * stream);
+int putchar(char);
+int printf(char *, ...);
+int puts(char *);
 
 #endif

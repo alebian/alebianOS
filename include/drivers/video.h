@@ -2,13 +2,12 @@
 #define _video_
 
 #define VGA_PORT 0xB8000
+#define VGA_BACKUP 0x200000
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 25
-#define TOTAL_CHARS 4000
+#define TOTAL_CHARS 4000 // VGA_WIDTH*VGA_HEIGHT*2
 
-#define TAB 4;
-#define SPACE 1;
-#define BACKSPACE -1;
+#define V_TAB 6
 
 #define CHAR_BLANK ' '
 
@@ -47,13 +46,25 @@
 #define BACKGROUND_COLOR_WHITE 0xF0
 
 /* Functions */
-void clearScreen();
-void scrollScreen();
-void changeBackgroundColor(char charcolor, char backcolor);
-void printxy(char c, int x, int y);
-void print(char c);
-void update_cursor(int position);
-void scrollup();
-void scrolldown();
+void clearScreen(void); // Clears chars from screen between rows set by set_vga_size
+void clearFullScreen(void); // Clears all chars from screen
+char getBackgroundColor(void); // Returns the current background color between rows set by set_vga_size
+void setBackgroundColor(char); // Changes the background between rows set by set_vga_size
+void setFullBackgroundColor(char); // Changes the entire screen background
+char getCharacterColor(void); // Returns the current char color between rows set by set_vga_size
+void setCharacterColor(char); // Changes the color that print will use next
+void setAllCharacterColor(char); // Changes all chars color between rows set by set_vga_size
+void setStartBarColor(char); // Changes the background color of the start bar
+char getMouseColor(void);
+void setMouseColor(char);
+void set_vga_size(int, int); // Changes the screen size that other functions can affect
+void printxy(char, int, int);
+void print(char, char);
+void update_cursor(int);
+void scrollup(void);
+void scrolldown(void);
+void printStartBar(char *);
+void drawMouse(int, int);
+void eraseMouse(int, int);
 
 #endif

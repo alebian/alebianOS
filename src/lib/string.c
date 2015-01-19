@@ -1,47 +1,47 @@
 #include "../../include/lib/string.h"
 
-void * memcpy(void * s, const void * ct, size_t n) {
+void * memcpy(void * s, const void * ct, dword n){
     int i;
-    for (i = 0; i < n; i++) {
+    for (i = 0; i < n; i++){
         *((byte *)s + i) = *((byte *)ct + i);
     }
     return s;
 }
 
-void * memset(void * s, int c, size_t n){
+void * memset(void * s, int c, dword n){
     int i;
-    for (i = 0; i < n; i++) {
+    for (i = 0; i < n; i++){
         *((byte *)s + i) = (unsigned char)c;
     }
     return s;
 }
 
-void * memsetw(void * s, int c, size_t n){
+void * memsetw(void * s, int c, dword n){
     int i;
-    for (i = 0; i < n; i++) {
+    for (i = 0; i < n; i++){
         *((short *)s + i) = (unsigned short) c;
     }
     return s;
 }
 
-char * strcpy(char * s, const char * ct) {
+char * strcpy(char * s, const char * ct){
     char * aux = s;
-    while (*ct) {
+    while (*ct){
         *aux++ = *ct++;
     }
     return s;
 }
 
-void reverse(char * s) {
+void reverse(char * s){
     int c, i, j;
-    for(i = 0, j = strlen(s)-1; i < j; i++, j--) {
+    for(i = 0, j = strlen(s)-1; i < j; i++, j--){
         c = s[i];
         s[i] = s[j];
         s[j] = c;
     }
 }
 
-int strlen(char * s) {
+int strlen(char * s){
     int i=0;
     while( s[i] != 0 ){
         i++;
@@ -49,7 +49,7 @@ int strlen(char * s) {
     return i;
 }
 
-int strcmp(const char * cs, const char * ct) {
+int strcmp(const char * cs, const char * ct){
     for(; *cs == *ct; cs++, ct++)
         if(*cs == '\0')
             return 0;
