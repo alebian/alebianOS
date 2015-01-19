@@ -11,6 +11,6 @@
 #define PAGE_SIZE 4096 // 4096b = 4kb
 
 void start_paging(void);
-void start_memory_manager(multiboot *);
+void start_memory_manager(multiboot*);
 
 #endif

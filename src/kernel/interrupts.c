@@ -163,3 +163,7 @@ void k_disableMouse(){
 	mouse_enabled = 0;
 	return;
 }
+
+int k_isMouseEnabled(){
+	return mouse_enabled;
+}

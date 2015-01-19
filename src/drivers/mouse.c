@@ -115,7 +115,7 @@ void mouse_handler(byte package){
 
     incX = mouse_bytes[1] % mouse_sensibility;
     incY = mouse_bytes[2] % mouse_sensibility;
-    k_eraseMouse(mouse_pos.actual_x, mouse_pos.actual_y);
+    k_eraseMouse();
     mouse_pos.last_x = mouse_pos.actual_x;
     mouse_pos.last_y = mouse_pos.actual_y;
     if(mouse_bytes[0] & 0x10){
@@ -132,7 +132,7 @@ void mouse_handler(byte package){
       mouse_pos.actual_x = incX;
       mouse_pos.actual_y = incY;
     }
-    k_drawMouse(mouse_pos.actual_x, mouse_pos.actual_y);
+    k_drawMouse();
   }
   return;
 }

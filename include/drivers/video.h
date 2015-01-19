@@ -45,7 +45,7 @@
 #define BACKGROUND_COLOR_LIGHT_BROWN 0xE0
 #define BACKGROUND_COLOR_WHITE 0xF0
 
-/* Functions */
+/* Functions*/
 void clearScreen(void); // Clears chars from screen between rows set by set_vga_size
 void clearFullScreen(void); // Clears all chars from screen
 char getBackgroundColor(void); // Returns the current background color between rows set by set_vga_size
@@ -56,14 +56,14 @@ void setCharacterColor(char); // Changes the color that print will use next
 void setAllCharacterColor(char); // Changes all chars color between rows set by set_vga_size
 void setStartBarColor(char); // Changes the background color of the start bar
 char getMouseColor(void);
-void setMouseColor(char);
+void setMouseColor(char, char);
 void set_vga_size(int, int); // Changes the screen size that other functions can affect
 void printxy(char, int, int);
 void print(char, char);
 void update_cursor(int);
 void scrollup(void);
 void scrolldown(void);
-void printStartBar(char *);
+void printStartBar(char*);
 void drawMouse(int, int);
 void eraseMouse(int, int);
 

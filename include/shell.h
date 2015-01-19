@@ -12,18 +12,18 @@ void restart_shell_buffer(void);
 void shellLineBreak(void);
 void prompt(void);
 /* Functions to parse commands*/
-void parsecommand(char *);
-void getCommand(char *);
-void getParameter(char *, int);
-int s_about(int, char *);
-int s_help(int, char *);
-int s_checkBIOS(int, char *);
-int s_exit(int, char *);
-int s_k_reboot(int, char *);
-int s_clear(int, char *);
-int s_speed(int, char *);
-int s_time(int, char *);
-int s_timestyle(int, char *);
-int s_bkg(int, char *);
+void parsecommand(char*);
+void getCommand(char*);
+void getParameter(char*, int);
+int s_about(int, char*);
+int s_help(int, char*);
+int s_checkBIOS(int, char*);
+int s_exit(int, char*);
+int s_k_reboot(int, char*);
+int s_clear(int, char*);
+int s_speed(int, char*);
+int s_time(int, char*);
+int s_timestyle(int, char*);
+int s_bkg(int, char*);
 
 #endif

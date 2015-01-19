@@ -40,7 +40,7 @@ void shell_keyboardListener(){
 				s[spos++] = c;
 				putchar(c);	
 			}
-			if(spos == SHELL_BUFFER_SIZE - 1){
+			else if(spos == SHELL_BUFFER_SIZE - 1){
 				beep();
 			}
 		}

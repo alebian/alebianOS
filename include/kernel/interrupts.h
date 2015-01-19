@@ -22,5 +22,6 @@ void irq_12(int);
 long getTicks(void);
 void k_enableMouse(void);
 void k_disableMouse(void);
+int k_isMouseEnabled(void);
 
 #endif

@@ -71,7 +71,7 @@ char scanCodeToAscii(int scanCode){
             case MAKE_CAPS_LOCK:
                 capsLock = !capsLock;
                 if(capsLock){
-                    turn_on_capslock();
+                    turn_on_capsLock();
                 }else{
                     turn_off_leds();
                 }
@@ -128,8 +128,20 @@ void turn_off_leds(){
     return;
 }
 
-void turn_on_capslock(){
+void turn_on_capsLock(){
     _outb(0x60, SET_LED);
     _outb(0x60, 0x04);
+    return;
+}
+
+void turn_on_numLock(){
+    _outb(0x60, SET_LED);
+    _outb(0x60, 0x02);
+    return;
+}
+
+void turn_on_scrollLock(){
+    _outb(0x60, SET_LED);
+    _outb(0x60, 0x01);
     return;
 }

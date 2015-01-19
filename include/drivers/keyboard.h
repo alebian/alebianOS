@@ -49,6 +49,8 @@ char scanCodeToAscii(int);
 int printable(unsigned char);
 void turn_on_leds(void);
 void turn_off_leds(void);
-void turn_on_capslock(void);
+void turn_on_capsLock(void);
+void turn_on_numLock(void);
+void turn_on_scrollLock(void);
 
 #endif

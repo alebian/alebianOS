@@ -280,18 +280,8 @@ char k_getMouseColor(){
 	return getMouseColor();
 }
 
-void k_setMouseColor(char color){
-	setMouseColor(SECONDBYTE(color));
-	return;
-}
-
-void k_drawMouse(int x, int y){
-	drawMouse(x,y);
-	return;
-}
-
-void k_eraseMouse(int x, int y){
-	eraseMouse(x,y);
+void k_setMouseColor(char back, char arrow){
+	setMouseColor(SECONDBYTE(back), FIRSTBYTE(arrow));
 	return;
 }
 
@@ -320,6 +310,7 @@ void k_sleep(int ticks){
 void k_reboot(){
 	int ticks = 10;
 	k_shellNotReady();
+	k_disableMouse();
 	_Sti();
 	k_clearFullScreen();
 	k_setFullBackgroundColor(BACKGROUND_COLOR_BLUE);
@@ -333,7 +324,7 @@ void k_reboot(){
 	printf("%s\n", "                                           $$");
 	printf("%s\n", "                                           $$");
 	printf("%s\n", "                                           $$");
-	printf("%s\n", "                                   $$$$$$$$$");
+	printf("%s", "                                   $$$$$$$$$");
 	k_sleep(ticks);
 	k_clearScreen();
 	printf("%s\n", "                                   $$      $$");
@@ -343,7 +334,7 @@ void k_reboot(){
 	printf("%s\n", "                                   $$$$$$$$$$");
 	printf("%s\n", "                                           $$");
 	printf("%s\n", "                                           $$");
-	printf("%s\n", "                                           $$");
+	printf("%s", "                                           $$");
 	k_sleep(ticks);
 	k_clearScreen();
 	printf("%s\n", "                                    $$$$$$$$$");
@@ -353,7 +344,7 @@ void k_reboot(){
 	printf("%s\n", "                                           $$");
 	printf("%s\n", "                                           $$");
 	printf("%s\n", "                                           $$");
-	printf("%s\n", "                                    $$$$$$$$");
+	printf("%s", "                                    $$$$$$$$");
 	k_sleep(ticks);
 	k_clearScreen();
 	printf("%s\n", "                                   $$$$$$$$$");
@@ -363,7 +354,7 @@ void k_reboot(){
 	printf("%s\n", "                                        $$");
 	printf("%s\n", "                                      $$");
 	printf("%s\n", "                                    $$");
-	printf("%s\n", "                                   $$$$$$$$$$");
+	printf("%s", "                                   $$$$$$$$$$");
 	k_sleep(ticks);
 	k_clearScreen();
 	printf("%s\n", "                                        $$");
@@ -412,6 +403,7 @@ void k_shellNotReady(){
 
 void k_panic(char* message){
 	k_shellNotReady();
+	k_disableMouse();
 	k_clearFullScreen();
 	set_vga_size(1, 25);
 	k_setBackgroundColor(BACKGROUND_COLOR_BLUE);
@@ -420,14 +412,12 @@ void k_panic(char* message){
 	printf("\n%s\n", message);
 	printf("\n%s\n", "Halting");
 	beep();
-	int i;
-	for (i=0;i<10;i++){
+	for (;;){
 		turn_off_leds();
 		k_sleep(10);
 		turn_on_leds();
 		k_sleep(10);
 	}
-	k_reboot();
 	return;
 }
 
@@ -470,6 +460,18 @@ void k_printosmsg(char* s){
 	k_setCharacterColor(CHAR_COLOR_BLUE);
 	printf("%s", s);
 	k_setCharacterColor(aux);
+	return;
+}
+
+void k_drawMouse(){
+	MousePosition mouse = getMousePosition();
+	drawMouse(mouse.actual_x, mouse.actual_y);
+	return;
+}
+
+void k_eraseMouse(){
+	MousePosition mouse = getMousePosition();
+	eraseMouse(mouse.actual_x, mouse.actual_y);
 	return;
 }
 
@@ -576,12 +578,11 @@ void k_randomVGAstyle(){
 }
 
 void k_setVGAstyle(char background, char character, char mouseback, char mousechar, char startbar){
-	MousePosition mouse = getMousePosition();
 	k_setBackgroundColor(SECONDBYTE(background));
 	setAllCharacterColor(FIRSTBYTE(character));
-	k_eraseMouse(mouse.actual_x, mouse.actual_y);
-	setMouseColor(SECONDBYTE(mouseback)+FIRSTBYTE(mousechar));
-	k_drawMouse(mouse.actual_x, mouse.actual_y);
+	k_eraseMouse();
+	setMouseColor(SECONDBYTE(mouseback), FIRSTBYTE(mousechar));
+	k_drawMouse();
 	k_setStartBarColor(SECONDBYTE(startbar));
 	return;
 }

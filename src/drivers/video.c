@@ -2,6 +2,7 @@
 #include "../../include/drivers/mouse.h"
 #include "../../include/kernel/k_libasm.h"
 #include "../../include/kernel/k_libc.h"
+#include "../../include/kernel/interrupts.h"
 #include "../../include/shell.h"
 #include "../../include/lib/stdio.h"
 
@@ -46,7 +47,7 @@ void clearFullScreen(){
 	};
 	cursor_pos=0;
 	update_cursor(cursor_pos);
-	drawMouse(mouse_pos.actual_x, mouse_pos.actual_y);
+	//drawMouse(mouse_pos.actual_x, mouse_pos.actual_y);
 	times_scrolled_down = 0;
 	return;
 }
@@ -116,8 +117,8 @@ char getMouseColor(){
 	return mouse_color;
 }
 
-void setMouseColor(char color){
-	mouse_color = color;
+void setMouseColor(char back, char arrow){
+	mouse_color = back+arrow;
 	return;
 }
 
@@ -290,25 +291,29 @@ void printStartBar(char * startBar){
 }
 
 void drawMouse(int x, int y){
-	char *vidmem = (char*) VGA_PORT;
-	int s = (y*160)+(x*2);
-	if(s%2==0){
-		s++;
+	if(k_isMouseEnabled()){
+		char *vidmem = (char*) VGA_PORT;
+		int s = (y*160)+(x*2);
+		if(s%2==0){
+			s++;
+		}
+		last_mouse_char = vidmem[s-1];
+		last_mouse_color = vidmem[s];
+		vidmem[s-1] = '+';
+		vidmem[s] = mouse_color;
 	}
-	last_mouse_char = vidmem[s-1];
-	last_mouse_color = vidmem[s];
-	vidmem[s-1] = '+';
-	vidmem[s] = mouse_color;
 	return;
 }
 
 void eraseMouse(int x, int y){
-	char *vidmem = (char*) VGA_PORT;
-	int s = (y*160)+(x*2);
-	if(s%2==0){
-		s++;
+	if(k_isMouseEnabled()){
+		char *vidmem = (char*) VGA_PORT;
+		int s = (y*160)+(x*2);
+		if(s%2==0){
+			s++;
+		}
+		vidmem[s-1] = last_mouse_char;
+		vidmem[s] = last_mouse_color;
 	}
-	vidmem[s-1] = last_mouse_char;
-	vidmem[s] = last_mouse_color;
 	return;
 }
