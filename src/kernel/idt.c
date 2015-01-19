@@ -1,14 +1,13 @@
 #include "../../include/system.h"
 
-/**********************************************
-In this file the IDT is created and filled
-The handlers loaded in the IDT are in interrupts.c
-The PIC masks are handled here and the IRQs remaped 
-*************************************************/
-
 static INT_DESCR idt[IDT_SIZE];
 static IDTR idtr;
 
+/*
+ * In this file the IDT is created and filled
+ * The handlers loaded in the IDT are in interrupts.c
+ * The PIC masks are handled here and the IRQs remaped 
+ */
 void setup_IDT(){
 	/* Loads IDTR */
 	setup_IDTR();
@@ -30,6 +29,9 @@ void setup_IDTR(){
 	return;
 }
 
+/*
+ * Loads the IDT with all the handlers
+ */
 void setup_IDT_content(){
 	remapIRQ();
 	//	Divide error
@@ -71,8 +73,11 @@ void setup_IDT_content(){
 	return;
 }
 
+/*
+ * Remaps the IRQ table
+ * From 32 to 47
+ */
 void remapIRQ(){
-	/* Remap the IRQ table */
 	_outb(0x20, 0x11);
 	_outb(0xA0, 0x11);
 	_outb(0x21, 0x20);
@@ -85,6 +90,16 @@ void remapIRQ(){
 	_outb(0xA1, 0x0);
 }
 
+/*
+ * Sets an IDT Descriptor
+ *
+ * Arguments: 
+ *	IDT's element pointer
+ *	Descriptor's selector
+ *	Handler pointer	
+ *	Access level
+ *	Zero
+ */
 void setup_IDT_entry (INT_DESCR *item, byte selector, dword offset, byte access, byte zero){
   item->selector = selector;
   item->offset_l = offset & 0xFFFF;
@@ -93,6 +108,11 @@ void setup_IDT_entry (INT_DESCR *item, byte selector, dword offset, byte access,
   item->zero = zero;
 }
 
+/*
+ * Sets the PIC masks
+ * PIC1: Timer tick, Keyboard and second PIC
+ * PIC2: CMOS and Mouse
+ */
 void setup_PIC(){
 	_Cli();
 	_maskPIC1(0xF8);

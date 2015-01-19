@@ -66,5 +66,7 @@ void scrolldown(void);
 void printStartBar(char*);
 void drawMouse(int, int);
 void eraseMouse(int, int);
+void MARIO(void);
+void printSquare(int, int, char);
 
 #endif

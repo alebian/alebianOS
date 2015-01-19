@@ -46,6 +46,9 @@ NOP, ESC, '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', BACKSPACE,
 KF6, KF7, KF8, KF9, KF10, NOP, NOP, KHOME, KUP, KPGUP, '-', KLEFT, NOP, KRIGHT, '+', KEND,
 KDOWN, KPGDN, KINS, KDEL, NOP, NOP, NOP, KF11, KF12 };
 
+/*
+ * Transforms the ScanCode readed from the keyboard into ASCII
+ */
 char scanCodeToAscii(int scanCode){
     /* Check if a key is pressed or released */
     if (scanCode & 0x80){
@@ -114,8 +117,11 @@ int isPrintable(unsigned char c){
     return FALSE;
 }
 
-/* Functions to control keyboard LEDs */
-
+/* ####################################################################
+ * #                Functions to control keyboard LEDs                #
+ * ####################################################################
+ */
+ 
 void turn_on_leds(){
     _outb(0x60, SET_LED);
     _outb(0x60, 0x07);

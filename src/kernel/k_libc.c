@@ -7,29 +7,18 @@ static char str_start_bar[VGA_WIDTH+1];
 static int start_menu = 0;
 static char current_time[9];
 static klistener keyboard_listener = &k_null;
+static char start_menu_str[] = "Reboot";
 
-static char * days[] = { "00", "01", "02", "03", "04", "05", "06", "07", "08",
-"09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21",
-"22", "23", "24", "25", "26", "27", "28", "29", "30", "31" };
+// static char * days[] = { "00", "01", "02", "03", "04", "05", "06", "07", "08",
+// "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21",
+// "22", "23", "24", "25", "26", "27", "28", "29", "30", "31" };
 
 static char * months[] = { "000", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul",
 "Aug", "Sep", "Oct", "Nov", "Dec" };
 
-static char * years[] = { "1994", "1995", "1996", "1997", "1998", "1999", "2000", 
-"2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", 
-"2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020" };
-
-/***************************************************************
-* setup_IDT_entry
-* starts an IDT Descriptor
-*
-* Arguments: 
-*	IDT's element pointer
-*	Descriptor's selector
-*	Handler pointer	
-*	Access level
-*	Zero
-****************************************************************/
+// static char * years[] = { "1994", "1995", "1996", "1997", "1998", "1999", "2000", 
+// "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", 
+// "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020" };
 
 dword __write(int fd, char* buffer, dword count){
 	dword c;
@@ -38,8 +27,7 @@ dword __write(int fd, char* buffer, dword count){
 		/* 1: Video output */
 	    case 1: {
 	    	c = 0;
-	    	for (i = 0; i < count; i++)
-	    	{
+	    	for (i = 0; i < count; i++){
 	    		print(buffer[i], getCharacterColor());
 	    		c++;
 	    	}
@@ -59,8 +47,7 @@ dword __read(int fd, char* buffer, dword count){
 		/* 1: Keyboard input */
 	    case 1: {
 	    	c = 0;
-	    	for (i = 0; i < count; i++)
-	    	{
+	    	for (i = 0; i < count; i++){
 	    		buffer[i] = get_char_from_keyboard_buffer();
 	    		c++;
 	    	}
@@ -94,20 +81,23 @@ void k_checkBIOSinfo(){
 }
 
 void k_checkSystemSpeed(){
-	/*
-	k_findSMBIOS();
+	/*k_findSMBIOS();
 	word * mem = (word*) SMBIOS->TableAddress + SMBIOShead->Length;
 	printf("%s\n", "System speed:");
 	printf("\t%s", "External clock frequency: ");
-	printf("%d\n", mem[0x12]);
+	printf("%d", mem[0x12]);
+	printf("%s\n", "Mhz");
 	printf("\t%s", "Maximum CPU speed: ");
-	printf("%d\n", mem[0x14]);
+	printf("%d", mem[0x14]);
+	printf("%s\n", "Mhz");
 	printf("\t%s", "Current CPU speed: ");
-	printf("%d\n", mem[0x16]);
-	*/
+	printf("%d", mem[0x16]);
+	printf("%s\n", "Mhz");*/
 	return;
 }
-
+/*
+ * Loads the time structure given with data from the RTC
+ */
 void k_time(tm * tp){
 	_Cli();
 	// Read year
@@ -138,57 +128,34 @@ void k_time(tm * tp){
 char * k_stime(){
 	tm tp;
 	k_time(&tp);
-	char * day = days[tp.tm_mday];
 	char * mon = months[tp.tm_mon];
-	char * year = years[tp.tm_year];
+	//char * year = years[tp.tm_year];
+	memset(&str_start_bar[67], ' ', 13);
 	switch(time_style){
 		case 0:
-			str_start_bar[67] = day[0];
-			str_start_bar[68] = day[1];
-			str_start_bar[69] = ' ';
+			str_start_bar[67] = ((tp.tm_mday & 0xF0) >> 4) + '0';
+			str_start_bar[68] = ((tp.tm_mday & 0x0F)) + '0';
 			str_start_bar[70] = mon[0];
 			str_start_bar[71] = mon[1];
 			str_start_bar[72] = mon[2];
 			str_start_bar[73] = ',';
-			str_start_bar[74] = ' ';
-			str_start_bar[75] = ((tp.tm_hour & 0xF0) >> 4) + '0';
-			str_start_bar[76] = ((tp.tm_hour & 0x0F)) + '0';
-			str_start_bar[77] = ':';
-			str_start_bar[78] = ((tp.tm_min & 0xF0) >> 4) + '0';
-			str_start_bar[79] = ((tp.tm_min & 0x0F)) + '0';
-			str_start_bar[80] = 0;
+			memcpy(&str_start_bar[75], k_currentTime(), 5);
 			break;
 		case 1:
-			str_start_bar[67] = ' ';
-			str_start_bar[68] = ' ';
-			str_start_bar[69] = ' ';
-			str_start_bar[70] = ' ';
-			str_start_bar[71] = ' ';
-			str_start_bar[72] = ((tp.tm_hour & 0xF0) >> 4) + '0';
-			str_start_bar[73] = ((tp.tm_hour & 0x0F)) + '0';
-			str_start_bar[74] = ':';
-			str_start_bar[75] = ((tp.tm_min & 0xF0) >> 4) + '0';
-			str_start_bar[76] = ((tp.tm_min & 0x0F)) + '0';
-			str_start_bar[77] = ':';
-			str_start_bar[78] = ((tp.tm_sec & 0xF0) >> 4) + '0';
-    		str_start_bar[79] = ((tp.tm_sec & 0x0F)) + '0';
-			str_start_bar[80] = 0;
+			memcpy(&str_start_bar[72], k_currentTime(), 8);
 			break;
 		case 2:
-			str_start_bar[67] = ' ';
-			str_start_bar[68] = ' ';
-			str_start_bar[69] = day[0];
-			str_start_bar[70] = day[1];
+			str_start_bar[69] = ((tp.tm_mday & 0xF0) >> 4) + '0';
+			str_start_bar[70] = ((tp.tm_mday & 0x0F)) + '0';
 			str_start_bar[71] = '/';
 			str_start_bar[72] = mon[0];
 			str_start_bar[73] = mon[1];
 			str_start_bar[74] = mon[2];
 			str_start_bar[75] = '/';
-			str_start_bar[76] = year[0];
-			str_start_bar[77] = year[1];
-			str_start_bar[78] = year[2];
-    		str_start_bar[79] = year[3];
-			str_start_bar[80] = 0;
+			str_start_bar[76] = '2';
+			str_start_bar[77] = '0';
+			str_start_bar[78] = ((tp.tm_year & 0xF0) >> 4) + '0';
+			str_start_bar[79] = ((tp.tm_year & 0x0F)) + '0';
 			break;
 		default:
 			break;
@@ -196,7 +163,7 @@ char * k_stime(){
 	return str_start_bar;
 }
 
-char * k_currentTime(){
+char* k_currentTime(){
 	tm tp;
 	k_time(&tp);
 	current_time[0] = ((tp.tm_hour & 0xF0) >> 4) + '0';
@@ -218,12 +185,21 @@ void k_setTimeStyle(int sty){
 }
 
 void k_turnOff(){
+	k_shellNotReady();
+	k_disableMouse();
+
+	MARIO();
+	set_vga_size(1,25);
+	k_printalert("                         Please turn off your computer...");
+	song_pacman();
 	_Cli();
+	/*
 	k_clearFullScreen();
-	set_vga_size(1, 25);
-	k_setBackgroundColor(BACKGROUND_COLOR_BLACK);
-	k_printalert("\n\n\n\n\n\n\n\n\n                            Goodbye! See you soon!");
-	k_printalert("\n\n\n                         Please turn off your computer");
+	k_setFullBackgroundColor(BACKGROUND_COLOR_BLACK);
+	set_vga_size(10, 25);
+	k_printalert("                            Goodbye! See you soon!\n\n\n");
+	k_printalert("                         Please turn off your computer");
+	*/
 	while(1){}
 	return;
 }
@@ -287,9 +263,7 @@ void k_setMouseColor(char back, char arrow){
 
 void k_updateStartBar(){
 	k_stime();
-	str_start_bar[0] = 'a';
-	str_start_bar[1] = 'O';
-	str_start_bar[2] = 'S';
+	memcpy(&str_start_bar, &START_LOGO, strlen(START_LOGO));
 	printStartBar(str_start_bar);
 	return;
 }
@@ -371,6 +345,9 @@ void k_reboot(){
 	return;
 }
 
+/*
+ * Changes the frequency of PIC's Channel 0
+ */
 void k_set_frecuency(int frequency){
   // The value we send to the PIT is the value to divide it's input clock
   // (1193180 Hz) by, to get our required frequency. Important to note is
@@ -405,10 +382,9 @@ void k_panic(char* message){
 	k_shellNotReady();
 	k_disableMouse();
 	k_clearFullScreen();
+	k_setFullBackgroundColor(BACKGROUND_COLOR_BLUE);
 	set_vga_size(1, 25);
-	k_setBackgroundColor(BACKGROUND_COLOR_BLUE);
 	k_setCharacterColor(CHAR_COLOR_WHITE);
-	set_vga_size(1, 25);
 	printf("\n%s\n", message);
 	printf("\n%s\n", "Halting");
 	beep();
@@ -431,35 +407,31 @@ void k_setKeyboardListener(klistener listener){
 	return;
 }
 
-void k_printwarning(char* s){
+void k_printWithColor(char* s, char color){
 	char aux = getCharacterColor();
-	k_setCharacterColor(CHAR_COLOR_GREEN);
+	k_setCharacterColor(color);
 	printf("%s", s);
 	k_setCharacterColor(aux);
+	return;
+}
+
+void k_printwarning(char* s){
+	k_printWithColor(s, CHAR_COLOR_GREEN);
 	return;
 }
 
 void k_printerror(char* s){
-	char aux = getCharacterColor();
-	k_setCharacterColor(CHAR_COLOR_RED);
-	printf("%s", s);
-	k_setCharacterColor(aux);
+	k_printWithColor(s, CHAR_COLOR_RED);
 	return;
 }
 
 void k_printalert(char* s){
-	char aux = getCharacterColor();
-	k_setCharacterColor(CHAR_COLOR_LIGHT_BROWN);
-	printf("%s", s);
-	k_setCharacterColor(aux);
+	k_printWithColor(s, CHAR_COLOR_LIGHT_BROWN);
 	return;
 }
 
 void k_printosmsg(char* s){
-	char aux = getCharacterColor();
-	k_setCharacterColor(CHAR_COLOR_BLUE);
-	printf("%s", s);
-	k_setCharacterColor(aux);
+	k_printWithColor(s, CHAR_COLOR_BLUE);
 	return;
 }
 
@@ -482,7 +454,7 @@ void k_mouseRightClick(int x, int y){
 
 void k_mouseLeftClick(int x, int y){
 	if(y==0){
-		if(x>=0 && x<=2){
+		if(x>=0 && x<strlen(START_LOGO)){
 			if(!start_menu){
 				openStartMenu();
 				return;
@@ -491,7 +463,7 @@ void k_mouseLeftClick(int x, int y){
 				return;
 			}
 		}
-		else if(x>=5 && x<=10){
+		else if( x>=(strlen(START_LOGO)+strlen(ARROW)) && x<(strlen(START_LOGO)+strlen(ARROW)+strlen(start_menu_str)) ){
 			if(start_menu){
 				k_reboot();
 			}
@@ -508,6 +480,9 @@ void k_mouseLeftClick(int x, int y){
 			}
 			k_setTimeStyle(aux);
 			return;
+		}else{
+			closeStartMenu();
+			return;
 		}
 	}else{
 		if(start_menu){
@@ -520,28 +495,15 @@ void k_mouseLeftClick(int x, int y){
 
 void openStartMenu(){
 	start_menu = 1;
-	str_start_bar[3]='-';
-	str_start_bar[4]='>';
-	str_start_bar[5]='R';
-	str_start_bar[6]='e';
-	str_start_bar[7]='b';
-	str_start_bar[8]='o';
-	str_start_bar[9]='o';
-	str_start_bar[10]='t';
+	memcpy(&str_start_bar[strlen(START_LOGO)], &ARROW, strlen(ARROW));
+	memcpy(&str_start_bar[strlen(START_LOGO)+strlen(ARROW)], &start_menu_str, strlen(start_menu_str));
 	k_updateStartBar();
 	return;
 }
 
 void closeStartMenu(){
 	start_menu = 0;
-	str_start_bar[3]=' ';
-	str_start_bar[4]=' ';
-	str_start_bar[5]=' ';
-	str_start_bar[6]=' ';
-	str_start_bar[7]=' ';
-	str_start_bar[8]=' ';
-	str_start_bar[9]=' ';
-	str_start_bar[10]=' ';
+	memset(&str_start_bar[strlen(START_LOGO)], ' ', strlen(ARROW)+strlen(start_menu_str));
 	k_updateStartBar();
 	return;
 }

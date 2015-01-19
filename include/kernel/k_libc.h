@@ -7,6 +7,9 @@
 #define FIRSTBYTE(x) x%16
 #define SECONDBYTE(x) x-(FIRSTBYTE(x))
 
+#define START_LOGO "aOS"
+#define ARROW "->"
+
 typedef void(*klistener)(void);
 
 dword __write(int, char*, dword);
@@ -42,6 +45,7 @@ void k_shellNotReady(void);
 void k_panic(char*);
 void k_KeyboardListener(void);
 void k_setKeyboardListener(void(*listener)(void));
+void k_printWithColor(char*, char);
 void k_printwarning(char*);
 void k_printerror(char*);
 void k_printalert(char*);

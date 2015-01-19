@@ -4,7 +4,7 @@
 #include "../../include/drivers/mouse.h"
 
 static MousePosition mouse_pos;
-static byte mouse_sensibility = 2;
+static byte mouse_sensibility = 3;
 
 void start_mouse(){
   byte status;

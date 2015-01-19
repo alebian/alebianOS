@@ -12,7 +12,7 @@ nasm -f aout ../../src/loader.asm -o loader.o
 echo "Compiling C..."
 gcc -Wall -c ../../src/kernel/kernel.c -o kernel.o -fno-builtin
 gcc -Wall -c ../../src/kernel/interrupts.c -o interrupts.o -fno-builtin
-gcc -Wall -c ../../src/kernel/k_libc.c -o k_libc.o -fno-builtin
+gcc -Wall -c -fno-stack-protector ../../src/kernel/k_libc.c -o k_libc.o -fno-builtin
 gcc -Wall -c ../../src/kernel/buffers.c -o buffers.o -fno-builtin
 gcc -Wall -c ../../src/kernel/idt.c -o idt.o -fno-builtin
 gcc -Wall -c ../../src/kernel/memory.c -o memory.o -fno-builtin
