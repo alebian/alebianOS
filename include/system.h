@@ -16,12 +16,13 @@
 #include "drivers/mouse.h"
 #include "drivers/sound.h"
 #include "multiboot.h"
-#include "shell.h"
 #include "lib/ctype.h"
 #include "lib/stdarg.h"
 #include "lib/stdio.h"
 #include "lib/stdlib.h"
 #include "lib/string.h"
 #include "lib/math.h"
+#include "programs/login.h"
+#include "programs/shell.h"
 
 #endif

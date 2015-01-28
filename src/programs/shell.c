@@ -1,22 +1,78 @@
-#include "../include/system.h"
+#include "../../include/system.h"
 
 static char s[SHELL_BUFFER_SIZE];
 static char command[SHELL_COMMAND_SIZE];
 static char parameter[SHELL_PARAMETER_SIZE];
 static int spos;
 static int max_spos;
-static char* user = ">$ ";
+static char* user;
+static char* computername;
+static char str_start_bar[VGA_WIDTH+1];
+static int start_menu = 0;
+static char start_menu_str[] = "Reboot";
 
-void shell(){
-	k_enableMouse();
+void shell(char* username, char* pcname){
+	shell_set_screen();
+	user = username;
+	computername = pcname;
 	k_shellReady();
-	k_setKeyboardListener(&shell_keyboardListener);
 	restart_shell_buffer();
-	k_updateStartBar();
+	shell_updateStartBar();
 	prompt();
-	while(1){}
+	// Set the listeners
+	k_setKeyboardListener(&shell_keyboardListener);
+	k_setLclickListener(&shell_lclickListener);
+	k_setRclickListener(&shell_rclickListener);
+	k_setMclickListener(&shell_mclickListener);
+	while(k_isOn() && login_isLogued()){}
 	return;
 }
+
+void shell_set_screen(){
+	/* Prepare screen to show shell properly */
+	k_clearFullScreen();
+	k_setFullBackgroundColor(BACKGROUND_COLOR_BLACK);
+	k_setCharacterColor(CHAR_COLOR_LIGHT_GREY);
+	k_set_vga_size(3, 25);
+	return;
+}
+
+void restart_shell_buffer(){
+	int i;
+	spos = 0;
+	max_spos = 0;
+	for(i = 0; i < SHELL_BUFFER_SIZE; i++){
+		s[i] = 0;
+	}
+	for(i = 0; i < SHELL_COMMAND_SIZE; i++){
+		command[i] = 0;
+	}
+	for(i = 0; i < SHELL_PARAMETER_SIZE; i++){
+		parameter[i] = 0;
+	}
+	return;
+}
+
+void prompt(){
+    printf("%s", user);
+    printf("%s", "@");
+    printf("%s", computername);
+    printf("%s", "$ ");
+    return;
+}
+
+void shell_updateStartBar(){
+	memcpy(&str_start_bar, &START_LOGO, strlen(START_LOGO));
+	memcpy(&str_start_bar[67], k_stime(), 13);
+	k_printStartBar(str_start_bar);
+	return;
+}
+
+/*************************************************************
+ *                                                           *
+ * Every listener needed for shell is below.                 *
+ *                                                           *
+ *************************************************************/
 
 void shell_keyboardListener(){
 	unsigned char c;
@@ -95,6 +151,30 @@ void shell_keyboardListener(){
 		}else{
 			shell_print(c);
 		}
+	}
+	return;
+}
+
+void shell_print(unsigned char c){
+	if(spos < SHELL_BUFFER_SIZE - 2){
+		s[spos++] = c;
+		if(spos > max_spos){
+			max_spos++;
+		}
+		putchar(c);	
+	}
+	else if(spos == SHELL_BUFFER_SIZE - 1){
+		k_beep();
+	}
+	return;
+}
+
+void shell_enter(){
+	if(s[0]!=0){
+		putchar('\n');
+		parsecommand(s);
+		restart_shell_buffer();
+		prompt();
 	}
 	return;
 }
@@ -226,53 +306,69 @@ void shell_f12(){
 	return;
 }
 
-void shell_enter(){
-	if(s[0]!=0){
-		putchar('\n');
-		shellLineBreak();
-		restart_shell_buffer();
-		prompt();
-	}
-	return;
-}
-
-void restart_shell_buffer(){
-	int i;
-	spos = 0;
-	max_spos = 0;
-	for(i = 0; i < SHELL_BUFFER_SIZE; i++){
-		s[i] = 0;
-	}
-	for(i = 0; i < SHELL_COMMAND_SIZE; i++){
-		command[i] = 0;
-	}
-	for(i = 0; i < SHELL_PARAMETER_SIZE; i++){
-		parameter[i] = 0;
-	}
-	return;
-}
-
-void shellLineBreak(){
-	parsecommand(s);
-	return;
-}
-
-void prompt(){
-    printf("%s", user);
-    return;
-}
-
-void shell_print(unsigned char c){
-	if(spos < SHELL_BUFFER_SIZE - 2){
-		s[spos++] = c;
-		if(spos > max_spos){
-			max_spos++;
+void shell_lclickListener(int x, int y){
+	if(y==0){
+		if(x>=0 && x<strlen(START_LOGO)){
+			if(!start_menu){
+				openStartMenu();
+				return;
+			}else{
+				closeStartMenu();
+				return;
+			}
 		}
-		putchar(c);	
+		else if( x>=(strlen(START_LOGO)+strlen(ARROW)) && x<(strlen(START_LOGO)+strlen(ARROW)+strlen(start_menu_str)) ){
+			if(start_menu){
+				k_reboot();
+			}
+		}
+		else if(x>=72){
+			int aux = k_getTimeStyle();
+			switch(aux){
+				case 2:
+					aux=0;
+					break;
+				default:
+					aux++;
+					break;
+			}
+			k_setTimeStyle(aux);
+			return;
+		}else{
+			closeStartMenu();
+			return;
+		}
+	}else{
+		if(start_menu){
+			closeStartMenu();
+			return;
+		}
 	}
-	else if(spos == SHELL_BUFFER_SIZE - 1){
-		beep();
-	}
+	return;
+}
+
+void shell_rclickListener(int x, int y){
+	shell_lclickListener(x, y);
+	return;
+}
+
+void shell_mclickListener(int x, int y){
+	k_randomVGAstyle();
+	return;
+}
+
+void openStartMenu(){
+	start_menu = 1;
+	memcpy(&str_start_bar[strlen(START_LOGO)], &ARROW, strlen(ARROW));
+	memcpy(&str_start_bar[strlen(START_LOGO)+strlen(ARROW)], &start_menu_str, strlen(start_menu_str));
+	shell_updateStartBar();
+	return;
+}
+
+void closeStartMenu(){
+	start_menu = 0;
+	memset(&str_start_bar[strlen(START_LOGO)], ' ', strlen(ARROW)+strlen(start_menu_str));
+	shell_updateStartBar();
 	return;
 }
 
@@ -314,18 +410,18 @@ void parsecommand(char* s){
 	else if(!strcmp(command,"speed")){
 		error = s_speed(hasParameter, parameter);
 	}
-	else if(!strcmp(command,"time")){
-		error = s_time(hasParameter, parameter);
-	}
 	else if(!strcmp(command,"timestyle")){
 		error = s_timestyle(hasParameter, parameter);
 	}
 	else if(!strcmp(command,"bkg")){
 		error = s_bkg(hasParameter, parameter);
 	}
+	else if(!strcmp(command,"logout")){
+		error = s_logout(hasParameter, parameter);
+	}
 	else {
 		k_printosmsg("alebian says: COMMAND NOT FOUND\n");
-		beep();
+		k_beep();
 	}
 	// Print error messages if needed
 	switch(error){
@@ -394,9 +490,9 @@ int s_help(int hp, char* p){
 		printf("\t%s\n", "* clear: erases screen content.");
 		printf("\t%s\n", "* exit: turns off the computer.");
 		printf("\t%s\n", "* help: gives information about the system commands.");
+		printf("\t%s\n", "* logout: closes user session.");
 		printf("\t%s\n", "* reboot: sends reboot signal.");
 		printf("\t%s\n", "* speed: gives information about the system speed.");
-		printf("\t%s\n", "* time: shows the current time.");
 		printf("%s\n", "Some commands can receive parameters.");
 		printf("%s\n", "For more information try -help as parameter.");
 		return 0;
@@ -416,7 +512,7 @@ int s_exit(int hp, char* p){
 	if(hp){
 		return 4;
 	}else{
-		k_turnOff();
+		k_exitScreen();
 		return 0;
 	}
 }
@@ -444,15 +540,6 @@ int s_speed(int hp, char* p){
 		return 4;
 	}else{
 		k_checkSystemSpeed();
-		return 0;
-	}
-}
-
-int s_time(int hp, char* p){
-	if(hp){
-		return 4;
-	}else{
-		printf("%s\n", k_currentTime());
 		return 0;
 	}
 }
@@ -508,5 +595,15 @@ int s_bkg(int hp, char* p){
 		return 0;
 	}else{
 		return 2;
+	}
+}
+
+int s_logout(int hp, char* p){
+	if(hp){
+		return 4;
+	}else{
+		k_shellNotReady();
+		login_out();
+		return 0;
 	}
 }

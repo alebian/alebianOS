@@ -1,6 +1,9 @@
 #ifndef _defs_
 #define _defs_
 
+#define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
+#define MAX(X, Y) (((X) < (Y)) ? (Y) : (X))
+
 #define OS_VERSION "1.1.1"
 
 #define TRUE    1

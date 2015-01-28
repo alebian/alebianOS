@@ -15,3 +15,7 @@ int isxdigit(int c){
 int isalpha(int c){
     return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
 }
+
+int isspecial(int c){
+	return (c=='!'||c=='@'||c=='#'||c=='$'||c=='%'||c=='&');
+}

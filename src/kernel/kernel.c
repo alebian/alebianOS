@@ -5,27 +5,24 @@ kmain()
 C code entry point.
 *************************************************/
 
+static int shutdown = 0;
 static initializable initializers[] = {
 	{"Starting IDT... ", &setup_IDT, 0},
 	{"Starting keyboard... ", &start_keyboard_buffer, 0},
 	{"Starting mouse... ", &start_mouse, 0},
 	{"Loading SMBIOS... ", &startSMBIOS, 0},
-	{"Starting paging...", 0, &start_paging},
+	//{"Starting paging...", 0, &start_paging},
 	{0, 0, 0}
 };
 
-int kmain(multiboot* mboot, int multiboot_magic){
+void kmain(multiboot* mboot, int multiboot_magic){
 	int i;
-	/* Prepare screen to show the loading screen */
-	k_clearFullScreen();
-	k_setFullBackgroundColor(BACKGROUND_COLOR_BLACK);
-	k_setCharacterColor(CHAR_COLOR_WHITE);
-	k_showLoadingScreen();
-	set_vga_size(12, 25);
+
+	k_set_loading_screen();
 
 	if(multiboot_magic!=0x2BADB002){
 		k_panic("The OS wasn't loaded by a Multiboot-compliant boot loader and it's impossible to continue.");
-		return -1;
+		return;
 	}
 
 	for(i=0; initializers[i].description != 0; i++){
@@ -44,15 +41,23 @@ int kmain(multiboot* mboot, int multiboot_magic){
 	// Just to see if everything went well
 	//k_sleep(30);
 
-	/* Prepare screen to load shell properly */
+	k_enableMouse();
+
+	while(k_isOn()){
+		login();
+	}
+	
+	return;
+}
+
+void k_set_loading_screen(){
+	/* Prepare screen to show the loading screen */
 	k_clearFullScreen();
 	k_setFullBackgroundColor(BACKGROUND_COLOR_BLACK);
-	k_setCharacterColor(CHAR_COLOR_LIGHT_GREY);
-	set_vga_size(3, 25);
-
-	shell();
-	
-	return 0;
+	k_setCharacterColor(CHAR_COLOR_WHITE);
+	k_showLoadingScreen();
+	k_set_vga_size(12, 25);
+	return;
 }
 
 void k_nice_square(){
@@ -60,4 +65,16 @@ void k_nice_square(){
 	k_printwarning("+");
 	printf("%s", "] ");
 	return;
+}
+
+void k_turnOn(){
+	shutdown = 0;
+}
+
+void k_turnOff(){
+	shutdown = 1;
+}
+
+int k_isOn(){
+	return !shutdown;
 }

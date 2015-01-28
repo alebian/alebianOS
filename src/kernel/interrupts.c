@@ -126,7 +126,7 @@ void irq_00(){
 	timer_ticks++;
 	if(k_isReadyToShell()){
 		if(timer_ticks%20 == 0){
-			k_updateStartBar();
+			shell_updateStartBar();
 		}
 	}
 	return;

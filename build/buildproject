@@ -26,12 +26,13 @@ gcc -Wall -c -fno-stack-protector ../../src/lib/stdio.c -o stdio.o -fno-builtin
 gcc -Wall -c ../../src/lib/stdlib.c -o stdlib.o -fno-builtin
 gcc -Wall -c ../../src/lib/string.c -o string.o -fno-builtin
 gcc -Wall -c ../../src/lib/math.c -o math.o -fno-builtin
-gcc -Wall -c ../../src/shell.c -o shell.o -fno-builtin
+gcc -Wall -c ../../src/programs/login.c -o login.o -fno-builtin
+gcc -Wall -c ../../src/programs/shell.c -o shell.o -fno-builtin
 
 if [ -f ../img/alebianOS.img ]; then
 echo "Linkediting..."
 
-if ld -T ../../src/link.ld -o kernel.bin k_libasm.o loader.o kernel.o idt.o paging.o smbios.o interrupts.o k_libc.o video.o keyboard.o mouse.o sound.o ctype.o stdio.o stdlib.o string.o math.o shell.o buffers.o; then
+if ld -T ../../src/link.ld -o kernel.bin k_libasm.o loader.o kernel.o idt.o paging.o smbios.o interrupts.o k_libc.o video.o keyboard.o mouse.o sound.o ctype.o stdio.o stdlib.o string.o math.o login.o shell.o buffers.o; then
 cd ..;
 
 echo "Updating Disk Image";

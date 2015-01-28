@@ -1,13 +1,13 @@
 #include "../../include/system.h"
 
 static int shell_ready = 0;
-static int time_style = 0;
+int time_style = 0;
 static int vga_style = 0;
-static char str_start_bar[VGA_WIDTH+1];
-static int start_menu = 0;
-static char current_time[9];
+char current_time[14];
 static klistener keyboard_listener = &k_null;
-static char start_menu_str[] = "Reboot";
+static clicklistener lclick_listener = &k_null2;
+static clicklistener rclick_listener = &k_null2;
+static clicklistener mclick_listener = &k_null2;
 
 // static char* days[] = { "00", "01", "02", "03", "04", "05", "06", "07", "08",
 // "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21",
@@ -137,64 +137,74 @@ char* k_stime(){
 	k_time(&tp);
 	char* mon = months[tp.tm_mon];
 	//char* year = years[tp.tm_year];
-	memset(&str_start_bar[67], ' ', 13);
 	switch(time_style){
 		case 0:
-			str_start_bar[67] = ((tp.tm_mday & 0xF0) >> 4) + '0';
-			str_start_bar[68] = ((tp.tm_mday & 0x0F)) + '0';
-			str_start_bar[70] = mon[0];
-			str_start_bar[71] = mon[1];
-			str_start_bar[72] = mon[2];
-			str_start_bar[73] = ',';
-			memcpy(&str_start_bar[75], k_currentTime(), 5);
+			current_time[0] = ((tp.tm_mday & 0xF0) >> 4) + '0';
+			current_time[1] = ((tp.tm_mday & 0x0F)) + '0';
+			current_time[2] = ' ';
+			current_time[3] = mon[0];
+			current_time[4] = mon[1];
+			current_time[5] = mon[2];
+			current_time[6] = ',';
+			current_time[7] = ' ';
+			current_time[8] = ((tp.tm_hour & 0xF0) >> 4) + '0';
+			current_time[9] = ((tp.tm_hour & 0x0F)) + '0';
+			current_time[10] = ':';
+			current_time[11] = ((tp.tm_min & 0xF0) >> 4) + '0';
+			current_time[12] = ((tp.tm_min & 0x0F)) + '0';
+			current_time[13] = 0;
 			break;
 		case 1:
-			memcpy(&str_start_bar[72], k_currentTime(), 8);
+			current_time[0] = ' ';
+			current_time[1] = ' ';
+			current_time[2] = ' ';
+			current_time[3] = ' ';
+			current_time[4] = ' ';
+			current_time[5] = ((tp.tm_hour & 0xF0) >> 4) + '0';
+			current_time[6] = ((tp.tm_hour & 0x0F)) + '0';
+			current_time[7] = ':';
+			current_time[8] = ((tp.tm_min & 0xF0) >> 4) + '0';
+			current_time[9] = ((tp.tm_min & 0x0F)) + '0';
+			current_time[10] = ':';
+			current_time[11] = ((tp.tm_sec & 0xF0) >> 4) + '0';
+			current_time[12] = ((tp.tm_sec & 0x0F)) + '0';
+			current_time[13] = 0;
 			break;
 		case 2:
-			str_start_bar[69] = ((tp.tm_mday & 0xF0) >> 4) + '0';
-			str_start_bar[70] = ((tp.tm_mday & 0x0F)) + '0';
-			str_start_bar[71] = '/';
-			str_start_bar[72] = mon[0];
-			str_start_bar[73] = mon[1];
-			str_start_bar[74] = mon[2];
-			str_start_bar[75] = '/';
-			str_start_bar[76] = '2';
-			str_start_bar[77] = '0';
-			str_start_bar[78] = ((tp.tm_year & 0xF0) >> 4) + '0';
-			str_start_bar[79] = ((tp.tm_year & 0x0F)) + '0';
+			current_time[0] = ' ';
+			current_time[1] = ' ';
+			current_time[2] = ((tp.tm_mday & 0xF0) >> 4) + '0';
+			current_time[3] = ((tp.tm_mday & 0x0F)) + '0';
+			current_time[4] = '/';
+			current_time[5] = mon[0];
+			current_time[6] = mon[1];
+			current_time[7] = mon[2];
+			current_time[8] = '/';
+			current_time[9] = '2';
+			current_time[10] = '0';
+			current_time[11] = ((tp.tm_year & 0xF0) >> 4) + '0';
+			current_time[12] = ((tp.tm_year & 0x0F)) + '0';
+			current_time[13] = 0;
 			break;
 		default:
 			break;
 	}
-	return str_start_bar;
-}
-
-char* k_currentTime(){
-	tm tp;
-	k_time(&tp);
-	current_time[0] = ((tp.tm_hour & 0xF0) >> 4) + '0';
-	current_time[1] = ((tp.tm_hour & 0x0F)) + '0';
-	current_time[2] = ':';
-	current_time[3] = ((tp.tm_min & 0xF0) >> 4) + '0';
-	current_time[4] = ((tp.tm_min & 0x0F)) + '0';
-	current_time[5] = ':';
-	current_time[6] = ((tp.tm_sec & 0xF0) >> 4) + '0';
-	current_time[7] = ((tp.tm_sec & 0x0F)) + '0';
-	current_time[8] = 0;
 	return current_time;
 }
 
 void k_setTimeStyle(int sty){
 	time_style = sty;
-	k_updateStartBar();
+	shell_updateStartBar();
 	return;
 }
 
-void k_turnOff(){
+int k_getTimeStyle(){
+	return time_style;
+}
+
+void k_exitScreen(){
 	k_shellNotReady();
 	k_disableMouse();
-
 	MARIO();
 	set_vga_size(1,25);
 	k_printalert("                         Please turn off your computer...");
@@ -207,7 +217,7 @@ void k_turnOff(){
 	k_printalert("                            Goodbye! See you soon!\n\n\n");
 	k_printalert("                         Please turn off your computer");
 	*/
-	while(1){}
+	k_turnOff();
 	return;
 }
 
@@ -268,16 +278,14 @@ void k_setMouseColor(char back, char arrow){
 	return;
 }
 
-void k_updateStartBar(){
-	k_stime();
-	memcpy(&str_start_bar, &START_LOGO, strlen(START_LOGO));
-	printStartBar(str_start_bar);
+void k_printStartBar(char* start){
+	printStartBar(start);
 	return;
 }
 
 void k_setStartBarColor(char color){
 	setStartBarColor(SECONDBYTE(color));
-	k_updateStartBar();
+	shell_updateStartBar();
 	return;
 }
 
@@ -394,7 +402,7 @@ void k_panic(char* message){
 	k_setCharacterColor(CHAR_COLOR_WHITE);
 	printf("\n%s\n", message);
 	printf("\n%s\n", "Halting");
-	beep();
+	k_beep();
 	for (;;){
 		turn_off_leds();
 		k_sleep(10);
@@ -455,72 +463,40 @@ void k_eraseMouse(){
 }
 
 void k_mouseRightClick(int x, int y){
-	k_mouseLeftClick(x, y);
+	rclick_listener(x,y);
+	return;
+}
+
+void k_setRclickListener(clicklistener listener){
+	rclick_listener = listener;
 	return;
 }
 
 void k_mouseLeftClick(int x, int y){
-	if(y==0){
-		if(x>=0 && x<strlen(START_LOGO)){
-			if(!start_menu){
-				openStartMenu();
-				return;
-			}else{
-				closeStartMenu();
-				return;
-			}
-		}
-		else if( x>=(strlen(START_LOGO)+strlen(ARROW)) && x<(strlen(START_LOGO)+strlen(ARROW)+strlen(start_menu_str)) ){
-			if(start_menu){
-				k_reboot();
-			}
-		}
-		else if(x>=72){
-			int aux = time_style;
-			switch(aux){
-				case 2:
-					aux=0;
-					break;
-				default:
-					aux++;
-					break;
-			}
-			k_setTimeStyle(aux);
-			return;
-		}else{
-			closeStartMenu();
-			return;
-		}
-	}else{
-		if(start_menu){
-			closeStartMenu();
-			return;
-		}
-	}
+	lclick_listener(x,y);
 	return;
 }
 
-void openStartMenu(){
-	start_menu = 1;
-	memcpy(&str_start_bar[strlen(START_LOGO)], &ARROW, strlen(ARROW));
-	memcpy(&str_start_bar[strlen(START_LOGO)+strlen(ARROW)], &start_menu_str, strlen(start_menu_str));
-	k_updateStartBar();
-	return;
-}
-
-void closeStartMenu(){
-	start_menu = 0;
-	memset(&str_start_bar[strlen(START_LOGO)], ' ', strlen(ARROW)+strlen(start_menu_str));
-	k_updateStartBar();
+void k_setLclickListener(clicklistener listener){
+	lclick_listener = listener;
 	return;
 }
 
 void k_mouseMidClick(int x, int y){
-	k_randomVGAstyle();
+	mclick_listener(x,y);
+	return;
+}
+
+void k_setMclickListener(clicklistener listener){
+	mclick_listener = listener;
 	return;
 }
 
 void k_null(){
+	return;
+}
+
+void k_null2(int x, int y){
 	return;
 }
 
@@ -563,5 +539,15 @@ void k_move_cursor_back(){
 
 void k_move_cursor_forward(){
 	move_cursor_forward();
+	return;
+}
+
+void k_set_vga_size(int min, int max){
+	set_vga_size(min, max);
+	return;
+}
+
+void k_beep(){
+	beep();
 	return;
 }

@@ -4,8 +4,8 @@
 #include "../../include/kernel/k_libc.h"
 #include "../../include/kernel/interrupts.h"
 #include "../../include/lib/string.h"
-#include "../../include/shell.h"
 #include "../../include/lib/stdio.h"
+#include "../../include/programs/shell.h"
 
 static int cursor_pos = 0;
 static int times_scrolled_down = 0;
@@ -34,6 +34,26 @@ void clearScreen(){
 	drawMouse(mouse_pos.actual_x, mouse_pos.actual_y);
 	times_scrolled_down = 0;
 	return;
+}
+
+void clearLine(int x){
+	MousePosition mouse_pos = getMousePosition();
+	char*vidmem = (char*) VGA_PORT;
+	eraseMouse(mouse_pos.actual_x, mouse_pos.actual_y);
+	int i = (x-1)*160;
+	int final = x*160;
+	while(i < final){
+		vidmem[i]=CHAR_BLANK;
+		i+=2;
+	}
+	update_cursor(cursor_pos);
+	drawMouse(mouse_pos.actual_x, mouse_pos.actual_y);
+	return;
+}
+
+void clearCurrentLine(){
+	clearLine((int)cursor_pos/160);
+	cursor_pos = cursor_pos - (cursor_pos%160);
 }
 
 void clearFullScreen(){

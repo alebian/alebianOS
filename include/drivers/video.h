@@ -47,6 +47,8 @@
 
 /* Functions*/
 void clearScreen(void); // Clears chars from screen between rows set by set_vga_size
+void clearLine(int); // Clears row selected by parameter (1 to 25)
+void clearCurrentLine(void);
 void clearFullScreen(void); // Clears all chars from screen
 char getBackgroundColor(void); // Returns the current background color between rows set by set_vga_size
 void setBackgroundColor(char); // Changes the background between rows set by set_vga_size

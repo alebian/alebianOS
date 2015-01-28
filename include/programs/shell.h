@@ -2,15 +2,17 @@
 #define _shell_
 
 #define SHELL_BUFFER_SIZE 128
-#define SHELL_PROMPT_SIZE 3
 #define SHELL_COMMAND_SIZE 16
 #define SHELL_PARAMETER_SIZE 16
 
-void shell(void);
-void shell_keyboardListener(void);
+#define START_LOGO "aOS"
+#define ARROW "->"
+
+void shell(char*, char*);
+void shell_set_screen(void);
 void restart_shell_buffer(void);
-void shellLineBreak(void);
 void prompt(void);
+void shell_enter(void);
 void shell_backspace(void);
 void shell_left(void);
 void shell_right(void);
@@ -22,7 +24,6 @@ void shell_delete(void);
 void shell_insert(void);
 void shell_home(void);
 void shell_end(void);
-void shell_enter(void);
 void shell_print(unsigned char);
 void shell_f1(void);
 void shell_f2(void);
@@ -36,7 +37,14 @@ void shell_f9(void);
 void shell_f10(void);
 void shell_f11(void);
 void shell_f12(void);
-
+void shell_updateStartBar(void);
+/* Listeners */
+void shell_keyboardListener(void);
+void shell_lclickListener(int, int);
+void shell_rclickListener(int, int);
+void shell_mclickListener(int, int);
+void openStartMenu(void);
+void closeStartMenu(void);
 /* Functions to parse commands*/
 void parsecommand(char*);
 void getCommand(char*);
@@ -48,8 +56,8 @@ int s_exit(int, char*);
 int s_k_reboot(int, char*);
 int s_clear(int, char*);
 int s_speed(int, char*);
-int s_time(int, char*);
 int s_timestyle(int, char*);
 int s_bkg(int, char*);
+int s_logout(int, char*);
 
 #endif
