@@ -2,7 +2,7 @@
 #include "../../include/lib/ctype.h"
 #include "../../include/lib/string.h"
 
-int atoi(const char * s){
+int atoi(const char* s){
     int i, n, sign;
     for (i = 0; isspace(s[i]); i++){} /* skip white space */
     sign = (s[i] == '-') ? -1 : 1;
@@ -15,7 +15,7 @@ int atoi(const char * s){
     return sign * n;
 }
 
-char * itoa(char * s, int n, int base){
+char* itoa(char* s, int n, int base){
     int i, sign;
     if ((sign = n) < 0) /* record sign */
         n = -n;         /* make n positive */

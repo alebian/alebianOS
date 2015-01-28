@@ -49,7 +49,7 @@ int strlen(char* s){
     return i;
 }
 
-int strcmp(const char * cs, const char* ct){
+int strcmp(const char* cs, const char* ct){
     for(; *cs == *ct; cs++, ct++)
         if(*cs == '\0')
             return 0;

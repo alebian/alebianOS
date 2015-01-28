@@ -7,7 +7,7 @@
 
 /* Input */
 
-int scanf(char *fmt, ...){
+int scanf(char* fmt, ...){
     va_list ap;
     char *p, *sval, *cval;
     int *ival;
@@ -50,7 +50,7 @@ int scanf(char *fmt, ...){
         {
             case 'd':
                 i=0;
-                ival = va_arg(ap,int *);
+                ival = va_arg(ap,int*);
                 while(s[j] != '\0' && isdigit(s[j]))
                 {
                     aux[i++] = s[j++];
@@ -63,7 +63,7 @@ int scanf(char *fmt, ...){
                 break;
             case 's':
                 i = 0;
-                sval = va_arg(ap,char *);
+                sval = va_arg(ap,char*);
                 while(s[j] != '\0' && s[j] != ' ')
                 {
                     aux[i++] = s[j++];
@@ -91,7 +91,7 @@ int scanf(char *fmt, ...){
                 break;
             case 'x':
                 i=0;
-                ival = va_arg(ap,int *);
+                ival = va_arg(ap,int*);
                 while(s[j] != '\0' && (isdigit(s[j]) || isxdigit(s[j])))
                 {
                     aux[i] = s[j];
@@ -115,15 +115,15 @@ int scanf(char *fmt, ...){
     return read;
 }
 
-char getchar(void){
-    char c;
+unsigned char getchar(void){
+    unsigned char c;
     __read(1,&c,1);
     return c;
 }
 
 /* Output */
 
-int printf(char *fmt, ...){
+int printf(char* fmt, ...){
     va_list ap;
     va_start(ap, fmt);
     char *p, *sval;
@@ -162,12 +162,12 @@ int printf(char *fmt, ...){
     return 0;
 }
 
-int putchar(char c){
+int putchar(unsigned char c){
     __write(1,&c,1);
     return 1;
 }
 
-int puts(char * stream){
+int puts(char* stream){
     while(*stream){
         putchar(*stream);
         stream++;   

@@ -9,18 +9,18 @@ static char current_time[9];
 static klistener keyboard_listener = &k_null;
 static char start_menu_str[] = "Reboot";
 
-// static char * days[] = { "00", "01", "02", "03", "04", "05", "06", "07", "08",
+// static char* days[] = { "00", "01", "02", "03", "04", "05", "06", "07", "08",
 // "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21",
 // "22", "23", "24", "25", "26", "27", "28", "29", "30", "31" };
 
-static char * months[] = { "000", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul",
+static char* months[] = { "000", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul",
 "Aug", "Sep", "Oct", "Nov", "Dec" };
 
-// static char * years[] = { "1994", "1995", "1996", "1997", "1998", "1999", "2000", 
+// static char* years[] = { "1994", "1995", "1996", "1997", "1998", "1999", "2000", 
 // "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", 
 // "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020" };
 
-dword __write(int fd, char* buffer, dword count){
+dword __write(int fd, unsigned char* buffer, dword count){
 	dword c;
 	int i;
 	switch(fd){
@@ -33,6 +33,13 @@ dword __write(int fd, char* buffer, dword count){
 	    	}
 	    	break;
 	    }
+	    /* Keyboard */
+	    case 2:
+	    	c = 0;
+	    	for (i = 0; i < count; i++){
+	    		add_to_keyboard_buffer(buffer[c]);
+	    		c++;
+	    	}	
 	    default: {
 	    	break;
 	    }
@@ -40,7 +47,7 @@ dword __write(int fd, char* buffer, dword count){
 	return c;
 }
 
-dword __read(int fd, char* buffer, dword count){
+dword __read(int fd, unsigned char* buffer, dword count){
 	dword c;
 	int i;
 	switch(fd){
@@ -125,11 +132,11 @@ void k_time(tm * tp){
     return;
 }
 
-char * k_stime(){
+char* k_stime(){
 	tm tp;
 	k_time(&tp);
-	char * mon = months[tp.tm_mon];
-	//char * year = years[tp.tm_year];
+	char* mon = months[tp.tm_mon];
+	//char* year = years[tp.tm_year];
 	memset(&str_start_bar[67], ' ', 13);
 	switch(time_style){
 		case 0:
@@ -546,5 +553,15 @@ void k_setVGAstyle(char background, char character, char mouseback, char mousech
 	setMouseColor(SECONDBYTE(mouseback), FIRSTBYTE(mousechar));
 	k_drawMouse();
 	k_setStartBarColor(SECONDBYTE(startbar));
+	return;
+}
+
+void k_move_cursor_back(){
+	move_cursor_back();
+	return;
+}
+
+void k_move_cursor_forward(){
+	move_cursor_forward();
 	return;
 }

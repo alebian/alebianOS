@@ -12,13 +12,13 @@ typedef struct {
   byte      zero;
   byte      access;
   word      offset_h;
-} INT_DESCR;
+} __attribute__ ((packed)) INT_DESCR;
 
 /* IDTR  */
 typedef struct {
   word  limit;
   dword base;
-} IDTR;
+} __attribute__ ((packed)) IDTR;
 
 void setup_IDT(void);
 void setup_IDT_content(void);

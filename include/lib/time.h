@@ -14,6 +14,6 @@ typedef struct {
 	int tm_wday;        /* day of the week, range 0 to 6    */
 	int tm_yday;        /* day in the year, range 0 to 365  */
 	int tm_isdst;       /* daylight saving time             */
-} tm;
+} __attribute__ ((aligned)) tm;
 
 #endif

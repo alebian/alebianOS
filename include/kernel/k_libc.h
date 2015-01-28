@@ -12,8 +12,8 @@
 
 typedef void(*klistener)(void);
 
-dword __write(int, char*, dword);
-dword __read(int, char*, dword);
+dword __write(int, unsigned char*, dword);
+dword __read(int, unsigned char*, dword);
 void k_showLoadingScreen(void);
 void k_checkBIOSinfo(void);
 void k_checkSystemSpeed(void);
@@ -60,5 +60,7 @@ void closeStartMenu(void);
 void k_null(void);
 void k_randomVGAstyle(void);
 void k_setVGAstyle(char, char, char, char, char);
+void k_move_cursor_back(void);
+void k_move_cursor_forward(void);
 
 #endif

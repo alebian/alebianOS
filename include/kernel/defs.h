@@ -8,18 +8,18 @@
 #define EOF     -1
 #define NULL    0
 
-typedef char s8int;
-typedef unsigned char u8int;
-typedef unsigned char byte;
-typedef short int word;
-typedef short int s16int;
-typedef unsigned short int u16int;
-typedef int dword;
-typedef int s32int;
-typedef unsigned int u32int;
-typedef long qword;
-typedef long s64int;
-typedef unsigned long u64int;
+typedef unsigned char  byte;
+typedef short int 	   word;
+typedef int 		   dword;
+typedef long 		   qword;
+typedef char 		   s8int;
+typedef unsigned char  u8int;
+typedef short		   s16int;
+typedef unsigned short u16int;
+typedef int 		   s32int;
+typedef unsigned int   u32int;
+typedef long 		   s64int;
+typedef unsigned long  u64int;
 
 /* Segment access rights flags */
 #define ACS_PRESENT     0x80            /* segment present */
@@ -33,7 +33,6 @@ typedef unsigned long u64int;
 #define ACS_INT         ( ACS_PRESENT | ACS_INT_386 )
 #define ACS_EXC         ( ACS_PRESENT | ACS_EXC_386 )
 #define ACS_USED        0x10            /* Interrupt programed */
-
 #define ACS_CODE        ( ACS_PRESENT | ACS_CSEG | ACS_READ )
 #define ACS_DATA        ( ACS_PRESENT | ACS_DSEG | ACS_WRITE )
 #define ACS_STACK       ( ACS_PRESENT | ACS_DSEG | ACS_WRITE )
@@ -50,6 +49,6 @@ typedef struct {
 	byte access;
 	byte attribs;
 	byte base_h;
-} DESCR_SEG;
+} __attribute__ ((packed)) DESCR_SEG;
 
 #endif

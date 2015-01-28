@@ -40,6 +40,6 @@ typedef struct {
     unsigned int vbe_interface_seg;
     unsigned int vbe_interface_off;
     unsigned int vbe_interface_len;
-} multiboot;
+} __attribute__ ((packed)) multiboot;
 
 #endif

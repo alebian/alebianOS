@@ -28,7 +28,7 @@ void add_to_keyboard_buffer(unsigned char c){
 }
 
 unsigned char get_char_from_keyboard_buffer(){
-	int c;
+	unsigned char c;
 	if(k_buffer.read==k_buffer.write){
 		//restart_keyboard_buffer();
 		return 0;

@@ -4,10 +4,10 @@
 #include "defs.h"
 
 typedef struct{
-	char vec[KEYBOARD_BUFFER_SIZE]; 
+	unsigned char vec[KEYBOARD_BUFFER_SIZE]; 
 	int read;
 	int write;
-}keyboard_buffer;
+} __attribute__ ((aligned)) keyboard_buffer;
 
 void start_keyboard_buffer(void);
 void restart_keyboard_buffer(void);

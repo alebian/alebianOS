@@ -18,13 +18,13 @@ typedef struct {
  	unsigned int TableAddress;	     	 // Address of the Table
  	unsigned short NumberOfStructures;   // Number of structures in the table
  	unsigned char BCDRevision;           // Unused
-}SMBIOSEntryPoint;
+} __attribute__ ((packed)) SMBIOSEntryPoint;
 
 typedef struct {
  	unsigned char Type;
  	unsigned char Length;
  	unsigned short Handle;
- }SMBIOS_structure_header;
+ } __attribute__ ((packed)) SMBIOS_structure_header;
 
 void startSMBIOS(void);
 void smb_BIOSinfo(void);

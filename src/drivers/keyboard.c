@@ -49,28 +49,28 @@ KDOWN, KPGDN, KINS, KDEL, NOP, NOP, NOP, KF11, KF12 };
 /*
  * Transforms the ScanCode readed from the keyboard into ASCII
  */
-char scanCodeToAscii(int scanCode){
+ unsigned char scanCodeToAscii(int scanCode){
     /* Check if a key is pressed or released */
     if (scanCode & 0x80){
         /* If released */
         switch(scanCode){
             case BREAK_SHIFT_L:
                 shifted = 0;
-                return 0;
+                break;
             case BREAK_SHIFT_R:
                 shifted = 0;
-                return 0;
+                break;
         }
     } else {
         /* If pressed */
-        /* If shift keys pressed */
         switch(scanCode){
-            case MAKE_SHIFT_L:
+            /* If shift keys pressed */
+            case MAKE_SHIFT_L: //scancode for left arrow key
                 shifted = 1;
-                return 0;
+                break;
             case MAKE_SHIFT_R:
                 shifted = 1;
-                return 0;
+                break;
             case MAKE_CAPS_LOCK:
                 capsLock = !capsLock;
                 if(capsLock){
@@ -78,32 +78,58 @@ char scanCodeToAscii(int scanCode){
                 }else{
                     turn_off_leds();
                 }
-                return 0;
-        }
-        /* If arrow keys pressed */
-        switch(scanCode){
-            case 0x4B: //scancode for left arrow key
-                return KLEFT;
-            case 0x4D: //scancode for right arrow key
-                return KRIGHT;
-            case 0x48: //scancode for up arrow key
-                return KUP;
-            case 0x50: //scancode for down arrow key
-                return KDOWN;
-        }
-        /* Any other key pressed */
-        if (capsLock){
-            if(shifted){
-                return scanCodeToAsciiShiftedCapsLockTable[scanCode];
-            } else {
-                return scanCodeToAsciiCapsLockTable[scanCode];
-            }
-        } else {
-            if(shifted){
-                return scanCodeToAsciiShiftedTable[scanCode];
-            } else {
-                return scanCodeToAsciiTable[scanCode];
-            }
+                break;
+            case KLEFT: //scancode for left arrow key
+                return LEFT;
+            case KRIGHT: //scancode for right arrow key
+                return RIGHT;
+            case KUP: //scancode for up arrow key
+                return UP;
+            case KDOWN: //scancode for down arrow key
+                return DOWN;
+            case KPGUP: //scancode for page up key
+                return PGUP;
+            case KPGDN: //scancode for page down key
+                return PGDN;
+            case KF1:
+                return F1;
+            case KF2:
+                return F2;
+            case KF3:
+                return F3;
+            case KF4:
+                return F4;
+            case KF5:
+                return F5;
+            case KF6:
+                return F6;
+            case KF7:
+                return F7;
+            case KF8:
+                return F8;
+            case KF9:
+                return F9;
+            case KF10:
+                return F10;
+            case KF11:
+                return F11;
+            case KF12:
+                return F12;
+            default:
+            /* Any other key pressed */
+                if (capsLock){
+                    if(shifted){
+                        return scanCodeToAsciiShiftedCapsLockTable[scanCode];
+                    } else {
+                        return scanCodeToAsciiCapsLockTable[scanCode];
+                    }
+                } else {
+                    if(shifted){
+                        return scanCodeToAsciiShiftedTable[scanCode];
+                    } else {
+                        return scanCodeToAsciiTable[scanCode];
+                    }
+                }
         }
     }
     return 0;

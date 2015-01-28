@@ -11,7 +11,7 @@ typedef struct{
 	int right_click;
 	int left_click;
 	int middle_click;
-} MousePosition;
+} __attribute__ ((aligned)) MousePosition;
 
 void start_mouse(void);
 void mouse_wait(byte);

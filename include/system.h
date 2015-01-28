@@ -2,8 +2,9 @@
 #define _system_
 
 #include "kernel/defs.h"
+#include "lib/time.h"
 #include "kernel/idt.h"
-#include "kernel/memory.h"
+#include "kernel/paging.h"
 #include "kernel/kernel.h"
 #include "kernel/k_libc.h"
 #include "kernel/k_libasm.h"
@@ -21,7 +22,6 @@
 #include "lib/stdio.h"
 #include "lib/stdlib.h"
 #include "lib/string.h"
-#include "lib/time.h"
 #include "lib/math.h"
 
 #endif

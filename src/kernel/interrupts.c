@@ -133,9 +133,9 @@ void irq_00(){
 }
 
 void irq_01(int scanCode){
-	char c = scanCodeToAscii(scanCode);
+	unsigned char c = scanCodeToAscii(scanCode);
 	if(c != NOP){
-		add_to_keyboard_buffer(c);
+		__write(2, &c, 1);
 	}
 	_Sti();
 	k_KeyboardListener();

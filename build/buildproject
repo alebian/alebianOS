@@ -12,10 +12,10 @@ nasm -f aout ../../src/loader.asm -o loader.o
 echo "Compiling C..."
 gcc -Wall -c ../../src/kernel/kernel.c -o kernel.o -fno-builtin
 gcc -Wall -c ../../src/kernel/interrupts.c -o interrupts.o -fno-builtin
-gcc -Wall -c -fno-stack-protector ../../src/kernel/k_libc.c -o k_libc.o -fno-builtin
+gcc -Wall -c ../../src/kernel/k_libc.c -o k_libc.o -fno-builtin
 gcc -Wall -c ../../src/kernel/buffers.c -o buffers.o -fno-builtin
 gcc -Wall -c ../../src/kernel/idt.c -o idt.o -fno-builtin
-gcc -Wall -c ../../src/kernel/memory.c -o memory.o -fno-builtin
+gcc -Wall -c ../../src/kernel/paging.c -o paging.o -fno-builtin
 gcc -Wall -c ../../src/kernel/smbios.c -o smbios.o -fno-builtin
 gcc -Wall -c ../../src/drivers/video.c -o video.o -fno-builtin
 gcc -Wall -c ../../src/drivers/keyboard.c -o keyboard.o -fno-builtin
@@ -31,7 +31,7 @@ gcc -Wall -c ../../src/shell.c -o shell.o -fno-builtin
 if [ -f ../img/alebianOS.img ]; then
 echo "Linkediting..."
 
-if ld -T ../../src/link.ld -o kernel.bin k_libasm.o loader.o kernel.o idt.o memory.o smbios.o interrupts.o k_libc.o video.o keyboard.o mouse.o sound.o ctype.o stdio.o stdlib.o string.o math.o shell.o buffers.o; then
+if ld -T ../../src/link.ld -o kernel.bin k_libasm.o loader.o kernel.o idt.o paging.o smbios.o interrupts.o k_libc.o video.o keyboard.o mouse.o sound.o ctype.o stdio.o stdlib.o string.o math.o shell.o buffers.o; then
 cd ..;
 
 echo "Updating Disk Image";

@@ -12,9 +12,9 @@ void	_maskPIC1 (byte);
 void	_maskPIC2 (byte);
 
 unsigned long	_read_cr0(void);
-void			_write_cr0(unsigned long);
+void			_write_cr0(unsigned int);
 unsigned long	_read_cr3(void);
-void			_write_cr3(unsigned long);
+void			_write_cr3(unsigned int);
 
 void	_Cli(void);
 void	_Sti(void);

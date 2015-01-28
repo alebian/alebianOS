@@ -9,7 +9,7 @@ static int present = 0;
  * It should be somehwere between 0xF0000 and 0xFFFFF
  */
 void startSMBIOS(){
-	char *mem = (char *) SMBIOS_START;
+	char* mem = (char*) SMBIOS_START;
 	int length, i;
 	unsigned char checksum;
 	while ((unsigned int) mem < 0x100000){
@@ -37,7 +37,7 @@ void startSMBIOS(){
 
 void smb_BIOSinfo(){
 	if(present){
-		char * BIOSstring = (char*) ((int)BIOS_info + BIOS_info->Length);
+		char* BIOSstring = (char*) ((int)BIOS_info + BIOS_info->Length);
 		printf("%s\n", "BIOS information:");
 	    // Prints string 1
 		printf("\t%s", "Brand: ");

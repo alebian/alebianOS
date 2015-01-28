@@ -4,6 +4,7 @@ static char s[SHELL_BUFFER_SIZE];
 static char command[SHELL_COMMAND_SIZE];
 static char parameter[SHELL_PARAMETER_SIZE];
 static int spos;
+static int max_spos;
 static char* user = ">$ ";
 
 void shell(){
@@ -18,32 +19,219 @@ void shell(){
 }
 
 void shell_keyboardListener(){
-	char c;
+	unsigned char c;
 	while((c=getchar())!=0){
 		if(c == '\b'){
-			if(spos > 0){
-				putchar(c);
-				spos--;
-			}
-			if(spos==0){
-				s[spos]=0;
-			}
+			shell_backspace();
 		}
 		else if(c == '\n'){
-			if(s[0]!=0){
-				shellLineBreak();
-				prompt();
-				restart_shell_buffer();
-			}
-		}else{
-			if(spos < SHELL_BUFFER_SIZE - 2){
-				s[spos++] = c;
-				putchar(c);	
-			}
-			else if(spos == SHELL_BUFFER_SIZE - 1){
-				beep();
-			}
+			shell_enter();
 		}
+		else if(c == UP){
+			shell_up();
+		}
+		else if(c == DOWN){
+			shell_down();
+		}
+		else if(c == LEFT){
+			shell_left();
+		}
+		else if(c == RIGHT){
+			shell_right();
+		}
+		else if(c == PGUP){
+			shell_pageup();
+		}
+		else if(c == PGDN){
+			shell_pagedown();
+		}
+		else if(c == DEL){
+			shell_delete();
+		}
+		else if(c == INS){
+			shell_insert();
+		}
+		else if(c == HOME){
+			shell_home();
+		}
+		else if(c == END){
+			shell_end();
+		}
+		else if(c == F1){
+			shell_f1();
+		}
+		else if(c == F2){
+			shell_f2();
+		}
+		else if(c == F3){
+			shell_f3();
+		}
+		else if(c == F4){
+			shell_f4();
+		}
+		else if(c == F5){
+			shell_f5();
+		}
+		else if(c == F6){
+			shell_f6();
+		}
+		else if(c == F7){
+			shell_f7();
+		}
+		else if(c == F8){
+			shell_f8();
+		}
+		else if(c == F9){
+			shell_f9();
+		}
+		else if(c == F10){
+			shell_f10();
+		}
+		else if(c == F11){
+			shell_f11();
+		}
+		else if(c == F12){
+			shell_f12();
+		}else{
+			shell_print(c);
+		}
+	}
+	return;
+}
+
+void shell_backspace(){
+	if(spos > 0){
+		putchar('\b');
+	}
+	s[--spos]=0;
+	return;
+}
+
+void shell_left(){
+	if(spos > 0){
+		k_move_cursor_back();
+		spos--;
+	}
+	return;
+}
+
+void shell_right(){
+	if(spos > 0 && spos < max_spos){
+		k_move_cursor_forward();
+		spos++;
+	}
+	return;
+}
+
+void shell_up(){
+	/* Future implementation */
+	return;
+}
+
+void shell_down(){
+	/* Future implementation */
+	return;
+}
+
+void shell_pageup(){
+	/* Future implementation */
+	return;
+}
+
+void shell_pagedown(){
+	/* Future implementation */
+	return;
+}
+
+void shell_delete(){
+	/* Future implementation */
+	return;
+}
+
+void shell_insert(){
+	/* Future implementation */
+	return;
+}
+
+void shell_home(){
+	/* Future implementation */
+	return;
+}
+
+void shell_end(){
+	/* Future implementation */
+	return;
+}
+
+void shell_f1(){
+	putchar('\n');
+	restart_shell_buffer();
+	s_help(0, 0);
+	prompt();
+	return;
+}
+
+void shell_f2(){
+	/* Future implementation */
+	return;
+}
+
+void shell_f3(){
+	/* Future implementation */
+	return;
+}
+
+void shell_f4(){
+	/* Future implementation */
+	return;
+}
+
+void shell_f5(){
+	/* Future implementation */
+	return;
+}
+
+void shell_f6(){
+	/* Future implementation */
+	return;
+}
+
+void shell_f7(){
+	/* Future implementation */
+	return;
+}
+
+void shell_f8(){
+	/* Future implementation */
+	return;
+}
+
+void shell_f9(){
+	/* Future implementation */
+	return;
+}
+
+void shell_f10(){
+	/* Future implementation */
+	return;
+}
+
+void shell_f11(){
+	/* Future implementation */
+	return;
+}
+
+void shell_f12(){
+	/* Future implementation */
+	return;
+}
+
+void shell_enter(){
+	if(s[0]!=0){
+		putchar('\n');
+		shellLineBreak();
+		restart_shell_buffer();
+		prompt();
 	}
 	return;
 }
@@ -51,6 +239,7 @@ void shell_keyboardListener(){
 void restart_shell_buffer(){
 	int i;
 	spos = 0;
+	max_spos = 0;
 	for(i = 0; i < SHELL_BUFFER_SIZE; i++){
 		s[i] = 0;
 	}
@@ -64,8 +253,6 @@ void restart_shell_buffer(){
 }
 
 void shellLineBreak(){
-	putchar('\n');
-	s[spos]='\0';
 	parsecommand(s);
 	return;
 }
@@ -75,23 +262,36 @@ void prompt(){
     return;
 }
 
+void shell_print(unsigned char c){
+	if(spos < SHELL_BUFFER_SIZE - 2){
+		s[spos++] = c;
+		if(spos > max_spos){
+			max_spos++;
+		}
+		putchar(c);	
+	}
+	else if(spos == SHELL_BUFFER_SIZE - 1){
+		beep();
+	}
+	return;
+}
+
 /*************************************************************
  *                                                           *
  * Every function needed to parse the command line is below. *
  *                                                           *
  *************************************************************/
 
-void parsecommand(char * s){
+void parsecommand(char* s){
 	int clength = 0;
 	int error = 0;
 	int hasParameter = 0;
 	getCommand(s);
 	clength = strlen(command);
-	if(s[clength]!=0 && s[clength+1]=='-'){
+	if(s[clength]==' '){
 		hasParameter = 1;
 		getParameter(s, clength);
 	}
-
 	// Execute the requested command 
 	if(!strcmp(command,"help")){
 		error = s_help(hasParameter, parameter);
@@ -147,33 +347,31 @@ void parsecommand(char * s){
 	return;
 }
 
-void getCommand(char * s){
+void getCommand(char* s){
 	int i, j;
-	for(i=0; s[i]!=0 && s[i]!=' '; i++){
+	for(i=0; s[i]!=0 && s[i]!=' ' && i<SHELL_COMMAND_SIZE; i++){
 		;
 	}
 	for(j=0; j<i; j++){
 		command[j] = s[j];
 	}
-	command[j] = 0;
 	return;
 }
 
-void getParameter(char * s, int clen){
+void getParameter(char* s, int clen){
 	int i, j, k;
 	j = clen + 1;
-	for(i=j; s[i]!=0 && s[i]!=' '; i++){
-		;
+	for(i=j; s[i]!=0 && s[i]!=' ' && k<SHELL_PARAMETER_SIZE; i++){
+		k++;
 	}
 	k = 0;
-	for( ; j<i; ){
+	while(j<i){
 		parameter[k++] = s[j++];
 	}
-	parameter[k] = 0;
 	return;
 }
 
-int s_about(int hp, char * p){
+int s_about(int hp, char* p){
 	if(hp){
 		return 1;
 	}else{
@@ -185,11 +383,10 @@ int s_about(int hp, char * p){
 	return 1;
 }
 
-int s_help(int hp, char * p){
+int s_help(int hp, char* p){
 	if(hp){
 		return 1;
 	}else{
-		printf("%s\n", "Every command in this OS can receive 1 parameter at most.");
 		printf("%s\n", "List of available commands: ");
 		printf("\t%s\n", "* about: gives information about the system.");
 		printf("\t%s\n", "* bios: gives information about the BIOS.");
@@ -200,12 +397,13 @@ int s_help(int hp, char * p){
 		printf("\t%s\n", "* reboot: sends reboot signal.");
 		printf("\t%s\n", "* speed: gives information about the system speed.");
 		printf("\t%s\n", "* time: shows the current time.");
+		printf("%s\n", "Some commands can receive parameters.");
 		printf("%s\n", "For more information try -help as parameter.");
 		return 0;
 	}
 }
 
-int s_checkBIOS(int hp, char * p){
+int s_checkBIOS(int hp, char* p){
 	if(hp){
 		return 4;
 	}else{
@@ -214,7 +412,7 @@ int s_checkBIOS(int hp, char * p){
 	}
 }
 
-int s_exit(int hp, char * p){
+int s_exit(int hp, char* p){
 	if(hp){
 		return 4;
 	}else{
@@ -223,7 +421,7 @@ int s_exit(int hp, char * p){
 	}
 }
 
-int s_k_reboot(int hp, char * p){
+int s_k_reboot(int hp, char* p){
 	if(hp){
 		return 4;
 	}else{
@@ -232,7 +430,7 @@ int s_k_reboot(int hp, char * p){
 	}
 }
 
-int s_clear(int hp, char * p){
+int s_clear(int hp, char* p){
 	if(hp){
 		return 4;
 	}else{
@@ -241,7 +439,7 @@ int s_clear(int hp, char * p){
 	}
 }
 
-int s_speed(int hp, char * p){
+int s_speed(int hp, char* p){
 	if(hp){
 		return 4;
 	}else{
@@ -250,7 +448,7 @@ int s_speed(int hp, char * p){
 	}
 }
 
-int s_time(int hp, char * p){
+int s_time(int hp, char* p){
 	if(hp){
 		return 4;
 	}else{
@@ -259,7 +457,7 @@ int s_time(int hp, char * p){
 	}
 }
 
-int s_timestyle(int hp, char * p){
+int s_timestyle(int hp, char* p){
 	if(hp){
 		if(!strcmp(p,"-help")){
 			printf("%s\n", "The available styles parameters are:");
@@ -285,7 +483,7 @@ int s_timestyle(int hp, char * p){
 	}
 }
 
-int s_bkg(int hp, char * p){
+int s_bkg(int hp, char* p){
 	if(hp){
 		char color = -1;
 		if(!strcmp(p,"-help")){

@@ -3,6 +3,11 @@
 #include "../../include/drivers/video.h"
 #include "../../include/drivers/mouse.h"
 
+/*
+ * This driver is based on the one in:
+ * JS-OS Copyright 2013 JS-OS <js@duck-squirell>
+ */
+
 static MousePosition mouse_pos;
 static byte mouse_sensibility = 3;
 
