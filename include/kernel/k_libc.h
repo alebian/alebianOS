@@ -23,7 +23,6 @@ void k_exitScreen(void);
 void k_clearScreen(void);
 void k_clearFullScreen(void);
 void k_scrolldown(void);
-void k_scrollup(void);
 char k_getBackgroundColor(void);
 void k_setBackgroundColor(char);
 void k_setFullBackgroundColor(char);

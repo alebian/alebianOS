@@ -7,8 +7,8 @@
 #include "../../include/lib/stdio.h"
 #include "../../include/programs/shell.h"
 
+static char* vidmem = (char*) VGA_PORT;
 static int cursor_pos = 0;
-static int times_scrolled_down = 0;
 static int min_row = 0;
 static int max_row = 24;
 static char background_color = BACKGROUND_COLOR_BLACK;
@@ -20,7 +20,6 @@ static char last_mouse_char = CHAR_BLANK;
 
 void clearScreen(){
 	MousePosition mouse_pos = getMousePosition();
-	char*vidmem = (char*) VGA_PORT;
 	int i = min_row*160;
 	int final = (max_row+1)*160;
 	eraseMouse(mouse_pos.actual_x, mouse_pos.actual_y);
@@ -32,13 +31,11 @@ void clearScreen(){
 	cursor_pos=min_row*160;
 	update_cursor(cursor_pos);
 	drawMouse(mouse_pos.actual_x, mouse_pos.actual_y);
-	times_scrolled_down = 0;
 	return;
 }
 
 void clearLine(int x){
 	MousePosition mouse_pos = getMousePosition();
-	char*vidmem = (char*) VGA_PORT;
 	eraseMouse(mouse_pos.actual_x, mouse_pos.actual_y);
 	int i = (x-1)*160;
 	int final = x*160;
@@ -58,7 +55,6 @@ void clearCurrentLine(){
 
 void clearFullScreen(){
 	MousePosition mouse_pos = getMousePosition();
-	char*vidmem = (char*) VGA_PORT;
 	int i=0;
 	eraseMouse(mouse_pos.actual_x, mouse_pos.actual_y);
 	while(i < TOTAL_CHARS)
@@ -69,7 +65,6 @@ void clearFullScreen(){
 	cursor_pos=0;
 	update_cursor(cursor_pos);
 	//drawMouse(mouse_pos.actual_x, mouse_pos.actual_y);
-	times_scrolled_down = 0;
 	return;
 }
 
@@ -78,7 +73,6 @@ char getBackgroundColor(){
 }
 
 void setBackgroundColor(char backcolor){
-	char*vidmem = (char*) VGA_PORT;
 	int i = (min_row*160)+1;
 	int final = (max_row+1)*160;
 	char old;
@@ -93,7 +87,6 @@ void setBackgroundColor(char backcolor){
 }
 
 void setFullBackgroundColor(char backcolor){
-	char*vidmem = (char*) VGA_PORT;
 	int i = 1;
 	char old;
 	while(i < TOTAL_CHARS){
@@ -116,7 +109,6 @@ void setCharacterColor(char color){
 }
 
 void setAllCharacterColor(char color){
-	char*vidmem = (char*) VGA_PORT;
 	int i = (min_row*160)+1;
 	int final = (max_row+1)*160;
 	while(i < final){
@@ -156,7 +148,6 @@ void set_vga_size(int min, int max){
 
 /* Prints a character in a specified VGA screen position without changing cursor */
 void printxy(char c, int x, int y){
-	char*vidmem = (char*) VGA_PORT;
 	MousePosition mouse_pos = getMousePosition();
 	eraseMouse(mouse_pos.actual_x, mouse_pos.actual_y);
 	vidmem[(y*160)+(x*2)] = c;
@@ -167,7 +158,6 @@ void printxy(char c, int x, int y){
 void print(char c, char color){
 	MousePosition mouse_pos = getMousePosition();
 	int nextPos, canDelete, aux;
-	char*vidmem = (char*) VGA_PORT;
 	switch(c){
 	    case '\t':
 	    	nextPos = cursor_pos + V_TAB;
@@ -217,6 +207,37 @@ void print(char c, char color){
 	return;
 }
 
+/*
+ * Prints on the entire available screen what is stored
+ * in the file and from the line specified.
+ * If color is set, it means that the file has one byte for
+ * the printable character and the next byte is the color.
+ * The 0 line is the one taht begins at file[0].
+ */
+void printFromFile(char* file, int lineFrom, int color){
+	clearScreen();
+	int v_start = min_row*160;
+	int v_final = (max_row+1)*160;
+	int v_current = v_start;
+	int f_start;
+	int f_current;
+	if(color){
+		f_start = lineFrom*160;
+	}else{
+		f_start = lineFrom*80;
+	}
+	f_current = f_start;
+	while(v_current<v_final){
+		vidmem[v_current++] = file[f_current++];
+		if(color){
+			vidmem[v_current++] = file[f_current++];
+		}else{
+			vidmem[v_current++] = character_color+background_color;
+		}
+	}
+	return;
+}
+
 void move_cursor_back(){
 	cursor_pos -=2;
 	update_cursor(cursor_pos);
@@ -240,70 +261,36 @@ void update_cursor(int position){
 
 void scrolldown(){
 	MousePosition mouse_pos = getMousePosition();
-	char*vidmem = (char*) VGA_PORT;
-	char*back = (char*) VGA_BACKUP;
-	int i, j, final;
-	eraseMouse(mouse_pos.actual_x, mouse_pos.actual_y);
-	// Save the first line
-	i = min_row*160;
-	j = times_scrolled_down*160;
-	final = (min_row+1)*160;
-	while(i < final){
-		back[j++]=vidmem[i++];
-	}
-	times_scrolled_down++;
-	// Scroll the rest of the screen
-	i = min_row*160;
-	final = max_row*160;
-	while(i < final){	
-		vidmem[i]= vidmem[i+160];
-		i++;
-		vidmem[i]= vidmem[i+160];
-		i++;
-	};
-	final = (max_row+1)*160;
-	while(i < final){
-		vidmem[i]=CHAR_BLANK;
-		i++;
-		vidmem[i]=background_color+character_color;
-		i++;
-	};
-	cursor_pos-=160;
-	update_cursor(cursor_pos);
-	drawMouse(mouse_pos.actual_x, mouse_pos.actual_y);
-	return;
-}
-
-void scrollup(){
-	MousePosition mouse_pos = getMousePosition();
-	char*vidmem = (char*) VGA_PORT;
-	char*back = (char*) VGA_BACKUP;
-	int i, j;
-	eraseMouse(mouse_pos.actual_x, mouse_pos.actual_y);
-	if(times_scrolled_down > 0 && (cursor_pos+160) < max_row*160){
-		// Scroll the screen up
-		i = ((max_row+1)*160)-1;
-		while(i>=(min_row+1)*160){
-			vidmem[i] = vidmem[i-160];
-			i--;
-		}
-		// Restores first line from saved
-		times_scrolled_down--;
+	int i, final;
+	/* If we are not in the first printable line */
+	if( (min_row*160) != (cursor_pos-(cursor_pos%160)) ){
+		eraseMouse(mouse_pos.actual_x, mouse_pos.actual_y);
+		// Scroll the printable screen
 		i = min_row*160;
-		j = times_scrolled_down*160;
-		while(i<(min_row+1)*160){
-			vidmem[i++]=back[j++];
-		}
-		cursor_pos+=160;
+		final = max_row*160;
+		while(i < final){	
+			vidmem[i]= vidmem[i+160];
+			i++;
+			vidmem[i]= vidmem[i+160];
+			i++;
+		};
+		final = (max_row+1)*160;
+		// Clears the last row
+		while(i < final){
+			vidmem[i]=CHAR_BLANK;
+			i++;
+			vidmem[i]=background_color+character_color;
+			i++;
+		};
+		cursor_pos-=160;
 		update_cursor(cursor_pos);
+		drawMouse(mouse_pos.actual_x, mouse_pos.actual_y);
 	}
-	drawMouse(mouse_pos.actual_x, mouse_pos.actual_y);
 	return;
 }
 
 void printStartBar(char* startBar){
 	MousePosition mouse_pos = getMousePosition();
-	char*vidmem = (char*) VGA_PORT;
 	int i, j;
 	i = j = 0;
 	eraseMouse(mouse_pos.actual_x, mouse_pos.actual_y);
@@ -333,7 +320,6 @@ void printStartBar(char* startBar){
 
 void drawMouse(int x, int y){
 	if(k_isMouseEnabled()){
-		char*vidmem = (char*) VGA_PORT;
 		int s = (y*160)+(x*2);
 		if(s%2==0){
 			s++;
@@ -348,7 +334,6 @@ void drawMouse(int x, int y){
 
 void eraseMouse(int x, int y){
 	if(k_isMouseEnabled()){
-		char*vidmem = (char*) VGA_PORT;
 		int s = (y*160)+(x*2);
 		if(s%2==0){
 			s++;
@@ -489,7 +474,6 @@ void MARIO(){
 }
 
 void printSquare(int x, int y, char color){
-	char*vidmem = (char*) VGA_PORT;
 	int aux = (y*160)+(x*2)+1;
 	int i;
 	for (i = 0; i < 4; i++){

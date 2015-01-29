@@ -1,9 +1,9 @@
 #include "../../include/system.h"
 
 static int shell_ready = 0;
-int time_style = 0;
+static int time_style = 0;
 static int vga_style = 0;
-char current_time[14];
+static char current_time[14];
 static klistener keyboard_listener = &k_null;
 static clicklistener lclick_listener = &k_null2;
 static clicklistener rclick_listener = &k_null2;
@@ -233,11 +233,6 @@ void k_clearFullScreen(){
 
 void k_scrolldown(){
 	scrolldown();
-	return;
-}
-
-void k_scrollup(){
-	scrollup();
 	return;
 }
 

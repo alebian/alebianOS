@@ -11,7 +11,7 @@ static initializable initializers[] = {
 	{"Starting keyboard... ", &start_keyboard_buffer, 0},
 	{"Starting mouse... ", &start_mouse, 0},
 	{"Loading SMBIOS... ", &startSMBIOS, 0},
-	//{"Starting paging...", 0, &start_paging},
+	{"Starting paging...", 0, &start_paging},
 	{0, 0, 0}
 };
 
