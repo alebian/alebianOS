@@ -1,9 +1,9 @@
 #include "../../include/system.h"
 
 /**********************************************
-kmain() 
-C code entry point.
-*************************************************/
+ * kmain() 
+ * C code entry point.
+ **********************************************/
 
 static int shutdown = 0;
 static initializable initializers[] = {
@@ -34,12 +34,11 @@ void kmain(multiboot* mboot, int multiboot_magic){
 		else if(initializers[i].minit !=0){
 			initializers[i].minit(mboot);
 		}
-		//k_sleep(3);
+		k_sleep(3); // Because it looks cool
 		k_printwarning("DONE\n");
 	}
 
-	// Just to see if everything went well
-	//k_sleep(30);
+	//k_sleep(30); // Just to see if everything went well
 
 	k_enableMouse();
 

@@ -13,49 +13,39 @@ typedef unsigned int address_t;
  */
 #define LOW_MEMORY_TOP  1*1024*1024
 
-typedef struct {
-	unsigned int present    	: 1;	// If set the page is present in memory
-    unsigned int rw         	: 1;	// If clear, Read-only
-    unsigned int user       	: 1;	// If clear, Supervisor level only
-    unsigned int writethrough 	: 1;	// Always 0
-    unsigned int cachedisabled	: 1;	// Always 0
-    unsigned int accessed   	: 1;	// If set, the page has been accessed
-    unsigned int zero	      	: 1;	// Always 0
-    unsigned int size			: 1;	// If set pages are 4MB
-    unsigned int ignored		: 1;
-    unsigned int available     	: 3;	// Free to use bits
-    unsigned int frame      	: 20;	// Page table 4kb aligned address
-} __attribute__ ((packed)) page_directory_entry;
-
 typedef struct{
-	page_directory_entry tables[1024];
-	// page_table* tables[1024];
-	// unsigned int tables_physical[1024];
-	// unsigned int physical_addr; // Physical address of tables_physical
+    // Bit 0: P -> Present, if set the page is present in memory
+    // Bit 1: R -> Read, if set the page can be written
+    // Bit 2: U -> User, if clear supervisor (kernel) level
+    // Bit 3: W -> Write Through, always 0
+    // Bit 4: D -> Cache Disabled, always 0
+    // Bit 5: A -> Accessed, if set some page has been accessed
+    // Bit 6: 0 -> Zero, always 0
+    // Bit 7: S -> Size, if set pages are 4MB
+    // Bit 8: G -> Ignored
+    // Bit 9-11: Available, free to use by OS
+    // Bit 12-31: Page table address
+    unsigned int tables[1024];
 } __attribute__ ((packed)) page_directory;
 
-typedef struct {
-	unsigned int present    	: 1;	// If set the page is present in memory
-    unsigned int rw         	: 1;	// If clear, Read-only
-    unsigned int user       	: 1;	// If clear, Supervisor level only
-    unsigned int writethrough 	: 1;	// Always 0
-    unsigned int cachedisabled	: 1;	// Always 0
-    unsigned int accessed   	: 1;	// If set, the page has been accessed
-    unsigned int dirty      	: 1;	// If set, the page has been written
-    unsigned int zero			: 1;	// Always 0
-    unsigned int global			: 1;	// Always 0
-    unsigned int available     	: 3;	// Free to use bits
-    unsigned int frame      	: 20;	// Physical page address
-} __attribute__ ((packed)) page_table_entry;
-
 typedef struct{
-	page_table_entry pages[1024];
+    // Bit 0: P -> Present, if set the page is present in memory
+    // Bit 1: R -> Read, if set the page can be written
+    // Bit 2: U -> User, if clear supervisor (kernel) level
+    // Bit 3: W -> Write Through, always 0
+    // Bit 4: C -> Cache Disabled, always 0
+    // Bit 5: A -> Accessed, if set the page has been accessed
+    // Bit 6: D -> Dirty, if set the page has been written
+    // Bit 7: 0 -> Zero, always 0
+    // Bit 8: G -> Global, always 0
+    // Bit 9-11: Available, free to use by OS
+    // Bit 12-31: Page table address
+	unsigned int pages[1024];
 } __attribute__ ((packed)) page_table;
 
-
 void start_paging(multiboot*);
-void set_page(page_directory*, int, int, unsigned int, int, int);
-void create_page_table(page_directory*, int);
+unsigned int create_page_directory_entry(void);
+unsigned int map_to_page_table(address_t, unsigned int, int, page_table*);
 address_t pop_frame(void);
 void push_frame(address_t);
 void print_memory_map(multiboot*);

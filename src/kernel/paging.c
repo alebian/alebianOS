@@ -9,20 +9,21 @@
 
 /* This stack stores available pages above LOW_MEMORY_TOP */
 static volatile address_t frame_stack[MAX_PAGES];
-static volatile address_t frame_stack_current = 0;
+static volatile int frame_stack_current = 0;
+static int frame_stack_max = 0;
 
-page_directory* kernel_directory = 0;
-page_directory* current_directory = 0;
+page_directory* page_dir = 0;
 
 void start_paging(multiboot * mboot){
-    unsigned int i, j, k, final;
+    unsigned int i, j, k, final, aux;
+    unsigned int page_directory_idx, page_table_idx, phys_page_addr;
 
 	// Check if map is provided
 	if (!(mboot->flags & 0x40)){
 		k_panic("GRUB failed to provide a memory map.");
 	}
 
-	//print_memory_map(mboot);
+	print_memory_map(mboot);
 
 	// Iterate over memory map to push available frames into the stack
 	i = mboot->mmap_addr;
@@ -37,7 +38,10 @@ void start_paging(multiboot * mboot){
 			k = 0;
 			while(k<j){
 				address_t current = *base_addr+(k*PAGE_SIZE);
-				push_frame(current);
+				if(current>=LOW_MEMORY_TOP){
+					push_frame(current);
+					frame_stack_max++;
+				}
 				k++;
 			}	
 		}
@@ -45,10 +49,22 @@ void start_paging(multiboot * mboot){
 	}
 
 	// Create a page directory
-	kernel_directory = (page_directory*)pop_frame();
-    current_directory = kernel_directory;
-    // Clear the directory
-    memset(&kernel_directory, 0, 4*1024);
+	aux = pop_frame();
+	page_dir = (page_directory*)aux;
+	for (i = 0; i < 1024; i++){
+		// Attribute: supervisor, write, not present.
+		page_dir->tables[i] = 2;
+	}
+
+	// Create the first page table which will have mapped the low memory and set it as read
+	page_dir->tables[0] = create_page_directory_entry()+1; // Since I'm going to map a few pages I sum 1
+	page_table* current_table = (page_table*)(page_dir->tables[0]>>12);
+	i = 0;
+	final = LOW_MEMORY_TOP/PAGE_SIZE;
+	while(i<final){
+		current_table->pages[i] = ((i*PAGE_SIZE)<<12)+3;
+		i++;
+	}
 
 	// Iterate over memory map AGAIN to load the page directory and create tables
 	i = mboot->mmap_addr;
@@ -61,70 +77,81 @@ void start_paging(multiboot * mboot){
 		j = *length/PAGE_SIZE; // We make sure that we won't allocate a page with less than 4kb
 		k = 0;
 		while(k<j){
+			// Base address of a frame:
 			address_t current = *base_addr+(k*PAGE_SIZE);
-			// Find the page table index
-    		u32int page_table_idx = current / PAGE_SIZE;
-    		// Find the page directory index
-    		u32int dir_idx = page_table_idx / 1024;
-    		if(*type == 1){
-				set_page(kernel_directory, dir_idx, page_table_idx, current, 1, 1);
+			page_directory_idx = current>>22;
+			page_table_idx = (current>>12) & 0x03FF;
+			phys_page_addr = current/PAGE_SIZE;
+			u32int page_directory_entry = page_dir->tables[page_directory_idx];
+
+			if(current>=LOW_MEMORY_TOP && *type==1){
+				if( !(page_directory_entry & 1) ){
+					// If the page table is not present we create one
+					page_directory_entry = create_page_directory_entry()+1; // If we are here it means that we will add a page so it's present
+					page_dir->tables[page_directory_idx] = page_directory_entry;
+				}
+				// We map the frame into the page table
+				current_table = (page_table*)(page_directory_entry>>12);
+				map_to_page_table(current, *type, page_directory_idx, current_table);
+				
 			}else{
-				set_page(kernel_directory, dir_idx, page_table_idx, current, 0, 0);
+				
 			}
+
 			k++;
 		}
 		i += *size + 4;
 	}
 
 	// Finally we enable paging
-	_write_cr3((unsigned int)&(*current_directory));
+	_write_cr3((unsigned int)&(*page_dir));
 	_write_cr0(_read_cr0() | 0x80000000); // Set the paging bit in CR0 to 1
-
 	return;
 }
 
 /*
- * Creates a new page table if available is not set
- * If available is set, it does nothing
+ * This function creates a new page table and returns a page directory entry
+ * IT DOES NOT RETURN ANY PHYSICAL ADDRESS 
  */
-void set_page(page_directory* dir, int dir_idx, int table_idx, unsigned int address, int write, int user){
-	if(dir->tables[dir_idx].available == 0){
-		// Page table not exists
-		create_page_table(dir, dir_idx);
+unsigned int create_page_directory_entry(){
+	int w;
+	address_t aux = pop_frame();
+	page_table* newTable = (page_table*)aux;
+	for(w=0; w<1024; w++){
+		// Attribute: supervisor, write, not present.
+		newTable->pages[w] = 0 | 2;
 	}
-	page_table_entry* aux = &(((page_table*)((unsigned int)dir->tables[dir_idx].frame))->pages[table_idx]);
-	aux->present = 1;
-	aux->rw = write;
-	aux->user = user;
-	aux->writethrough = 0;
-	aux->cachedisabled = 0;
-	aux->accessed = 0;
-	aux->dirty = 0;
-	aux->zero = 0;
-	aux->global = 0;
-	aux->available = 1;
-	aux->frame = address;
-	return;
+	aux = (aux<<12)+2;
+	return aux;
 }
 
-void create_page_table(page_directory* dir, int dir_idx){
-	dir->tables[dir_idx].present = 1;
-	dir->tables[dir_idx].rw = 1;
-	dir->tables[dir_idx].user = 1;
-	dir->tables[dir_idx].writethrough = 0;
-	dir->tables[dir_idx].cachedisabled = 0;
-	dir->tables[dir_idx].accessed = 0;
-	dir->tables[dir_idx].zero = 0;
-	dir->tables[dir_idx].size = 0;
-	dir->tables[dir_idx].available = 1;
-	unsigned int aux = pop_frame();
-	dir->tables[dir_idx].frame = aux;
-	memset((page_table*)aux, 0, 4*1024);
-    return;
+/*
+ * This function assignates a frame into a page table entry
+ * Returns the type of memory it mapped
+ */
+unsigned int map_to_page_table(address_t addr, unsigned int type, int idx, page_table* table){
+	// First we find the index of the page in the table
+	int page_table_idx;
+	if(addr>=1024*PAGE_SIZE){
+		page_table_idx = (addr-(idx*1024*PAGE_SIZE))/PAGE_SIZE;
+	}else{
+		page_table_idx = addr/PAGE_SIZE;
+	}
+	table->pages[page_table_idx] = (addr<<12);
+	if(type==1){
+		// Set it to user, write, present
+		table->pages[page_table_idx] += 7;
+	}else{
+		// Set it to supervisor, write, present
+		table->pages[page_table_idx] += 3;
+	}
+	return type;
 }
+
+
 
 address_t pop_frame(){
-  if(!frame_stack_current){
+  if(frame_stack_current<=0){
   	/*
   	 * We could return a low memory address
   	 * Future implementation of virtual memory should swap a page to disk
@@ -140,14 +167,11 @@ void push_frame(address_t paddr){
 }
 
 /*
- * Prints on screen memory data that might be useful 
- * for testing (memory map, size, etc)
+ * Prints on screen the memory map
  */
 void print_memory_map(multiboot * mboot){
 	unsigned int i = mboot->mmap_addr;
 	unsigned int final = mboot->mmap_addr + mboot->mmap_length;
-	unsigned int available = 0;
-	unsigned int pages = 0;
 	printf("\n%s\n", "Memory map:");
 	while (i < final){
 		unsigned int* size = (unsigned int*) i;
@@ -155,15 +179,8 @@ void print_memory_map(multiboot * mboot){
 		unsigned int* length = (unsigned int*) (i + 12);
 		unsigned int* type = (unsigned int*) (i + 20);
 		printf("\tbase adr:%x length:%x type:%d\n", *base_addr, *length, *type);
-		if(*type == 1){
-			available += *length;
-			pages += *length/PAGE_SIZE;
-		}
 		i += *size + 4;
 	}
-	printf("\n%s%d bytes\n", "Total memory:                      ", ((mboot->mem_lower + mboot->mem_upper) * 1024));
-	printf("%s%d bytes\n", "Available memory (type 1):         ", available);
-	printf("%s%d bytes\n", "Usable memory (mapped into pages): ", pages*PAGE_SIZE);
-	printf("%s%d\n\n", "Free pages: ", pages);
+	printf("%s%d bytes\n", "Total available memory: ", ((mboot->mem_lower + mboot->mem_upper) * 1024));
 	return;
 }
