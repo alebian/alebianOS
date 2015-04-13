@@ -1,4 +1,4 @@
-#include "../../include/math.h"
+#include "../../include/lib/math.h"
 
 double acos(double x){
 	double aux = 0;

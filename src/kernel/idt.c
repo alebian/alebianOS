@@ -25,7 +25,6 @@ void setup_IDTR(){
 	_lidt(&idtr);
 	// start IDT with 0
 	memset(&idt, 0, sizeof(INT_DESCR)*IDT_SIZE);
-
 	return;
 }
 

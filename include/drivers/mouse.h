@@ -14,6 +14,7 @@ typedef struct{
 } __attribute__ ((aligned)) MousePosition;
 
 void start_mouse(void);
+int isMouseConnected(void);
 void mouse_wait(byte);
 byte mouse_read(void);
 void mouse_write(byte);

@@ -15,6 +15,7 @@ static int frame_stack_max = 0;
 page_directory* page_dir = 0;
 
 void start_paging(multiboot * mboot){
+	/*
     unsigned int i, j, k, final, aux;
     unsigned int page_directory_idx, page_table_idx, phys_page_addr;
 
@@ -107,6 +108,7 @@ void start_paging(multiboot * mboot){
 	_write_cr3((unsigned int)&(*page_dir));
 	_write_cr0(_read_cr0() | 0x80000000); // Set the paging bit in CR0 to 1
 	return;
+	*/
 }
 
 /*

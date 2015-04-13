@@ -40,8 +40,6 @@ void kmain(multiboot* mboot, int multiboot_magic){
 
 	//k_sleep(30); // Just to see if everything went well
 
-	k_enableMouse();
-
 	while(k_isOn()){
 		login();
 	}

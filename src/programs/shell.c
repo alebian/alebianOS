@@ -10,18 +10,18 @@ static char* computername;
 static char str_start_bar[VGA_WIDTH+1];
 static int start_menu = 0;
 static char start_menu_str[] = "Reboot";
-static char* shell_file;
+//static char* shell_file;
 /******************************************************/
 /* WE SHOULD USE MALLOC BUT IT IS NOT IMPLEMENTED YET */
-static address_t shell_file_phys;
+//static address_t shell_file_phys;
 /******************************************************/
 
 void shell(char* username, char* pcname){
 	shell_set_screen();
 	/******************************************************/
 	/* WE SHOULD USE MALLOC BUT IT IS NOT IMPLEMENTED YET */
-	shell_file_phys = pop_frame();
-	shell_file = (char*) shell_file_phys;
+	//shell_file_phys = pop_frame();
+	//shell_file = (char*) shell_file_phys;
 	/******************************************************/
 	user = username;
 	computername = pcname;
@@ -37,7 +37,7 @@ void shell(char* username, char* pcname){
 	while(k_isOn() && login_isLogued()){}
 	/******************************************************/
 	/*  WE SHOULD USE FREE BUT IT IS NOT IMPLEMENTED YET  */
-	push_frame(shell_file_phys);
+	//push_frame(shell_file_phys);
 	/******************************************************/
 	return;
 }

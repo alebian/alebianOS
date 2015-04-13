@@ -155,7 +155,9 @@ long getTicks(){
 }
 
 void k_enableMouse(){
-	mouse_enabled = 1;
+	if(isMouseConnected()){
+		mouse_enabled = 1;
+	}
 	return;
 }
 

@@ -1,5 +1,6 @@
 #include "../../include/kernel/k_libasm.h"
 #include "../../include/kernel/k_libc.h"
+#include "../../include/kernel/interrupts.h"
 #include "../../include/drivers/video.h"
 #include "../../include/drivers/mouse.h"
 
@@ -13,36 +14,51 @@ static byte mouse_sensibility = 3;
 
 void start_mouse(){
   byte status;
-  _Cli();
-  //Enable the auxiliary mouse device
-  mouse_wait(1);
-  _outb(0x64, 0xA8);
-  //Enable the interrupts
-  mouse_wait(1);
-  _outb(0x64, 0x20);
-  mouse_wait(0);
-  status=(_inb(0x60) | 2);
-  mouse_wait(1);
-  _outb(0x64, 0x60);
-  mouse_wait(1);
-  _outb(0x60, status);
-  //Tell the mouse to use default settings
-  mouse_write(0xF6);
-  mouse_read();  //Acknowledge
-  //Enable the mouse
-  mouse_write(0xF4);
-  mouse_read();  //Acknowledge
+  if(isMouseConnected()){
+    _Cli();
+    //Enable the auxiliary mouse device
+    mouse_wait(1);
+    _outb(0x64, 0xA8);
+    //Enable the interrupts
+    mouse_wait(1);
+    _outb(0x64, 0x20);
+    mouse_wait(0);
+    status=(_inb(0x60) | 2);
+    mouse_wait(1);
+    _outb(0x64, 0x60);
+    mouse_wait(1);
+    _outb(0x60, status);
+    //Tell the mouse to use default settings
+    mouse_write(0xF6);
+    mouse_read();  //Acknowledge
+    //Enable the mouse
+    mouse_write(0xF4);
+    mouse_read();  //Acknowledge
 
-  mouse_pos.actual_x = 40;
-  mouse_pos.actual_y = 12;
-  mouse_pos.last_x = 40;
-  mouse_pos.last_y = 12;
-  mouse_pos.right_click = 0;
-  mouse_pos.left_click = 0;
-  mouse_pos.middle_click = 0;
-  
-  _Sti();
+    mouse_pos.actual_x = 40;
+    mouse_pos.actual_y = 12;
+    mouse_pos.last_x = 40;
+    mouse_pos.last_y = 12;
+    mouse_pos.right_click = 0;
+    mouse_pos.left_click = 0;
+    mouse_pos.middle_click = 0;
+    
+    _Sti();
+
+    k_enableMouse();
+  }
   return;
+}
+
+int isMouseConnected(){
+  byte read;
+  mouse_write(0xEB);
+  read = mouse_read();
+  if(read == 0xFA){
+    return 1;
+  }else{
+    return -1;
+  }
 }
 
 void mouse_wait(byte type){

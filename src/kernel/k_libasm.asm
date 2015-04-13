@@ -13,6 +13,7 @@ GLOBAL  _inb
 GLOBAL  _indw
 GLOBAL  _outb
 GLOBAL  _outdw
+GLOBAL _turnOff
 
 GLOBAL  _int_14_hand
 GLOBAL  _irq_00_hand
