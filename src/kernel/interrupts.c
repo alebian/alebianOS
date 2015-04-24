@@ -18,6 +18,12 @@ void int_01(){
 	return;
 }
 
+void int_02(){
+	//k_panic("Non maskable interrupt.");
+	k_exitScreen();
+	return;
+}
+
 void int_03(){
 	k_panic("Breakpoint exception.");
 	return;

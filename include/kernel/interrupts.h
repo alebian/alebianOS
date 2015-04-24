@@ -3,6 +3,7 @@
 
 void int_00(void);
 void int_01(void);
+void int_02(void);
 void int_03(void);
 void int_04(void);
 void int_05(void);

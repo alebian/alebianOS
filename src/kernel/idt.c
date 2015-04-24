@@ -37,6 +37,8 @@ void setup_IDT_content(){
 	setup_IDT_entry(&idt[0], 0x08, (dword) &int_00, ACS_EXC, 0);
 	//	Debug Exceptions
 	setup_IDT_entry(&idt[1], 0x08, (dword) &int_01, ACS_EXC, 0);
+	//	Non maskable interrupt
+	setup_IDT_entry(&idt[2], 0x08, (dword) &int_02, ACS_EXC, 0);
 	//	Breakpoint
 	setup_IDT_entry(&idt[3], 0x08, (dword) &int_03, ACS_EXC, 0);
 	//	Overflow

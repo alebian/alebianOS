@@ -6,18 +6,8 @@
  **********************************************/
 
 static int shutdown = 0;
-static initializable initializers[] = {
-	{"Starting IDT... ", &setup_IDT, 0},
-	{"Starting keyboard... ", &start_keyboard_buffer, 0},
-	{"Starting mouse... ", &start_mouse, 0},
-	{"Loading SMBIOS... ", &startSMBIOS, 0},
-	{"Starting paging...", 0, &start_paging},
-	{0, 0, 0}
-};
 
 void kmain(multiboot* mboot, int multiboot_magic){
-	int i;
-
 	k_set_loading_screen();
 
 	if(multiboot_magic!=0x2BADB002){
@@ -25,20 +15,31 @@ void kmain(multiboot* mboot, int multiboot_magic){
 		return;
 	}
 
-	for(i=0; initializers[i].description != 0; i++){
-		k_nice_square();
-		printf("%s", initializers[i].description);
-		if(initializers[i].vinit != 0){
-			initializers[i].vinit();
-		}
-		else if(initializers[i].minit !=0){
-			initializers[i].minit(mboot);
-		}
-		k_sleep(3); // Because it looks cool
-		k_printwarning("DONE\n");
-	}
+	k_nice_square();
+	printf("%s", "Setting up IDT... ");
+	setup_IDT();
+	k_sleep(3);
+	k_printwarning("DONE\n");
+	
+	k_nice_square();
+	printf("%s", "Setting up drivers... ");
+	k_SetUpDrivers();
+	k_sleep(3);
+	k_printwarning("DONE\n");
 
-	//k_sleep(30); // Just to see if everything went well
+	k_nice_square();
+	printf("%s", "Loading SMBIOS... ");
+	startSMBIOS();
+	k_sleep(3);
+	k_printwarning("DONE\n");
+
+	k_nice_square();
+	printf("%s", "Setting up paging...");
+	start_paging(mboot);
+	k_sleep(3);
+	k_printwarning("DONE\n");
+
+	k_sleep(30); // Just to see if everything went well
 
 	while(k_isOn()){
 		login();
@@ -61,6 +62,12 @@ void k_nice_square(){
 	printf("%s", "[");
 	k_printwarning("+");
 	printf("%s", "] ");
+	return;
+}
+
+void k_SetUpDrivers(){
+	start_keyboard_buffer();
+	start_mouse();
 	return;
 }
 
