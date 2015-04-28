@@ -1,7 +1,7 @@
 #ifndef _buffers_
 #define _buffers_
 
-#include "defs.h"
+#include "kernel.h"
 
 typedef struct{
 	unsigned char vec[KEYBOARD_BUFFER_SIZE]; 

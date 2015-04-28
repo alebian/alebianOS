@@ -65,6 +65,8 @@ void setup_IDT_content(){
 	setup_IDT_entry(&idt[14], 0x08, (dword) &_int_14_hand, ACS_EXC, 0);
 	//	Coprocessor Error
 	setup_IDT_entry(&idt[16], 0x08, (dword) &int_16, ACS_EXC, 0);
+	//	Syscalls
+	setup_IDT_entry(&idt[128], 0x08, (dword) &_int_80_hand, ACS_EXC, 0);
 	//	IRQ0: timer tick
 	setup_IDT_entry(&idt[32], 0x08, (dword) &_irq_00_hand, ACS_INT, 0);
 	//	IRQ1: keyboard

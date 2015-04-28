@@ -1,4 +1,54 @@
-sudo ./buildproject
+if [ ! -d ./bin ]
+then sudo mkdir bin
+fi
+cd ./bin
+sudo rm -rf *
+
+echo "Compiling ASM..."
+nasm -f aout ../../src/arch/x86/x86.asm -o x86.o
+nasm -f aout ../../src/arch/x86/loader.asm -o loader.o
+
+echo "Compiling C..."
+gcc -Wall -c ../../src/kernel/main.c -o main.o -fno-builtin
+gcc -Wall -c ../../src/kernel/interrupts.c -o interrupts.o -fno-builtin
+gcc -Wall -c ../../src/kernel/kernel.c -o kernel.o -fno-builtin
+gcc -Wall -c ../../src/kernel/syscalls.c -o syscalls.o -fno-builtin
+gcc -Wall -c ../../src/kernel/buffers.c -o buffers.o -fno-builtin
+gcc -Wall -c ../../src/kernel/idt.c -o idt.o -fno-builtin
+gcc -Wall -c ../../src/kernel/mm/paging.c -o paging.o -fno-builtin
+gcc -Wall -c ../../src/kernel/smbios.c -o smbios.o -fno-builtin
+gcc -Wall -c ../../src/drivers/video.c -o video.o -fno-builtin
+gcc -Wall -c ../../src/drivers/keyboard.c -o keyboard.o -fno-builtin
+gcc -Wall -c ../../src/drivers/mouse.c -o mouse.o -fno-builtin
+gcc -Wall -c ../../src/drivers/sound.c -o sound.o -fno-builtin
+gcc -Wall -c ../../src/lib/ctype.c -o ctype.o -fno-builtin
+gcc -Wall -c -fno-stack-protector ../../src/lib/stdio.c -o stdio.o -fno-builtin
+gcc -Wall -c ../../src/lib/stdlib.c -o stdlib.o -fno-builtin
+gcc -Wall -c ../../src/lib/string.c -o string.o -fno-builtin
+gcc -Wall -c ../../src/lib/math.c -o math.o -fno-builtin
+gcc -Wall -c ../../src/programs/login.c -o login.o -fno-builtin
+gcc -Wall -c ../../src/programs/shell.c -o shell.o -fno-builtin
+
+if [ -f ../img/alebianOS.img ]; then
+echo "Linkediting..."
+
+if ld -T ../link.ld -o kernel.bin x86.o loader.o main.o idt.o paging.o smbios.o interrupts.o kernel.o syscalls.o video.o keyboard.o mouse.o sound.o ctype.o stdio.o stdlib.o string.o math.o login.o shell.o buffers.o; then
+cd ..;
+
+echo "Updating Disk Image";
+sudo mount -o loop ./img/alebianOS.img /mnt;
+sudo cp ./bin/kernel.bin /mnt/boot;
+sudo umount /mnt;
+
+echo "Proyect built";
+else
+echo ""
+echo "Error building proyect";
+echo ""
+fi
+else
+echo "Disk Image not found."
+fi
 
 sudo mkdir -p isodir
 sudo mkdir -p isodir/boot

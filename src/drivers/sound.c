@@ -1,7 +1,6 @@
 #include "../../include/drivers/sound.h"
-#include "../../include/kernel/k_libc.h"
-#include "../../include/kernel/k_libasm.h"
-#include "../../include/kernel/defs.h"
+#include "../../include/kernel/kernel.h"
+#include "../../include/arch/x86/x86.h"
 
 /*
  * Copyright 2013 JS-OS <js@duck-squirell>

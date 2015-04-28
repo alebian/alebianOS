@@ -1,5 +1,5 @@
-#include "../../include/kernel/defs.h"
-#include "../../include/kernel/k_libasm.h"
+#include "../../include/kernel/kernel.h"
+#include "../../include/arch/x86/x86.h"
 #include "../../include/drivers/keyboard.h"
 
 static int shifted = 0;

@@ -1,7 +1,7 @@
 #ifndef _asm_
 #define _asm_
 
-#include "idt.h"
+#include "../../kernel/idt.h"
 
 unsigned int	_read_msw(void);
 
@@ -21,6 +21,7 @@ void	_Sti(void);
 
 /* Interrupt handlers */
 void	_int_14_hand(void);
+void	_int_80_hand(void);
 void	_irq_00_hand(void);
 void	_irq_01_hand(void);
 void	_irq_12_hand(void);

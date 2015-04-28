@@ -13,14 +13,15 @@ GLOBAL  _inb
 GLOBAL  _indw
 GLOBAL  _outb
 GLOBAL  _outdw
-GLOBAL _turnOff
 
 GLOBAL  _int_14_hand
+GLOBAL  _int_80_hand
 GLOBAL  _irq_00_hand
 GLOBAL  _irq_01_hand
 GLOBAL  _irq_12_hand
 
 EXTERN  int_14
+EXTERN  int_80
 EXTERN  irq_00
 EXTERN  irq_01
 EXTERN  irq_12
@@ -145,6 +146,22 @@ _int_14_hand:           ; Page fault handler
     push    eax
     call    int_14
     pop     eax
+    
+    popa
+    ret
+
+_int_80_hand:           ; Syscall
+    pusha
+
+    push    edx
+    push    ecx
+    push    ebx
+    push    eax
+    call    int_80
+    pop     eax
+    pop     ebx
+    pop     ecx
+    pop     edx
     
     popa
     ret

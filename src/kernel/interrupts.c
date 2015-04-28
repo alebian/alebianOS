@@ -128,6 +128,11 @@ void int_16(){
 	return;
 }
 
+void int_80(int eax, int ebx, int ecx, int edx){
+	k_syscall(eax, ebx, ecx, edx);
+	return;
+}
+
 void irq_00(){
 	timer_ticks++;
 	if(k_isReadyToShell()){
@@ -141,7 +146,7 @@ void irq_00(){
 void irq_01(int scanCode){
 	unsigned char c = scanCodeToAscii(scanCode);
 	if(c != NOP){
-		__write(2, &c, 1);
+		k_syscall(4, 2, (dword)&c, 1);
 	}
 	_Sti();
 	k_KeyboardListener();

@@ -1,4 +1,4 @@
-#include "../../include/kernel/k_libc.h"
+#include "../../include/kernel/syscalls.h"
 #include "../../include/drivers/sound.h"
 #include "../../include/lib/stdio.h"
 #include "../../include/lib/stdarg.h"
@@ -117,7 +117,7 @@ int scanf(char* fmt, ...){
 
 unsigned char getchar(void){
     unsigned char c;
-    __read(1,&c,1);
+    k_syscall(3, 1, (dword)&c, 1);
     return c;
 }
 
@@ -163,7 +163,7 @@ int printf(char* fmt, ...){
 }
 
 int putchar(unsigned char c){
-    __write(1,&c,1);
+    k_syscall(4, 1, (dword)&c, 1);
     return 1;
 }
 

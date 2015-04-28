@@ -1,5 +1,5 @@
-#include "../../include/kernel/k_libasm.h"
-#include "../../include/kernel/k_libc.h"
+#include "../../include/arch/x86/x86.h"
+#include "../../include/kernel/kernel.h"
 #include "../../include/kernel/interrupts.h"
 #include "../../include/drivers/video.h"
 #include "../../include/drivers/mouse.h"

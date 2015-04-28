@@ -1,7 +1,7 @@
 #ifndef _mouse_
 #define _mouse_
 
-#include "../kernel/defs.h"
+#include "../kernel/kernel.h"
 
 typedef struct{
 	int actual_x;

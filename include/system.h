@@ -1,13 +1,13 @@
 #ifndef _system_
 #define _system_
 
-#include "kernel/defs.h"
+#include "kernel/kernel.h"
+#include "kernel/syscalls.h"
 #include "lib/time.h"
 #include "kernel/idt.h"
-#include "kernel/paging.h"
-#include "kernel/kernel.h"
-#include "kernel/k_libc.h"
-#include "kernel/k_libasm.h"
+#include "kernel/mm/paging.h"
+#include "kernel/main.h"
+#include "arch/x86/x86.h"
 #include "kernel/interrupts.h"
 #include "kernel/buffers.h"
 #include "kernel/smbios.h"

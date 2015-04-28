@@ -1,17 +1,16 @@
 ;*****************************************************
-; kstart.asm
+; start.asm
 ;
 ; Img entry point.
 ; Multiboot header.
 ;******************************************************
 
-
-%include "../include/grub.inc"
+%include "../../../include/grub.inc"
 
 [BITS 32]
 
 [global start]
-[extern kmain] ; in kernel.c
+[extern kmain] ; in main.c
 
 start:
 

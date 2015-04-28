@@ -1,7 +1,7 @@
 #ifndef _idt_
 #define _idt_
 
-#include "defs.h"
+#include "kernel.h"
 
 #define IDT_SIZE 256
 

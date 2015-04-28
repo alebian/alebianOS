@@ -17,6 +17,7 @@ void int_12(void);
 void int_13(void);
 void int_14(int, int);
 void int_16(void);
+void int_80(dword, dword, dword, dword);
 void irq_00(void);
 void irq_01(int);
 void irq_12(int);

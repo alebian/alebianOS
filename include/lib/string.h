@@ -1,7 +1,7 @@
 #ifndef _string_
 #define _string_
 
-#include "../kernel/defs.h"
+#include "../kernel/kernel.h"
 
 void* memcpy(void*, const void*, int);
 void* memset(void*, int, int);

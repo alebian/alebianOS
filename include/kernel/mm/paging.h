@@ -1,7 +1,7 @@
 #ifndef _paging_
 #define _paging_
 
-#include "../multiboot.h"
+#include "../../multiboot.h"
 
 typedef unsigned int address_t;
 
