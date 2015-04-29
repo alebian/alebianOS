@@ -1,18 +1,20 @@
 ENTRY (_loader)
-
 SECTIONS{
-    . = 0x00100000;
-
-    .text :{
+    .text 0x00100000 :{
+        code = .;
         *(.text)
     }
 
-    .rodata ALIGN (0x1000) : {
+    .rodata : {
+        rodata = .;
         *(.rodata)
+        . = ALIGN(4096);
     }
 
-    .data ALIGN (0x1000) : {
+    .data : {
+        data = .;
         *(.data)
+        . = ALIGN(4096);
     }
 
     .bss : {
@@ -20,6 +22,7 @@ SECTIONS{
         *(COMMON)
         *(.bss)
         _ebss = .;
+        . = ALIGN(4096);
     }
 
     end = .;

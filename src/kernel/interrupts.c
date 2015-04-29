@@ -135,6 +135,9 @@ void int_80(int eax, int ebx, int ecx, int edx){
 
 void irq_00(){
 	timer_ticks++;
+	if(k_isLoading()){
+		k_LoadingScreenEffect();
+	}
 	if(k_isReadyToShell()){
 		if(timer_ticks%20 == 0){
 			shell_updateStartBar();

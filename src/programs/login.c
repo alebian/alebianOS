@@ -51,7 +51,7 @@ void login_set_screen(){
 	k_set_vga_size(1, 25);
 	k_setFullBackgroundColor(BACKGROUND_COLOR_BLACK);
 	k_setCharacterColor(CHAR_COLOR_WHITE);
-	k_printalert("\nWelcome to AlebianOS ");
+	k_printalert("\nWelcome to alebianOS ");
 	k_printwarning("v");
 	k_printwarning(OS_VERSION);
 	printf("\n\n%s\n\n", "Please insert your username and password to login");

@@ -155,6 +155,15 @@ void printxy(char c, int x, int y){
 	return;
 }
 
+void printxyc(char c, char color, int x, int y){
+	MousePosition mouse_pos = getMousePosition();
+	eraseMouse(mouse_pos.actual_x, mouse_pos.actual_y);
+	vidmem[(y*160)+(x*2)] = c;
+	vidmem[(y*160)+(x*2)+1] = color;
+	drawMouse(mouse_pos.actual_x, mouse_pos.actual_y);
+	return;
+}
+
 void print(char c, char color){
 	MousePosition mouse_pos = getMousePosition();
 	int nextPos, canDelete, aux;

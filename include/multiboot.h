@@ -15,7 +15,7 @@
 #define MULTIBOOT_FLAG_APM     0x200
 #define MULTIBOOT_FLAG_VBE     0x400
 
-typedef struct {
+typedef struct{
     unsigned int flags;
     unsigned int mem_lower;
     unsigned int mem_upper;
@@ -40,6 +40,15 @@ typedef struct {
     unsigned int vbe_interface_seg;
     unsigned int vbe_interface_off;
     unsigned int vbe_interface_len;
-} __attribute__ ((packed)) multiboot;
+} __attribute__ ((packed)) multiboot_info;
+
+typedef struct{
+    u32int size;
+    u32int addr_low;
+    u32int addr_high;
+    u32int len_low;
+    u32int len_high;
+    u32int type;
+} __attribute__((packed)) mmap_entry;
 
 #endif

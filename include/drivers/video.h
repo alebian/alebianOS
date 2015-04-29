@@ -61,6 +61,7 @@ char getMouseColor(void);
 void setMouseColor(char, char);
 void set_vga_size(int, int); // Changes the screen size that other functions can affect
 void printxy(char, int, int);
+void printxyc(char, char, int, int);
 void print(char, char);
 void printFromFile(char*, int, int);
 void move_cursor_back(void);

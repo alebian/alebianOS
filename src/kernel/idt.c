@@ -34,45 +34,45 @@ void setup_IDTR(){
 void setup_IDT_content(){
 	remapIRQ();
 	//	Divide error
-	setup_IDT_entry(&idt[0], 0x08, (dword) &int_00, ACS_EXC, 0);
+	setup_IDT_entry(0, 0x08, (dword) &int_00, ACS_EXC);
 	//	Debug Exceptions
-	setup_IDT_entry(&idt[1], 0x08, (dword) &int_01, ACS_EXC, 0);
+	setup_IDT_entry(1, 0x08, (dword) &int_01, ACS_EXC);
 	//	Non maskable interrupt
-	setup_IDT_entry(&idt[2], 0x08, (dword) &int_02, ACS_EXC, 0);
+	setup_IDT_entry(2, 0x08, (dword) &int_02, ACS_EXC);
 	//	Breakpoint
-	setup_IDT_entry(&idt[3], 0x08, (dword) &int_03, ACS_EXC, 0);
+	setup_IDT_entry(3, 0x08, (dword) &int_03, ACS_EXC);
 	//	Overflow
-	setup_IDT_entry(&idt[4], 0x08, (dword) &int_04, ACS_EXC, 0);
+	setup_IDT_entry(4, 0x08, (dword) &int_04, ACS_EXC);
 	//	Bounds Check
-	setup_IDT_entry(&idt[5], 0x08, (dword) &int_05, ACS_EXC, 0);
+	setup_IDT_entry(5, 0x08, (dword) &int_05, ACS_EXC);
 	//	Invalid Opcode
-	setup_IDT_entry(&idt[6], 0x08, (dword) &int_06, ACS_EXC, 0);
+	setup_IDT_entry(6, 0x08, (dword) &int_06, ACS_EXC);
 	//	Coprocessor Not Available
-	setup_IDT_entry(&idt[7], 0x08, (dword) &int_07, ACS_EXC, 0);
+	setup_IDT_entry(7, 0x08, (dword) &int_07, ACS_EXC);
 	//	Double Fault
-	setup_IDT_entry(&idt[8], 0x08, (dword) &int_08, ACS_EXC, 0);
+	setup_IDT_entry(8, 0x08, (dword) &int_08, ACS_EXC);
 	//	Coprocessor Segment Overrun
-	setup_IDT_entry(&idt[9], 0x08, (dword) &int_09, ACS_EXC, 0);
+	setup_IDT_entry(9, 0x08, (dword) &int_09, ACS_EXC);
 	//	Invalid TSS
-	setup_IDT_entry(&idt[10], 0x08, (dword) &int_10, ACS_EXC, 0);
+	setup_IDT_entry(10, 0x08, (dword) &int_10, ACS_EXC);
 	//	Segment Not Present
-	setup_IDT_entry(&idt[11], 0x08, (dword) &int_11, ACS_EXC, 0);
+	setup_IDT_entry(11, 0x08, (dword) &int_11, ACS_EXC);
 	//	Stack Exception
-	setup_IDT_entry(&idt[12], 0x08, (dword) &int_12, ACS_EXC, 0);
+	setup_IDT_entry(12, 0x08, (dword) &int_12, ACS_EXC);
 	//	General Protection Exception(Triple Fault)
-	setup_IDT_entry(&idt[13], 0x08, (dword) &int_13, ACS_EXC, 0);
+	setup_IDT_entry(13, 0x08, (dword) &int_13, ACS_EXC);
 	//	Page Fault
-	setup_IDT_entry(&idt[14], 0x08, (dword) &_int_14_hand, ACS_EXC, 0);
+	setup_IDT_entry(14, 0x08, (dword) &_int_14_hand, ACS_EXC);
 	//	Coprocessor Error
-	setup_IDT_entry(&idt[16], 0x08, (dword) &int_16, ACS_EXC, 0);
+	setup_IDT_entry(16, 0x08, (dword) &int_16, ACS_EXC);
 	//	Syscalls
-	setup_IDT_entry(&idt[128], 0x08, (dword) &_int_80_hand, ACS_EXC, 0);
+	setup_IDT_entry(128, 0x08, (dword) &_int_80_hand, ACS_EXC);
 	//	IRQ0: timer tick
-	setup_IDT_entry(&idt[32], 0x08, (dword) &_irq_00_hand, ACS_INT, 0);
+	setup_IDT_entry(32, 0x08, (dword) &_irq_00_hand, ACS_INT);
 	//	IRQ1: keyboard
-	setup_IDT_entry(&idt[33], 0x08, (dword) &_irq_01_hand, ACS_INT, 0);
+	setup_IDT_entry(33, 0x08, (dword) &_irq_01_hand, ACS_INT);
 	//	IRQ12: mouse
-	setup_IDT_entry(&idt[44], 0x08, (dword) &_irq_12_hand, ACS_INT, 0);
+	setup_IDT_entry(44, 0x08, (dword) &_irq_12_hand, ACS_INT);
 	return;
 }
 
@@ -97,18 +97,17 @@ void remapIRQ(){
  * Sets an IDT Descriptor
  *
  * Arguments: 
- *	IDT's element pointer
+ *	IDT's position
  *	Descriptor's selector
  *	Handler pointer	
  *	Access level
- *	Zero
  */
-void setup_IDT_entry (INT_DESCR *item, byte selector, dword offset, byte access, byte zero){
-  item->selector = selector;
-  item->offset_l = offset & 0xFFFF;
-  item->offset_h = offset >> 16;
-  item->access = access;
-  item->zero = zero;
+void setup_IDT_entry (u8int num, byte selector, dword offset, byte access){
+	idt[num].selector = selector;
+  	idt[num].offset_l = offset & 0xFFFF;
+  	idt[num].offset_h = offset >> 16;
+  	idt[num].access = access;
+  	idt[num].zero = 0;
 }
 
 /*

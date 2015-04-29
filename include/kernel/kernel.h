@@ -3,6 +3,7 @@
 
 #include "../lib/time.h"
 
+#define CHECK_BIT(var,pos) ((var) & (1<<(pos)))
 #define FIRSTBYTE(x) x%16
 #define SECONDBYTE(x) x-(FIRSTBYTE(x))
 #define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))

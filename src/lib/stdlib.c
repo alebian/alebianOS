@@ -37,8 +37,8 @@ char* itoa(char* s, int n, int base){
     if(base == 10 && sign < 0)
         s[i++] = '-';
     if(base == 16){
-        s[i++] = 'x';
-        s[i++] = '0';
+        //s[i++] = 'x';
+        //s[i++] = '0';
     }
     if(base == 8)
         s[i++] = '0';

@@ -13,17 +13,24 @@ static char* months[] = { "000", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"
 "Aug", "Sep", "Oct", "Nov", "Dec" };
 
 void k_showLoadingScreen(){
-	k_printalert("*******************************************************************************\n");
-	k_printalert("*                                                                             *\n");
-	k_printalert("*   $$$$$$$$ $$           $$       $$                      $$$$$$   $$$$$$    *\n");
-	k_printalert("*   $$    $$ $$           $$                              $$    $$ $$    $$   *\n");
-	k_printalert("*   $$    $$ $$   $$$$$   $$       $$  $$$$$$  $$ $$$     $$    $$ $$         *\n");
-	k_printalert("*   $$$$$$$$ $$  $$   $$  $$$$$$$  $$       $$ $$$  $$$   $$    $$  $$$$$$    *\n");
-	k_printalert("*   $$    $$ $$  $$$$$$   $$    $$ $$   $$$$$$ $$    $$   $$    $$       $$   *\n");
-	k_printalert("*   $$    $$ $$  $$       $$    $$ $$  $$   $$ $$    $$   $$    $$ $$    $$   *\n");
-	k_printalert("*   $$    $$  $$  $$$$$$  $$$$$$$  $$   $$$$$$ $$    $$    $$$$$$   $$$$$$    *\n");
-	k_printalert("*                                                                             *\n");
-	k_printalert("*******************************************************************************\n\n");
+	/*k_printalert("\n");
+	k_printalert("            $$            $$        $$                      $$$$$$    $$$$$$   \n");
+	k_printalert("            $$            $$                               $$    $$  $$    $$  \n");
+	k_printalert("   $$$$$$   $$    $$$$$   $$        $$  $$$$$$   $$ $$$    $$    $$  $$        \n");
+	k_printalert("        $$  $$   $$   $$  $$$$$$$   $$       $$  $$$  $$$  $$    $$   $$$$$$   \n");
+	k_printalert("    $$$$$$  $$   $$$$$$   $$    $$  $$   $$$$$$  $$    $$  $$    $$        $$  \n");
+	k_printalert("   $$   $$  $$   $$       $$    $$  $$  $$   $$  $$    $$  $$    $$  $$    $$  \n");
+	k_printalert("    $$$$$$   $$   $$$$$$  $$$$$$$   $$   $$$$$$  $$    $$   $$$$$$    $$$$$$   \n");
+	k_printalert("\nloading\n");*/
+	k_printalert("\n");
+	k_printalert("                                    $$$$$$    $$$$$$ \n");
+	k_printalert("                                   $$    $$  $$    $$\n");
+	k_printalert("                          $$$$$$   $$    $$  $$      \n");
+	k_printalert("                               $$  $$    $$   $$$$$$ \n");
+	k_printalert("                           $$$$$$  $$    $$        $$\n");
+	k_printalert("                          $$   $$  $$    $$  $$    $$\n");
+	k_printalert("                           $$$$$$   $$$$$$    $$$$$$ \n");
+	k_printalert("\n                              alebianOS is loading\n");
 	return;
 }
 

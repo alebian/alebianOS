@@ -1,11 +1,13 @@
 #ifndef _asm_
 #define _asm_
 
+#include "../../kernel/mm/gdt.h"
 #include "../../kernel/idt.h"
 
 unsigned int	_read_msw(void);
 
-void	_lidt (IDTR *);
+void	_lgdt (GDT_PTR*);
+void	_lidt (IDTR*);
 
 /* PIC masks handlers */
 void	_maskPIC1 (byte);

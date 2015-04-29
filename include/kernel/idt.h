@@ -23,7 +23,7 @@ typedef struct {
 void setup_IDT(void);
 void setup_IDT_content(void);
 void remapIRQ(void);
-void setup_IDT_entry(INT_DESCR*, byte, dword, byte, byte);
+void setup_IDT_entry(u8int, byte, dword, byte);
 void setup_IDTR(void);
 void setup_PIC(void);
 
