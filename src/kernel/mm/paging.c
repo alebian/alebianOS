@@ -7,7 +7,6 @@ void start_paging(multiboot_info_t* mboot){
 		k_panic("Memory map not provided by GRUB.");
 	}
 	print_memory_map(mboot);
-	printf("0x%x\n", end);
 }
 
 /*

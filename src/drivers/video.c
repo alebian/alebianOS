@@ -13,10 +13,11 @@ static int min_row = 0;
 static int max_row = 24;
 static char background_color = BACKGROUND_COLOR_BLACK;
 static char character_color = CHAR_COLOR_LIGHT_GREY;
-static char startbar_color = BACKGROUND_COLOR_LIGHT_GREY;
+static char startbar_color = START_BAR_COLOR;
 static char mouse_color = BACKGROUND_COLOR_RED+CHAR_COLOR_WHITE;
 static char last_mouse_color = BACKGROUND_COLOR_BLACK + CHAR_COLOR_LIGHT_GREY;
 static char last_mouse_char = CHAR_BLANK;
+static startmenu start_menu;
 
 void clearScreen(){
 	MousePosition mouse_pos = getMousePosition();
@@ -123,6 +124,7 @@ void setAllCharacterColor(char color){
 
 void setStartBarColor(char color){
 	startbar_color = color;
+	setStartMenuColor(color);
 	return;
 }
 
@@ -493,42 +495,58 @@ void printSquare(int x, int y, char color){
 	return;
 }
 
-void startRCM(rclickmenu* rclckmenu){
+void setSTARTMENU(){
+	/* Shutdown   | */
+	/* Reboot     | */
+	/* Logout     | */
+	/* Theme: 0000| */
+	/* ------------ */
+	memcpy(start_menu.firstline,  "SShhuuttddoowwnn      ||", START_MENU_SIZE);
+	memcpy(start_menu.secondline, "RReebboooott          ||", START_MENU_SIZE);
+	memcpy(start_menu.thirdline,  "LLooggoouutt          ||", START_MENU_SIZE);
+	memcpy(start_menu.fourthline, "TThheemmee::          ||", START_MENU_SIZE);
+	memcpy(start_menu.fifthline,  "------------------------", START_MENU_SIZE);
+	setStartMenuColor(startbar_color);
+	return;
+}
+
+void setStartMenuColor(char color){
 	int i;
-	/* ---------------- */
-	/* |CHAR: 00000000| */
-	/* |BCKG: 00000000| */
-	/* ---------------- */
-	for(i = 1 ; i < 32 ; i++){
-		rclckmenu->firstline[i] = CHAR_COLOR_LIGHT_RED + startbar_color;
-		rclckmenu->secondline[i] = CHAR_COLOR_LIGHT_RED + startbar_color;
-		rclckmenu->thirdline[i] = CHAR_COLOR_LIGHT_RED + startbar_color;
-		rclckmenu->fourthline[i] = CHAR_COLOR_LIGHT_RED + startbar_color;
-		i+=2;
+	for(i = 1; i < START_MENU_SIZE ; i+=2){
+		start_menu.firstline[i] = color + CHAR_COLOR_LIGHT_RED;
+		start_menu.secondline[i] = color + CHAR_COLOR_LIGHT_RED;
+		start_menu.thirdline[i] = color + CHAR_COLOR_LIGHT_RED;
+		start_menu.fourthline[i] = color + CHAR_COLOR_LIGHT_RED;
+		start_menu.fifthline[i] = color + CHAR_COLOR_LIGHT_RED;
 	}
-	rclckmenu->secondline[15] = CHAR_COLOR_LIGHT_RED + BACKGROUND_COLOR_BLACK;
-	rclckmenu->thirdline[15] = CHAR_COLOR_LIGHT_RED + CHAR_COLOR_LIGHT_RED + BACKGROUND_COLOR_BLACK;
-	rclckmenu->secondline[17] = CHAR_COLOR_LIGHT_RED + BACKGROUND_COLOR_BLUE;
-	rclckmenu->thirdline[17] = CHAR_COLOR_LIGHT_RED + BACKGROUND_COLOR_BLUE;
-	rclckmenu->secondline[19] = CHAR_COLOR_LIGHT_RED + BACKGROUND_COLOR_GREEN;
-	rclckmenu->thirdline[19] = CHAR_COLOR_LIGHT_RED + BACKGROUND_COLOR_GREEN;
-	rclckmenu->secondline[21] = CHAR_COLOR_LIGHT_RED + BACKGROUND_COLOR_CYAN;
-	rclckmenu->thirdline[21] = CHAR_COLOR_LIGHT_RED + BACKGROUND_COLOR_CYAN;
-	rclckmenu->secondline[23] = CHAR_COLOR_LIGHT_RED + BACKGROUND_COLOR_RED;
-	rclckmenu->thirdline[23] = CHAR_COLOR_LIGHT_RED + BACKGROUND_COLOR_RED;
-	rclckmenu->secondline[25] = CHAR_COLOR_LIGHT_RED + BACKGROUND_COLOR_MAGENTA;
-	rclckmenu->thirdline[25] = CHAR_COLOR_LIGHT_RED + BACKGROUND_COLOR_MAGENTA;
-	rclckmenu->secondline[27] = CHAR_COLOR_LIGHT_RED + BACKGROUND_COLOR_BROWN;
-	rclckmenu->thirdline[27] = CHAR_COLOR_LIGHT_RED + BACKGROUND_COLOR_BROWN;
-	rclckmenu->secondline[29] = CHAR_COLOR_LIGHT_RED + BACKGROUND_COLOR_LIGHT_GREY;
-	rclckmenu->thirdline[29] = CHAR_COLOR_LIGHT_RED + BACKGROUND_COLOR_LIGHT_GREY;
+	start_menu.fourthline[15] = BACKGROUND_COLOR_BLACK;
+	start_menu.fourthline[17] = BACKGROUND_COLOR_LIGHT_GREY;
+	start_menu.fourthline[19] = BACKGROUND_COLOR_RED;
+	start_menu.fourthline[21] = BACKGROUND_COLOR_BLUE;
 	return;
 }
 
-void printRCM(rclickmenu* rclckmenu){
+void printSTARTMENU(){
+	/* Save first */
+	memcpy(start_menu.savedfirstline, (char*)VGA_PORT+(160*2), START_MENU_SIZE);
+	memcpy(start_menu.savedsecondline, (char*)VGA_PORT+(160*3), START_MENU_SIZE);
+	memcpy(start_menu.savedthirdline, (char*)VGA_PORT+(160*4), START_MENU_SIZE);
+	memcpy(start_menu.savedfourthline, (char*)VGA_PORT+(160*5), START_MENU_SIZE);
+	memcpy(start_menu.savedfifthline, (char*)VGA_PORT+(160*6), START_MENU_SIZE);
+	/* Then print */
+	memcpy((char*)VGA_PORT+(160*2), start_menu.firstline, START_MENU_SIZE);
+	memcpy((char*)VGA_PORT+(160*3), start_menu.secondline, START_MENU_SIZE);
+	memcpy((char*)VGA_PORT+(160*4), start_menu.thirdline, START_MENU_SIZE);
+	memcpy((char*)VGA_PORT+(160*5), start_menu.fourthline, START_MENU_SIZE);
+	memcpy((char*)VGA_PORT+(160*6), start_menu.fifthline, START_MENU_SIZE);
 	return;
 }
 
-void clearRCM(rclickmenu* rclckmenu){
+void clearSTARTMENU(){
+	memcpy((char*)VGA_PORT+(160*2), start_menu.savedfirstline, START_MENU_SIZE);
+	memcpy((char*)VGA_PORT+(160*3), start_menu.savedsecondline, START_MENU_SIZE);
+	memcpy((char*)VGA_PORT+(160*4), start_menu.savedthirdline, START_MENU_SIZE);
+	memcpy((char*)VGA_PORT+(160*5), start_menu.savedfourthline, START_MENU_SIZE);
+	memcpy((char*)VGA_PORT+(160*6), start_menu.savedfifthline, START_MENU_SIZE);
 	return;
 }

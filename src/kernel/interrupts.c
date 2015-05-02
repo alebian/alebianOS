@@ -168,16 +168,17 @@ long getTicks(){
 	return timer_ticks;
 }
 
-void k_enableMouse(){
+int k_enableMouse(){
 	if(isMouseConnected()){
 		mouse_enabled = 1;
+		return 1;
 	}
-	return;
+	return 0;
 }
 
-void k_disableMouse(){
+int k_disableMouse(){
 	mouse_enabled = 0;
-	return;
+	return 0;
 }
 
 int k_isMouseEnabled(){

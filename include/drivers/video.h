@@ -45,24 +45,25 @@
 #define BACKGROUND_COLOR_LIGHT_BROWN 0xE0
 #define BACKGROUND_COLOR_WHITE 0xF0
 
+#define START_MENU_SIZE 24
+
 typedef struct{
-	/* ---------------- */
-	/* |CHAR: 00000000| */
-	/* |BCKG: 00000000| */
-	/* ---------------- */
-	char firstline[32];
-	char secondline[32];
-	char thirdline[32];
-	char fourthline[32];
-	char menucolor;
-	int posx;
-	int posy;
-	int opened;
-	char savedfirstline[32];
-	char savedsecondline[32];
-	char savedthirdline[32];
-	char savedfourthline[32];
-} rclickmenu;
+	/* Shutdown   | */
+	/* Reboot     | */
+	/* Logout     | */
+	/* Theme: 0000| */
+	/* ------------ */
+	char firstline[START_MENU_SIZE];
+	char secondline[START_MENU_SIZE];
+	char thirdline[START_MENU_SIZE];
+	char fourthline[START_MENU_SIZE];
+	char fifthline[START_MENU_SIZE];
+	char savedfirstline[START_MENU_SIZE];
+	char savedsecondline[START_MENU_SIZE];
+	char savedthirdline[START_MENU_SIZE];
+	char savedfourthline[START_MENU_SIZE];
+	char savedfifthline[START_MENU_SIZE];
+} startmenu;
 
 /* Functions*/
 void clearScreen(void); // Clears chars from screen between rows set by set_vga_size
@@ -92,8 +93,9 @@ void drawMouse(int, int);
 void eraseMouse(int, int);
 void MARIO(void);
 void printSquare(int, int, char);
-void startRCM(rclickmenu*);
-void printRCM(rclickmenu*);
-void clearRCM(rclickmenu*);
+void setSTARTMENU(void);
+void setStartMenuColor(char);
+void printSTARTMENU(void);
+void clearSTARTMENU(void);
 
 #endif

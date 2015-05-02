@@ -10,10 +10,10 @@ static int error;
 static int stage;
 
 void login(){
-	login_set_screen();
-	if(k_isMouseEnabled()){
+	if(k_enableMouse()){
 		k_setLclickListener(&login_lclickListener);	
 	}
+	login_set_screen();
 	login_out();
 	error = 1;
 	while(error!=0){
@@ -63,6 +63,8 @@ void login_set_screen(){
 		k_printerror("GUEST\n\n");
 		printf("%s", "To turn off your computer click here ----> ");
 		k_printerror("TURN OFF\n");	
+	}else{
+		printf("\n\n\n");
 	}
 	printf("\n%s", "________________________________________________________________________________");
 	k_set_vga_size(12, 25);

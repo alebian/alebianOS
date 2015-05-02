@@ -458,18 +458,18 @@ void k_OSmclcklistener(int x, int y){
 	return;
 }
 
-void k_setRCM(rclickmenu* rclckmenu){
-	startRCM(rclckmenu);
+void k_setSTARTMENU(){
+	setSTARTMENU();
 	return;
 }
 
-void k_printRCM(rclickmenu* rclckmenu){
-	printRCM(rclckmenu);
+void k_printSTARTMENU(){
+	printSTARTMENU();
 	return;
 }
 
-void k_clearRCM(rclickmenu* rclckmenu){
-	clearRCM(rclckmenu);
+void k_clearSTARTMENU(){
+	clearSTARTMENU();
 	return;
 }
 

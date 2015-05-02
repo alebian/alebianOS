@@ -1,6 +1,8 @@
 #ifndef _shell_
 #define _shell_
 
+#include "../drivers/video.h"
+
 #define SHELL_BUFFER_SIZE 128
 #define SHELL_COMMAND_SIZE 16
 #define SHELL_PARAMETER_SIZE 16
@@ -8,8 +10,7 @@
 #define START_LOGO "aOS"
 #define ARROW "->"
 
-#define START_BAR_MENU_ITEM "Reboot"
-#define START_BAR_MENU_SIZE 8
+#define START_BAR_COLOR BACKGROUND_COLOR_LIGHT_GREY
 
 typedef struct{
 	char buffer[SHELL_BUFFER_SIZE];
@@ -17,6 +18,10 @@ typedef struct{
 	char parameter[SHELL_PARAMETER_SIZE];
 	int bpos;
 	int max_bpos;
+	char lastbuffer[SHELL_BUFFER_SIZE];
+	int lastbpos;
+	int max_lastbpos;
+	int changed;
 } shell_buffer;
 
 typedef struct{
@@ -27,7 +32,6 @@ typedef struct{
 typedef struct{
 	char str[VGA_WIDTH+1];
 	int menu_opened;
-	char* menu_str;
 } start_bar;
 
 typedef struct{
@@ -37,7 +41,11 @@ typedef struct{
 
 void shell(char*, char*);
 void shell_set_screen(void);
+void start_shell_buffer(void);
 void restart_shell_buffer(void);
+void swap_buffers_tolast(void);
+void swap_buffers_tofirst(void);
+void swap_buffer(void);
 void prompt(void);
 void shell_enter(void);
 void shell_backspace(void);
@@ -45,6 +53,7 @@ void shell_left(void);
 void shell_right(void);
 void shell_up(void);
 void shell_down(void);
+void print_changed_buffer(void);
 void shell_pageup(void);
 void shell_pagedown(void);
 void shell_delete(void);
@@ -65,9 +74,6 @@ void shell_f10(void);
 void shell_f11(void);
 void shell_f12(void);
 void shell_updateStartBar(void);
-void setRCM(rclickmenu*);
-void openRCM(rclickmenu*, int, int);
-void closeRCM(rclickmenu*);
 /* Listeners */
 void shell_keyboardListener(void);
 void shell_lclickListener(int, int);

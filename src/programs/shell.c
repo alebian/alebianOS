@@ -4,7 +4,6 @@ static shell_buffer shellbuff;
 static session_data sdata;
 static start_bar sbar;
 static shell_file file;
-rclickmenu rclckmenu;
 
 void shell(char* username, char* pcname){
 	shell_set_screen();
@@ -16,11 +15,11 @@ void shell(char* username, char* pcname){
 	sdata.user = username;
 	sdata.computername = pcname;
 	sbar.menu_opened = 0;
-	memcpy(&sbar.menu_str[0], &START_BAR_MENU_ITEM, strlen(START_BAR_MENU_ITEM));
-	setRCM(&rclckmenu);
+
+	k_setSTARTMENU();
 
 	k_shellReady();
-	restart_shell_buffer();
+	start_shell_buffer();
 	shell_updateStartBar();
 	prompt();
 	// Set the listeners
@@ -46,11 +45,35 @@ void shell_set_screen(){
 	return;
 }
 
-void restart_shell_buffer(){
+void start_shell_buffer(){
 	int i;
 	shellbuff.bpos = 0;
+	shellbuff.lastbpos = 0;
 	shellbuff.max_bpos = 0;
+	shellbuff.max_lastbpos = 0;
+	shellbuff.changed = 0;
 	for(i = 0; i < SHELL_BUFFER_SIZE; i++){
+		shellbuff.buffer[i] = 0;
+		shellbuff.lastbuffer[i] = 0;
+	}
+	for(i = 0; i < SHELL_COMMAND_SIZE; i++){
+		shellbuff.command[i] = 0;
+	}
+	for(i = 0; i < SHELL_PARAMETER_SIZE; i++){
+		shellbuff.parameter[i] = 0;
+	}
+	return;
+}
+
+void restart_shell_buffer(){
+	int i;
+	shellbuff.lastbpos = shellbuff.bpos;
+	shellbuff.max_lastbpos = shellbuff.max_bpos;
+	shellbuff.bpos = 0;
+	shellbuff.max_bpos = 0;
+	shellbuff.changed = 0;
+	for(i = 0; i < SHELL_BUFFER_SIZE; i++){
+		shellbuff.lastbuffer[i] = shellbuff.buffer[i];
 		shellbuff.buffer[i] = 0;
 	}
 	for(i = 0; i < SHELL_COMMAND_SIZE; i++){
@@ -58,6 +81,39 @@ void restart_shell_buffer(){
 	}
 	for(i = 0; i < SHELL_PARAMETER_SIZE; i++){
 		shellbuff.parameter[i] = 0;
+	}
+	return;
+}
+
+void swap_buffers_tolast(){
+	if(shellbuff.changed == 0){
+		swap_buffer();
+		shellbuff.changed = 1;
+	}
+	return;
+}
+
+void swap_buffers_tofirst(){
+	if(shellbuff.changed == 1){
+		swap_buffer();
+		shellbuff.changed = 0;
+	}
+	return;
+}
+
+void swap_buffer(){
+	static char auxb[SHELL_BUFFER_SIZE];
+	int aux;
+	aux = shellbuff.bpos;
+	shellbuff.bpos = shellbuff.lastbpos;
+	shellbuff.lastbpos = aux;
+	aux = shellbuff.max_bpos;
+	shellbuff.max_bpos = shellbuff.max_lastbpos;
+	shellbuff.max_lastbpos = aux;
+	for(aux = 0 ; aux < SHELL_BUFFER_SIZE ; aux++){
+		auxb[aux] = shellbuff.buffer[aux];
+		shellbuff.buffer[aux] = shellbuff.lastbuffer[aux];
+		shellbuff.lastbuffer[aux] = auxb[aux];
 	}
 	return;
 }
@@ -77,68 +133,13 @@ void shell_updateStartBar(){
 	return;
 }
 
-void setRCM(rclickmenu* rclckmenu){
-	int i;
-	rclckmenu->posx = 0;
-	rclckmenu->posy = 0;
-	rclckmenu->opened = 0;
-	/* ---------------- */
-	/* |CHAR: 00000000| */
-	/* |BCKG: 00000000| */
-	/* ---------------- */
-	for(i = 0 ; i < 32 ; i++){
-		rclckmenu->firstline[i] = '-';
-		rclckmenu->fourthline[i] = '-';
-		i+=2;
-	}
-	rclckmenu->secondline[0] = '|';
-	rclckmenu->secondline[2] = 'C';
-	rclckmenu->secondline[4] = 'H';
-	rclckmenu->secondline[6] = 'A';
-	rclckmenu->secondline[8] = 'R';
-	rclckmenu->secondline[10] = ':';
-	for(i = 12 ; i < 30 ; i++){
-		rclckmenu->secondline[i] = ' ';
-		i+=2;
-	}
-	rclckmenu->secondline[30] = '|';
-	rclckmenu->thirdline[0] = '|';
-	rclckmenu->thirdline[2] = 'B';
-	rclckmenu->thirdline[4] = 'C';
-	rclckmenu->thirdline[6] = 'K';
-	rclckmenu->thirdline[8] = 'G';
-	rclckmenu->thirdline[10] = ':';
-	for(i = 12 ; i < 30 ; i++){
-		rclckmenu->thirdline[i] = ' ';
-		i+=2;
-	}
-	rclckmenu->thirdline[30] = '|';
-	k_setRCM(rclckmenu);
-	return;
-}
-
-void openRCM(rclickmenu* rclckmenu, int x, int y){
-	if(rclckmenu->opened = 0){
-		rclckmenu->posx = x;
-		rclckmenu->posy = y;
-		k_printRCM(rclckmenu);
-		rclckmenu->opened = 1;
-	}
-}
-
-void closeRCM(rclickmenu* rclckmenu){
-	if(rclckmenu->opened = 1){
-		k_clearRCM(rclckmenu);
-		rclckmenu->opened = 0;
-	}
-}
-
 /*************************************************************
  * Every listener needed for shell is below.                 *
  *************************************************************/
 
 void shell_keyboardListener(){
 	unsigned char c;
+	closeStartMenu();
 	while((c=getchar())!=0){
 		if(c == '\b'){
 			shell_backspace();
@@ -246,7 +247,7 @@ void shell_backspace(){
 	if(shellbuff.bpos > 0){
 		putchar('\b');
 	}
-	shellbuff.buffer[--shellbuff.bpos]=0;
+	shellbuff.buffer[--shellbuff.bpos] = 0;
 	return;
 }
 
@@ -267,12 +268,31 @@ void shell_right(){
 }
 
 void shell_up(){
-	/* Future implementation */
+	if(shellbuff.changed == 0){
+		swap_buffers_tolast();
+		print_changed_buffer();
+	}
 	return;
 }
 
 void shell_down(){
-	/* Future implementation */
+	if(shellbuff.changed == 1){
+		swap_buffers_tofirst();
+		print_changed_buffer();
+	}
+	return;
+}
+
+void print_changed_buffer(){
+	int i;
+	for(i = 0 ; i < shellbuff.lastbpos ; i++){
+		if(shellbuff.lastbpos > 0){
+			putchar('\b');
+		}
+	}
+	for(i = 0 ; i < shellbuff.bpos ; i++){
+		putchar(shellbuff.buffer[i]);
+	}
 	return;
 }
 
@@ -381,11 +401,6 @@ void shell_lclickListener(int x, int y){
 				return;
 			}
 		}
-		else if( x>=(strlen(START_LOGO)+strlen(ARROW)) && x<(strlen(START_LOGO)+strlen(ARROW)+strlen(sbar.str)) ){
-			if(sbar.menu_opened){
-				k_reboot();
-			}
-		}
 		else if(x>=72){
 			int aux = k_getTimeStyle();
 			switch(aux){
@@ -402,11 +417,62 @@ void shell_lclickListener(int x, int y){
 			closeStartMenu();
 			return;
 		}
-	}else{
+	}
+	else if(y==2){
+		if(sbar.menu_opened){
+			/* Shutdown */
+			if(x>=0 && x<8){
+				k_exitScreen();
+			}
+			closeStartMenu();
+		}
+		return;
+	}
+	else if(y==3){
+		if(sbar.menu_opened){
+			/* Reboot */
+			if(x>=0 && x<6){
+				k_reboot();
+			}
+			closeStartMenu();
+		}
+		return;
+	}
+	else if(y==4){
+		if(sbar.menu_opened){
+			/* Logout */
+			if(x>=0 && x<8){
+				k_shellNotReady();
+				login_out();
+			}
+			closeStartMenu();
+		}
+		return;
+	}
+	else if(y==5){
 		if(sbar.menu_opened){
 			closeStartMenu();
-			return;
+			/* THEME: BLACK GREY RED BLUE */
+			if(x==7){
+				k_setVGAstyle(BACKGROUND_COLOR_BLACK, CHAR_COLOR_LIGHT_GREY, BACKGROUND_COLOR_RED, CHAR_COLOR_WHITE, BACKGROUND_COLOR_LIGHT_GREY);
+			}
+			if(x==8){
+				k_setVGAstyle(BACKGROUND_COLOR_LIGHT_GREY, CHAR_COLOR_BLACK, BACKGROUND_COLOR_BLACK, CHAR_COLOR_LIGHT_GREY, BACKGROUND_COLOR_LIGHT_GREY);
+			}
+			if(x==9){
+				k_setVGAstyle(BACKGROUND_COLOR_RED, CHAR_COLOR_WHITE, BACKGROUND_COLOR_BLACK, CHAR_COLOR_RED, BACKGROUND_COLOR_RED);
+			}
+			if(x==10){
+				k_setVGAstyle(BACKGROUND_COLOR_BLUE, CHAR_COLOR_WHITE, BACKGROUND_COLOR_BLACK, CHAR_COLOR_RED, BACKGROUND_COLOR_BLUE);
+			}
 		}
+		return;
+	}
+	else{
+		if(sbar.menu_opened){
+			closeStartMenu();
+		}
+		return;
 	}
 	return;
 }
@@ -423,16 +489,13 @@ void shell_mclickListener(int x, int y){
 
 void openStartMenu(){
 	sbar.menu_opened = 1;
-	memcpy(&sbar.str[strlen(START_LOGO)], &ARROW, strlen(ARROW));
-	memcpy(&sbar.str[strlen(START_LOGO)+strlen(ARROW)], &sbar.menu_str, strlen(sbar.menu_str));
-	shell_updateStartBar();
+	k_printSTARTMENU();
 	return;
 }
 
 void closeStartMenu(){
 	sbar.menu_opened = 0;
-	memset(&sbar.str[strlen(START_LOGO)], ' ', strlen(ARROW)+strlen(sbar.str));
-	shell_updateStartBar();
+	k_clearSTARTMENU();
 	return;
 }
 

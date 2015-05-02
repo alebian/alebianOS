@@ -2,7 +2,6 @@
 #define _kernel_
 
 #include "../lib/time.h"
-#include "../drivers/video.h"
 
 #define CHECK_BIT(var,pos) ((var) & (1<<(pos)))
 #define FIRSTBYTE(x) x%16
@@ -111,9 +110,9 @@ void k_OSkblistener(void);
 void k_OSlclcklistener(int, int);
 void k_OSrclcklistener(int, int);
 void k_OSmclcklistener(int, int);
-void k_setRCM(rclickmenu*);
-void k_printRCM(rclickmenu*);
-void k_clearRCM(rclickmenu*);
+void k_setSTARTMENU(void);
+void k_printSTARTMENU(void);
+void k_clearSTARTMENU(void);
 void k_randomVGAstyle(void);
 void k_setVGAstyle(char, char, char, char, char);
 void k_move_cursor_back(void);

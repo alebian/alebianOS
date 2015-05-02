@@ -11,10 +11,11 @@
 
 static MousePosition mouse_pos;
 static byte mouse_sensibility = 3;
+static int connected = 0;
 
 void start_mouse(){
   byte status;
-  if(isMouseConnected()){
+  if(checkConnection()){
     _Cli();
     //Enable the auxiliary mouse device
     mouse_wait(1);
@@ -42,23 +43,27 @@ void start_mouse(){
     mouse_pos.right_click = 0;
     mouse_pos.left_click = 0;
     mouse_pos.middle_click = 0;
+
+    connected = 1;
     
     _Sti();
-
-    k_enableMouse();
   }
   return;
 }
 
+int checkConnection(){
+    byte read;
+    mouse_write(0xEB);
+    read = mouse_read();
+    if(read == 0xFA){
+        return 1;
+    }else{
+        return -1;
+    }
+}
+
 int isMouseConnected(){
-  byte read;
-  mouse_write(0xEB);
-  read = mouse_read();
-  if(read == 0xFA){
-    return 1;
-  }else{
-    return -1;
-  }
+  return connected;
 }
 
 void mouse_wait(byte type){
