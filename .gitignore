@@ -2,3 +2,5 @@
 *.bin
 bin/*
 isodir/*
+bochsout.txt
+bochsrc.txt

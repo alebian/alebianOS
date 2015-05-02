@@ -16,7 +16,7 @@ gcc -Wall -c ../../src/kernel/syscalls.c -o syscalls.o -fno-builtin
 gcc -Wall -c ../../src/kernel/buffers.c -o buffers.o -fno-builtin
 gcc -Wall -c ../../src/kernel/mm/gdt.c -o gdt.o -fno-builtin
 gcc -Wall -c ../../src/kernel/idt.c -o idt.o -fno-builtin
-gcc -Wall -c ../../src/kernel/mm/heap.c -o heap.o -fno-builtin
+gcc -Wall -c ../../src/kernel/mm/kheap.c -o kheap.o -fno-builtin
 gcc -Wall -c ../../src/kernel/mm/paging.c -o paging.o -fno-builtin
 gcc -Wall -c ../../src/kernel/smbios.c -o smbios.o -fno-builtin
 gcc -Wall -c ../../src/drivers/video.c -o video.o -fno-builtin
@@ -34,7 +34,7 @@ gcc -Wall -c ../../src/programs/shell.c -o shell.o -fno-builtin
 if [ -f ../img/alebianOS.img ]; then
 echo "Linkediting..."
 
-if ld -T ../link.ld -o kernel.bin x86.o loader.o main.o gdt.o idt.o heap.o paging.o smbios.o interrupts.o kernel.o syscalls.o video.o keyboard.o mouse.o sound.o ctype.o stdio.o stdlib.o string.o math.o login.o shell.o buffers.o; then
+if ld -T ../link.ld -o kernel.bin x86.o loader.o main.o gdt.o idt.o kheap.o paging.o smbios.o interrupts.o kernel.o syscalls.o video.o keyboard.o mouse.o sound.o ctype.o stdio.o stdlib.o string.o math.o login.o shell.o buffers.o; then
 cd ..;
 
 echo "Updating Disk Image";

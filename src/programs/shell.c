@@ -1,43 +1,38 @@
 #include "../../include/system.h"
 
-static char s[SHELL_BUFFER_SIZE];
-static char command[SHELL_COMMAND_SIZE];
-static char parameter[SHELL_PARAMETER_SIZE];
-static int spos;
-static int max_spos;
-static char* user;
-static char* computername;
-static char str_start_bar[VGA_WIDTH+1];
-static int start_menu = 0;
-static char start_menu_str[] = "Reboot";
-//static char* shell_file;
-/******************************************************/
-/* WE SHOULD USE MALLOC BUT IT IS NOT IMPLEMENTED YET */
-//static address_t shell_file_phys;
-/******************************************************/
+static shell_buffer shellbuff;
+static session_data sdata;
+static start_bar sbar;
+static shell_file file;
+rclickmenu rclckmenu;
 
 void shell(char* username, char* pcname){
 	shell_set_screen();
 	/******************************************************/
 	/* WE SHOULD USE MALLOC BUT IT IS NOT IMPLEMENTED YET */
-	//shell_file_phys = pop_frame();
-	//shell_file = (char*) shell_file_phys;
+	file.init = (char*) 0x300000;
+	file.limit = 0x100000;
 	/******************************************************/
-	user = username;
-	computername = pcname;
+	sdata.user = username;
+	sdata.computername = pcname;
+	sbar.menu_opened = 0;
+	memcpy(&sbar.menu_str[0], &START_BAR_MENU_ITEM, strlen(START_BAR_MENU_ITEM));
+	setRCM(&rclckmenu);
+
 	k_shellReady();
 	restart_shell_buffer();
 	shell_updateStartBar();
 	prompt();
 	// Set the listeners
 	k_setKeyboardListener(&shell_keyboardListener);
-	k_setLclickListener(&shell_lclickListener);
-	k_setRclickListener(&shell_rclickListener);
-	k_setMclickListener(&shell_mclickListener);
-	while(k_isOn() && login_isLogued()){}
+	if(k_isMouseEnabled()){
+		k_setLclickListener(&shell_lclickListener);
+		k_setRclickListener(&shell_rclickListener);
+		k_setMclickListener(&shell_mclickListener);
+	}
+	while(login_isLogued()){}
 	/******************************************************/
 	/*  WE SHOULD USE FREE BUT IT IS NOT IMPLEMENTED YET  */
-	//push_frame(shell_file_phys);
 	/******************************************************/
 	return;
 }
@@ -53,39 +48,93 @@ void shell_set_screen(){
 
 void restart_shell_buffer(){
 	int i;
-	spos = 0;
-	max_spos = 0;
+	shellbuff.bpos = 0;
+	shellbuff.max_bpos = 0;
 	for(i = 0; i < SHELL_BUFFER_SIZE; i++){
-		s[i] = 0;
+		shellbuff.buffer[i] = 0;
 	}
 	for(i = 0; i < SHELL_COMMAND_SIZE; i++){
-		command[i] = 0;
+		shellbuff.command[i] = 0;
 	}
 	for(i = 0; i < SHELL_PARAMETER_SIZE; i++){
-		parameter[i] = 0;
+		shellbuff.parameter[i] = 0;
 	}
 	return;
 }
 
 void prompt(){
-    printf("%s", user);
+    printf("%s", sdata.user);
     printf("%s", "@");
-    printf("%s", computername);
+    printf("%s", sdata.computername);
     printf("%s", "$ ");
     return;
 }
 
 void shell_updateStartBar(){
-	memcpy(&str_start_bar, &START_LOGO, strlen(START_LOGO));
-	memcpy(&str_start_bar[67], k_stime(), 13);
-	k_printStartBar(str_start_bar);
+	memcpy(&sbar.str, &START_LOGO, strlen(START_LOGO));
+	memcpy(&sbar.str[67], k_stime(), 13);
+	k_printStartBar(sbar.str);
 	return;
 }
 
+void setRCM(rclickmenu* rclckmenu){
+	int i;
+	rclckmenu->posx = 0;
+	rclckmenu->posy = 0;
+	rclckmenu->opened = 0;
+	/* ---------------- */
+	/* |CHAR: 00000000| */
+	/* |BCKG: 00000000| */
+	/* ---------------- */
+	for(i = 0 ; i < 32 ; i++){
+		rclckmenu->firstline[i] = '-';
+		rclckmenu->fourthline[i] = '-';
+		i+=2;
+	}
+	rclckmenu->secondline[0] = '|';
+	rclckmenu->secondline[2] = 'C';
+	rclckmenu->secondline[4] = 'H';
+	rclckmenu->secondline[6] = 'A';
+	rclckmenu->secondline[8] = 'R';
+	rclckmenu->secondline[10] = ':';
+	for(i = 12 ; i < 30 ; i++){
+		rclckmenu->secondline[i] = ' ';
+		i+=2;
+	}
+	rclckmenu->secondline[30] = '|';
+	rclckmenu->thirdline[0] = '|';
+	rclckmenu->thirdline[2] = 'B';
+	rclckmenu->thirdline[4] = 'C';
+	rclckmenu->thirdline[6] = 'K';
+	rclckmenu->thirdline[8] = 'G';
+	rclckmenu->thirdline[10] = ':';
+	for(i = 12 ; i < 30 ; i++){
+		rclckmenu->thirdline[i] = ' ';
+		i+=2;
+	}
+	rclckmenu->thirdline[30] = '|';
+	k_setRCM(rclckmenu);
+	return;
+}
+
+void openRCM(rclickmenu* rclckmenu, int x, int y){
+	if(rclckmenu->opened = 0){
+		rclckmenu->posx = x;
+		rclckmenu->posy = y;
+		k_printRCM(rclckmenu);
+		rclckmenu->opened = 1;
+	}
+}
+
+void closeRCM(rclickmenu* rclckmenu){
+	if(rclckmenu->opened = 1){
+		k_clearRCM(rclckmenu);
+		rclckmenu->opened = 0;
+	}
+}
+
 /*************************************************************
- *                                                           *
  * Every listener needed for shell is below.                 *
- *                                                           *
  *************************************************************/
 
 void shell_keyboardListener(){
@@ -170,23 +219,23 @@ void shell_keyboardListener(){
 }
 
 void shell_print(unsigned char c){
-	if(spos < SHELL_BUFFER_SIZE - 2){
-		s[spos++] = c;
-		if(spos > max_spos){
-			max_spos++;
+	if(shellbuff.bpos < SHELL_BUFFER_SIZE - 2){
+		shellbuff.buffer[shellbuff.bpos++] = c;
+		if(shellbuff.bpos > shellbuff.max_bpos){
+			shellbuff.max_bpos++;
 		}
 		putchar(c);	
 	}
-	else if(spos == SHELL_BUFFER_SIZE - 1){
+	else if(shellbuff.bpos == SHELL_BUFFER_SIZE - 1){
 		k_beep();
 	}
 	return;
 }
 
 void shell_enter(){
-	if(s[0]!=0){
+	if(shellbuff.buffer[0]!=0){
 		putchar('\n');
-		parsecommand(s);
+		parsecommand(shellbuff.buffer);
 		restart_shell_buffer();
 		prompt();
 	}
@@ -194,25 +243,25 @@ void shell_enter(){
 }
 
 void shell_backspace(){
-	if(spos > 0){
+	if(shellbuff.bpos > 0){
 		putchar('\b');
 	}
-	s[--spos]=0;
+	shellbuff.buffer[--shellbuff.bpos]=0;
 	return;
 }
 
 void shell_left(){
-	if(spos > 0){
+	if(shellbuff.bpos > 0){
 		k_move_cursor_back();
-		spos--;
+		shellbuff.bpos--;
 	}
 	return;
 }
 
 void shell_right(){
-	if(spos > 0 && spos < max_spos){
+	if(shellbuff.bpos > 0 && shellbuff.bpos < shellbuff.max_bpos){
 		k_move_cursor_forward();
-		spos++;
+		shellbuff.bpos++;
 	}
 	return;
 }
@@ -324,7 +373,7 @@ void shell_f12(){
 void shell_lclickListener(int x, int y){
 	if(y==0){
 		if(x>=0 && x<strlen(START_LOGO)){
-			if(!start_menu){
+			if(!sbar.menu_opened){
 				openStartMenu();
 				return;
 			}else{
@@ -332,8 +381,8 @@ void shell_lclickListener(int x, int y){
 				return;
 			}
 		}
-		else if( x>=(strlen(START_LOGO)+strlen(ARROW)) && x<(strlen(START_LOGO)+strlen(ARROW)+strlen(start_menu_str)) ){
-			if(start_menu){
+		else if( x>=(strlen(START_LOGO)+strlen(ARROW)) && x<(strlen(START_LOGO)+strlen(ARROW)+strlen(sbar.str)) ){
+			if(sbar.menu_opened){
 				k_reboot();
 			}
 		}
@@ -354,7 +403,7 @@ void shell_lclickListener(int x, int y){
 			return;
 		}
 	}else{
-		if(start_menu){
+		if(sbar.menu_opened){
 			closeStartMenu();
 			return;
 		}
@@ -373,24 +422,22 @@ void shell_mclickListener(int x, int y){
 }
 
 void openStartMenu(){
-	start_menu = 1;
-	memcpy(&str_start_bar[strlen(START_LOGO)], &ARROW, strlen(ARROW));
-	memcpy(&str_start_bar[strlen(START_LOGO)+strlen(ARROW)], &start_menu_str, strlen(start_menu_str));
+	sbar.menu_opened = 1;
+	memcpy(&sbar.str[strlen(START_LOGO)], &ARROW, strlen(ARROW));
+	memcpy(&sbar.str[strlen(START_LOGO)+strlen(ARROW)], &sbar.menu_str, strlen(sbar.menu_str));
 	shell_updateStartBar();
 	return;
 }
 
 void closeStartMenu(){
-	start_menu = 0;
-	memset(&str_start_bar[strlen(START_LOGO)], ' ', strlen(ARROW)+strlen(start_menu_str));
+	sbar.menu_opened = 0;
+	memset(&sbar.str[strlen(START_LOGO)], ' ', strlen(ARROW)+strlen(sbar.str));
 	shell_updateStartBar();
 	return;
 }
 
 /*************************************************************
- *                                                           *
  * Every function needed to parse the command line is below. *
- *                                                           *
  *************************************************************/
 
 void parsecommand(char* s){
@@ -398,41 +445,41 @@ void parsecommand(char* s){
 	int error = 0;
 	int hasParameter = 0;
 	getCommand(s);
-	clength = strlen(command);
-	if(s[clength]==' '){
+	clength = strlen(shellbuff.command);
+	if(shellbuff.buffer[clength]==' '){
 		hasParameter = 1;
-		getParameter(s, clength);
+		getParameter(shellbuff.buffer, clength);
 	}
 	// Execute the requested command 
-	if(!strcmp(command,"help")){
-		error = s_help(hasParameter, parameter);
+	if(!strcmp(shellbuff.command,"help")){
+		error = s_help(hasParameter, shellbuff.parameter);
 	}
-	else if(!strcmp(command,"bios")){
-		error = s_checkBIOS(hasParameter, parameter);
+	else if(!strcmp(shellbuff.command,"bios")){
+		error = s_checkBIOS(hasParameter, shellbuff.parameter);
 	}
-	else if(!strcmp(command, "exit")){
-		error = s_exit(hasParameter, parameter);
+	else if(!strcmp(shellbuff.command, "exit")){
+		error = s_exit(hasParameter, shellbuff.parameter);
 	}
-	else if(!strcmp(command, "reboot")){
-		error = s_k_reboot(hasParameter, parameter); 
+	else if(!strcmp(shellbuff.command, "reboot")){
+		error = s_k_reboot(hasParameter, shellbuff.parameter); 
 	}
-	else if(!strcmp(command,"clear")){
-		error = s_clear(hasParameter, parameter);
+	else if(!strcmp(shellbuff.command,"clear")){
+		error = s_clear(hasParameter, shellbuff.parameter);
 	}
-	else if(!strcmp(command,"about")){
-		error = s_about(hasParameter, parameter);
+	else if(!strcmp(shellbuff.command,"about")){
+		error = s_about(hasParameter, shellbuff.parameter);
 	}
-	else if(!strcmp(command,"speed")){
-		error = s_speed(hasParameter, parameter);
+	else if(!strcmp(shellbuff.command,"speed")){
+		error = s_speed(hasParameter, shellbuff.parameter);
 	}
-	else if(!strcmp(command,"timestyle")){
-		error = s_timestyle(hasParameter, parameter);
+	else if(!strcmp(shellbuff.command,"timestyle")){
+		error = s_timestyle(hasParameter, shellbuff.parameter);
 	}
-	else if(!strcmp(command,"bkg")){
-		error = s_bkg(hasParameter, parameter);
+	else if(!strcmp(shellbuff.command,"bkg")){
+		error = s_bkg(hasParameter, shellbuff.parameter);
 	}
-	else if(!strcmp(command,"logout")){
-		error = s_logout(hasParameter, parameter);
+	else if(!strcmp(shellbuff.command,"logout")){
+		error = s_logout(hasParameter, shellbuff.parameter);
 	}
 	else {
 		k_printosmsg("alebian says: COMMAND NOT FOUND\n");
@@ -464,7 +511,7 @@ void getCommand(char* s){
 		;
 	}
 	for(j=0; j<i; j++){
-		command[j] = s[j];
+		shellbuff.command[j] = s[j];
 	}
 	return;
 }
@@ -477,7 +524,7 @@ void getParameter(char* s, int clen){
 	}
 	k = 0;
 	while(j<i){
-		parameter[k++] = s[j++];
+		shellbuff.parameter[k++] = s[j++];
 	}
 	return;
 }
@@ -486,7 +533,9 @@ int s_about(int hp, char* p){
 	if(hp){
 		return 1;
 	}else{
-		k_printalert("\n                                 AlebianOS V");
+		k_printalert("\n                                 ");
+		k_printalert(OS_NAME);
+		k_printalert(" v");
 		k_printalert(OS_VERSION);
 		k_printalert("\n                        Developed by Alejandro Bezdjian\n\n");
 		return 0;

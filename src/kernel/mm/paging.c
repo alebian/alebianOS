@@ -1,16 +1,19 @@
 #include "../../../include/system.h"
 
-void start_paging(multiboot_info* mboot){
+extern u32int end;
+
+void start_paging(multiboot_info_t* mboot){
 	if (!CHECK_BIT(mboot->flags, 6)){
 		k_panic("Memory map not provided by GRUB.");
 	}
 	print_memory_map(mboot);
+	printf("0x%x\n", end);
 }
 
 /*
  * Prints on screen the memory map
  */
-void print_memory_map(multiboot_info* mboot){
+void print_memory_map(multiboot_info_t* mboot){
 	unsigned long i = mboot->mmap_addr;
 	unsigned long final = mboot->mmap_addr + mboot->mmap_length;
 	printf("%s\n", "Memory map:");

@@ -11,9 +11,9 @@ static int stage;
 
 void login(){
 	login_set_screen();
-	k_setLclickListener(&login_lclickListener);
-	k_setRclickListener(&login_rclickListener);
-	k_setMclickListener(&login_mclickListener);
+	if(k_isMouseEnabled()){
+		k_setLclickListener(&login_lclickListener);	
+	}
 	login_out();
 	error = 1;
 	while(error!=0){
@@ -39,7 +39,7 @@ void login(){
 		}
 	}
 	login_in();
-	while(k_isOn() && login_isLogued()){
+	while(login_isLogued()){
 		shell(username, pcname);
 	}
 	return;
@@ -51,8 +51,9 @@ void login_set_screen(){
 	k_set_vga_size(1, 25);
 	k_setFullBackgroundColor(BACKGROUND_COLOR_BLACK);
 	k_setCharacterColor(CHAR_COLOR_WHITE);
-	k_printalert("\nWelcome to alebianOS ");
-	k_printwarning("v");
+	k_printalert("\nWelcome to ");
+	k_printalert(OS_NAME);
+	k_printwarning(" v");
 	k_printwarning(OS_VERSION);
 	printf("\n\n%s\n\n", "Please insert your username and password to login");
 	printf("%s\n", "If you don't have a user you can log in as guest:");
@@ -178,16 +179,6 @@ void login_lclickListener(int x, int y){
 			k_exitScreen();
 		}
 	}
-	return;
-}
-
-void login_rclickListener(int x, int y){
-	shell_lclickListener(x, y);
-	return;
-}
-
-void login_mclickListener(int x, int y){
-	shell_lclickListener(x, y);
 	return;
 }
 

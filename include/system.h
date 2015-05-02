@@ -6,7 +6,7 @@
 #include "lib/time.h"
 #include "kernel/mm/gdt.h"
 #include "kernel/idt.h"
-#include "kernel/mm/heap.h"
+#include "kernel/mm/kheap.h"
 #include "kernel/mm/paging.h"
 #include "kernel/main.h"
 #include "arch/x86/x86.h"

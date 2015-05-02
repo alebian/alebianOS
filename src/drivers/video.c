@@ -492,3 +492,43 @@ void printSquare(int x, int y, char color){
 	}
 	return;
 }
+
+void startRCM(rclickmenu* rclckmenu){
+	int i;
+	/* ---------------- */
+	/* |CHAR: 00000000| */
+	/* |BCKG: 00000000| */
+	/* ---------------- */
+	for(i = 1 ; i < 32 ; i++){
+		rclckmenu->firstline[i] = CHAR_COLOR_LIGHT_RED + startbar_color;
+		rclckmenu->secondline[i] = CHAR_COLOR_LIGHT_RED + startbar_color;
+		rclckmenu->thirdline[i] = CHAR_COLOR_LIGHT_RED + startbar_color;
+		rclckmenu->fourthline[i] = CHAR_COLOR_LIGHT_RED + startbar_color;
+		i+=2;
+	}
+	rclckmenu->secondline[15] = CHAR_COLOR_LIGHT_RED + BACKGROUND_COLOR_BLACK;
+	rclckmenu->thirdline[15] = CHAR_COLOR_LIGHT_RED + CHAR_COLOR_LIGHT_RED + BACKGROUND_COLOR_BLACK;
+	rclckmenu->secondline[17] = CHAR_COLOR_LIGHT_RED + BACKGROUND_COLOR_BLUE;
+	rclckmenu->thirdline[17] = CHAR_COLOR_LIGHT_RED + BACKGROUND_COLOR_BLUE;
+	rclckmenu->secondline[19] = CHAR_COLOR_LIGHT_RED + BACKGROUND_COLOR_GREEN;
+	rclckmenu->thirdline[19] = CHAR_COLOR_LIGHT_RED + BACKGROUND_COLOR_GREEN;
+	rclckmenu->secondline[21] = CHAR_COLOR_LIGHT_RED + BACKGROUND_COLOR_CYAN;
+	rclckmenu->thirdline[21] = CHAR_COLOR_LIGHT_RED + BACKGROUND_COLOR_CYAN;
+	rclckmenu->secondline[23] = CHAR_COLOR_LIGHT_RED + BACKGROUND_COLOR_RED;
+	rclckmenu->thirdline[23] = CHAR_COLOR_LIGHT_RED + BACKGROUND_COLOR_RED;
+	rclckmenu->secondline[25] = CHAR_COLOR_LIGHT_RED + BACKGROUND_COLOR_MAGENTA;
+	rclckmenu->thirdline[25] = CHAR_COLOR_LIGHT_RED + BACKGROUND_COLOR_MAGENTA;
+	rclckmenu->secondline[27] = CHAR_COLOR_LIGHT_RED + BACKGROUND_COLOR_BROWN;
+	rclckmenu->thirdline[27] = CHAR_COLOR_LIGHT_RED + BACKGROUND_COLOR_BROWN;
+	rclckmenu->secondline[29] = CHAR_COLOR_LIGHT_RED + BACKGROUND_COLOR_LIGHT_GREY;
+	rclckmenu->thirdline[29] = CHAR_COLOR_LIGHT_RED + BACKGROUND_COLOR_LIGHT_GREY;
+	return;
+}
+
+void printRCM(rclickmenu* rclckmenu){
+	return;
+}
+
+void clearRCM(rclickmenu* rclckmenu){
+	return;
+}

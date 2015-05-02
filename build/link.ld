@@ -8,13 +8,11 @@ SECTIONS{
     .rodata : {
         rodata = .;
         *(.rodata)
-        . = ALIGN(4096);
     }
 
     .data : {
         data = .;
         *(.data)
-        . = ALIGN(4096);
     }
 
     .bss : {
@@ -22,7 +20,6 @@ SECTIONS{
         *(COMMON)
         *(.bss)
         _ebss = .;
-        . = ALIGN(4096);
     }
 
     end = .;

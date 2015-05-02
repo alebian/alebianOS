@@ -8,6 +8,33 @@
 #define START_LOGO "aOS"
 #define ARROW "->"
 
+#define START_BAR_MENU_ITEM "Reboot"
+#define START_BAR_MENU_SIZE 8
+
+typedef struct{
+	char buffer[SHELL_BUFFER_SIZE];
+	char command[SHELL_COMMAND_SIZE];
+	char parameter[SHELL_PARAMETER_SIZE];
+	int bpos;
+	int max_bpos;
+} shell_buffer;
+
+typedef struct{
+	char* user;
+	char* computername;	
+} session_data;
+
+typedef struct{
+	char str[VGA_WIDTH+1];
+	int menu_opened;
+	char* menu_str;
+} start_bar;
+
+typedef struct{
+	char* init;
+	int limit;
+} shell_file;
+
 void shell(char*, char*);
 void shell_set_screen(void);
 void restart_shell_buffer(void);
@@ -38,6 +65,9 @@ void shell_f10(void);
 void shell_f11(void);
 void shell_f12(void);
 void shell_updateStartBar(void);
+void setRCM(rclickmenu*);
+void openRCM(rclickmenu*, int, int);
+void closeRCM(rclickmenu*);
 /* Listeners */
 void shell_keyboardListener(void);
 void shell_lclickListener(int, int);

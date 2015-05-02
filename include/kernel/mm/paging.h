@@ -3,7 +3,7 @@
 
 #include "../../multiboot.h"
 
-void start_paging(multiboot_info*);
-void print_memory_map(multiboot_info*);
+void start_paging(multiboot_info_t*);
+void print_memory_map(multiboot_info_t*);
 
 #endif

@@ -45,6 +45,25 @@
 #define BACKGROUND_COLOR_LIGHT_BROWN 0xE0
 #define BACKGROUND_COLOR_WHITE 0xF0
 
+typedef struct{
+	/* ---------------- */
+	/* |CHAR: 00000000| */
+	/* |BCKG: 00000000| */
+	/* ---------------- */
+	char firstline[32];
+	char secondline[32];
+	char thirdline[32];
+	char fourthline[32];
+	char menucolor;
+	int posx;
+	int posy;
+	int opened;
+	char savedfirstline[32];
+	char savedsecondline[32];
+	char savedthirdline[32];
+	char savedfourthline[32];
+} rclickmenu;
+
 /* Functions*/
 void clearScreen(void); // Clears chars from screen between rows set by set_vga_size
 void clearLine(int); // Clears row selected by parameter (1 to 25)
@@ -73,5 +92,8 @@ void drawMouse(int, int);
 void eraseMouse(int, int);
 void MARIO(void);
 void printSquare(int, int, char);
+void startRCM(rclickmenu*);
+void printRCM(rclickmenu*);
+void clearRCM(rclickmenu*);
 
 #endif

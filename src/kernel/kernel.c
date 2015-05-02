@@ -30,7 +30,9 @@ void k_showLoadingScreen(){
 	k_printalert("                           $$$$$$  $$    $$        $$\n");
 	k_printalert("                          $$   $$  $$    $$  $$    $$\n");
 	k_printalert("                           $$$$$$   $$$$$$    $$$$$$ \n");
-	k_printalert("\n                              alebianOS is loading\n");
+	k_printalert("\n                              ");
+	k_printalert(OS_NAME);
+	k_printalert(" is loading\n");
 	return;
 }
 
@@ -169,7 +171,8 @@ void k_exitScreen(){
 	k_printalert("                            Goodbye! See you soon!\n\n\n");
 	k_printalert("                         Please turn off your computer");
 	*/
-	k_turnOff();
+	/* Change for ACPI turn off */
+	while(1){}
 	return;
 }
 
@@ -452,6 +455,21 @@ void k_OSrclcklistener(int x, int y){
 }
 
 void k_OSmclcklistener(int x, int y){
+	return;
+}
+
+void k_setRCM(rclickmenu* rclckmenu){
+	startRCM(rclckmenu);
+	return;
+}
+
+void k_printRCM(rclickmenu* rclckmenu){
+	printRCM(rclckmenu);
+	return;
+}
+
+void k_clearRCM(rclickmenu* rclckmenu){
+	clearRCM(rclckmenu);
 	return;
 }
 

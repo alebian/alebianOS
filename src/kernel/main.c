@@ -5,10 +5,9 @@
  * C code entry point.
  **********************************************/
 
-static int shutdown = 0;
 static int loadingscreen = 1;
 
-void kmain(multiboot_info* mboot, int multiboot_magic){
+void kmain(multiboot_info_t* mboot, int multiboot_magic){
 	k_set_loading_screen();
 	if(multiboot_magic!=0x2BADB002){
 		k_panic("The OS wasn't loaded by a Multiboot-compliant bootloader and it's impossible to continue.");
@@ -32,7 +31,7 @@ void kmain(multiboot_info* mboot, int multiboot_magic){
 
 	k_sleep(30); // Just to see if everything went well
 	loadingscreen = 0;
-	while(k_isOn()){
+	while(1){
 		login();
 	}
 	return;
@@ -120,16 +119,4 @@ void k_SetUpDrivers(){
 	start_keyboard_buffer();
 	start_mouse();
 	return;
-}
-
-void k_turnOn(){
-	shutdown = 0;
-}
-
-void k_turnOff(){
-	shutdown = 1;
-}
-
-int k_isOn(){
-	return !shutdown;
 }
