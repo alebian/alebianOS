@@ -139,7 +139,9 @@ void shell_updateStartBar(){
 
 void shell_keyboardListener(){
 	unsigned char c;
-	closeStartMenu();
+	if(sbar.menu_opened){
+		closeStartMenu();
+	}
 	while((c=getchar())!=0){
 		if(c == '\b'){
 			shell_backspace();

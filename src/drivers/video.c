@@ -511,13 +511,23 @@ void setSTARTMENU(){
 }
 
 void setStartMenuColor(char color){
+	char menucharcolor;
+	if(color == BACKGROUND_COLOR_LIGHT_GREY){
+		menucharcolor = CHAR_COLOR_BLACK;
+	}
+	if(color == BACKGROUND_COLOR_RED){
+		menucharcolor = CHAR_COLOR_WHITE;
+	}
+	if(color == BACKGROUND_COLOR_BLUE){
+		menucharcolor = CHAR_COLOR_WHITE;
+	}
 	int i;
 	for(i = 1; i < START_MENU_SIZE ; i+=2){
-		start_menu.firstline[i] = color + CHAR_COLOR_LIGHT_RED;
-		start_menu.secondline[i] = color + CHAR_COLOR_LIGHT_RED;
-		start_menu.thirdline[i] = color + CHAR_COLOR_LIGHT_RED;
-		start_menu.fourthline[i] = color + CHAR_COLOR_LIGHT_RED;
-		start_menu.fifthline[i] = color + CHAR_COLOR_LIGHT_RED;
+		start_menu.firstline[i] = color + menucharcolor;
+		start_menu.secondline[i] = color + menucharcolor;
+		start_menu.thirdline[i] = color + menucharcolor;
+		start_menu.fourthline[i] = color + menucharcolor;
+		start_menu.fifthline[i] = color + menucharcolor;
 	}
 	start_menu.fourthline[15] = BACKGROUND_COLOR_BLACK;
 	start_menu.fourthline[17] = BACKGROUND_COLOR_LIGHT_GREY;
