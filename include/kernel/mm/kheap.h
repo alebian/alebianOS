@@ -1,6 +1,6 @@
 //            Written for JamesM's kernel development tutorials.
-#ifndef __kheap__
-#define __kheap__
+#ifndef _kheap_
+#define _kheap_
 
 #include "../kernel.h"
 
