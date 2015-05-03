@@ -1,15 +1,23 @@
 #include "../../../include/system.h"
 
-page_directory* page_dir = (page_directory*)0x400000;
-page_table* first_table = (page_table*)0x401000; // First 4MB kernel land
+page_directory* page_dir;
+int nframes;
 
 void start_paging(multiboot_info_t* mboot){
-	int i;
+	unsigned int diraddr, tableaddr;
+	int i, j, dentries;
 
 	if (!CHECK_BIT(mboot->flags, 6)){
 		k_panic("Memory map not provided by GRUB.");
 	}
-	//print_memory_map(mboot);
+	print_memory_map(mboot);
+
+	/******************************************************/
+	/* WE SHOULD USE MALLOC BUT IT IS NOT IMPLEMENTED YET */
+	/*    Arbitrary address until malloc is implemented   */
+	diraddr = 0x400000;
+	/******************************************************/
+	page_dir = (page_directory*)diraddr;
 
 	/* Initialize the page directory */
 	for(i = 0; i < 1024; i++){
@@ -28,29 +36,33 @@ void start_paging(multiboot_info_t* mboot){
 	    page_dir->tables[i] = entry; // attributes: supervisor level, read/write, not present.
 	}
 
-	/* Identity paging for the first 4MB (kernel land) */
-	for(i = 0; i < 1024; i++){
-		page pg;
-		pg.present = 1;
-		pg.rw = 1;
-		pg.user = 0;
-	    pg.writet = 0;
-	    pg.cache = 0;
-	    pg.accessed = 0;
-	    pg.dirty = 0;
-	    pg.zero = 0;
-	    pg.global = 0;
-	    pg.avail = 0;
-		pg.frame = i;
-	    first_table->pages[i] = pg;
+	/* We will use Identity paging according to the information received in the multiboot. */
+	nframes = ((mboot->mem_lower + mboot->mem_upper) * 1024) / PAGE_SIZE;
+	dentries = (nframes/1024)+1;
+
+	/* Initiate all the needed page tables */
+	for(i = 0 ; i < dentries ; i++){
+		/* The tables will be physically contiguous to the page directory. */
+		tableaddr = diraddr + ((i+1)*0x1000);
+		page_table* table = (page_table*) tableaddr;
+		for(j = 0; j < 1024; j++){
+			page pg;
+			pg.present = 1;
+			pg.rw = 1;
+			pg.user = 0;
+		    pg.writet = 0;
+		    pg.cache = 0;
+		    pg.accessed = 0;
+		    pg.dirty = 0;
+		    pg.zero = 0;
+		    pg.global = 0;
+		    pg.avail = 0;
+			pg.frame = (i*1024)+j;
+		    table->pages[j] = pg;
+		}
+		page_dir->tables[i].present = 1;
+		page_dir->tables[i].frame = (unsigned int)tableaddr/PAGE_SIZE;
 	}
-
-	page_dir->tables[0].present = 1;
-	page_dir->tables[0].frame = (unsigned int)first_table/4096;
-
-	printf("%s%x\n", "Page table addess: ", first_table);
-	printf("%s%x\n", "Page table addess frame: ", (unsigned int)first_table/4096);
-	printf("%s%x\n", "Page directory first entry: ", page_dir->tables[0]);
 
 	/* Finally we enable paging */
 	_write_cr3((unsigned int)page_dir);
@@ -73,5 +85,6 @@ void print_memory_map(multiboot_info_t* mboot){
 		printf("\tbase addr: 0x%x length: 0x%x type: %d\n", *base_addr, *length, *type);
 		i += *size + 4;
 	}
+	printf("%s%x%s\n", "Total memory: 0x", ((mboot->mem_lower + mboot->mem_upper) * 1024), " bytes.");
 	return;
 }
