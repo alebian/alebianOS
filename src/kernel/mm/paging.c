@@ -5,8 +5,9 @@ int nframes;
 
 void start_paging(multiboot_info_t* mboot){
 	unsigned int diraddr, tableaddr;
-	int i, j, dentries;
-
+	int i, dentries, aux;
+	int j = 0;
+	
 	if (!CHECK_BIT(mboot->flags, 6)){
 		k_panic("Memory map not provided by GRUB.");
 	}
@@ -24,7 +25,11 @@ void start_paging(multiboot_info_t* mboot){
 		page_dir_entry entry;
 		entry.present = 1;
 		entry.rw = 1;
-		entry.user = 0;
+		if(j < KERNEL_MAX_FRAMES){
+			entry.user = 0;
+		}else{
+			entry.user = 1;
+		}
 	    entry.writet = 0;
 	    entry.cache = 0;
 	    entry.accessed = 0;
@@ -45,11 +50,16 @@ void start_paging(multiboot_info_t* mboot){
 		/* The tables will be physically contiguous to the page directory. */
 		tableaddr = diraddr + ((i+1)*0x1000);
 		page_table* table = (page_table*) tableaddr;
+		aux = (i*1024);
 		for(j = 0; j < 1024; j++){
 			page pg;
 			pg.present = 1;
 			pg.rw = 1;
-			pg.user = 0;
+			if(j < KERNEL_MAX_FRAMES){
+				pg.user = 0;
+			}else{
+				pg.user = 1;
+			}
 		    pg.writet = 0;
 		    pg.cache = 0;
 		    pg.accessed = 0;
@@ -57,7 +67,7 @@ void start_paging(multiboot_info_t* mboot){
 		    pg.zero = 0;
 		    pg.global = 0;
 		    pg.avail = 0;
-			pg.frame = (i*1024)+j;
+			pg.frame = aux+j;
 		    table->pages[j] = pg;
 		}
 		page_dir->tables[i].present = 1;

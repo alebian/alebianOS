@@ -138,7 +138,7 @@ void irq_00(){
 	if(k_isLoading()){
 		k_LoadingScreenEffect();
 	}
-	if(k_isReadyToShell()){
+	if(k_isShellEnabled()){
 		if(timer_ticks%20 == 0){
 			shell_updateStartBar();
 		}

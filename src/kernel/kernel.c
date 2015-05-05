@@ -157,7 +157,7 @@ int k_getTimeStyle(){
 }
 
 void k_exitScreen(){
-	k_shellNotReady();
+	k_disableShell();
 	k_disableMouse();
 	MARIO();
 	set_vga_size(1,25);
@@ -188,6 +188,10 @@ void k_clearFullScreen(){
 
 void k_scrolldown(){
 	scrolldown();
+	return;
+}
+
+void k_scrollup(){
 	return;
 }
 
@@ -248,7 +252,7 @@ void k_sleep(int ticks){
 
 void k_reboot(){
 	int ticks = 10;
-	k_shellNotReady();
+	k_disableShell();
 	k_disableMouse();
 	_Sti();
 	k_clearFullScreen();
@@ -329,22 +333,22 @@ void k_set_frecuency(int frequency){
   return;
 }
 
-int k_isReadyToShell(){
+int k_isShellEnabled(){
 	return shell_ready;
 }
 
-void k_shellReady(){
+void k_enableShell(){
 	shell_ready = 1;
 	return;
 }
 
-void k_shellNotReady(){
+void k_disableShell(){
 	shell_ready = 0;
 	return;
 }
 
 void k_panic(char* message){
-	k_shellNotReady();
+	k_disableShell();
 	k_disableMouse();
 	k_clearFullScreen();
 	k_setFullBackgroundColor(BACKGROUND_COLOR_BLUE);
@@ -458,17 +462,17 @@ void k_OSmclcklistener(int x, int y){
 	return;
 }
 
-void k_setSTARTMENU(){
+void k_setStartMenu(){
 	setSTARTMENU();
 	return;
 }
 
-void k_printSTARTMENU(){
+void k_printStartMenu(){
 	printSTARTMENU();
 	return;
 }
 
-void k_clearSTARTMENU(){
+void k_clearStartMenu(){
 	clearSTARTMENU();
 	return;
 }
@@ -522,5 +526,16 @@ void k_set_vga_size(int min, int max){
 
 void k_beep(){
 	beep();
+	return;
+}
+
+void k_init_shell_file(){
+	if(k_isShellEnabled()){
+		init_shell_file();
+	}
+	return;
+}
+
+void k_deleteKey(){
 	return;
 }

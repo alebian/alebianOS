@@ -3,22 +3,15 @@
 static shell_buffer shellbuff;
 static session_data sdata;
 static start_bar sbar;
-static shell_file file;
 
 void shell(char* username, char* pcname){
 	shell_set_screen();
-	/******************************************************/
-	/* WE SHOULD USE MALLOC BUT IT IS NOT IMPLEMENTED YET */
-	file.init = (char*) 0x300000;
-	file.limit = 0x100000;
-	/******************************************************/
 	sdata.user = username;
 	sdata.computername = pcname;
 	sbar.menu_opened = 0;
-
-	k_setSTARTMENU();
-
-	k_shellReady();
+	k_init_shell_file();
+	k_setStartMenu();
+	k_enableShell();
 	start_shell_buffer();
 	shell_updateStartBar();
 	prompt();
@@ -299,18 +292,17 @@ void print_changed_buffer(){
 }
 
 void shell_pageup(){
-	/* Future implementation */
+	k_scrollup();
 	return;
 }
 
 void shell_pagedown(){
-	/* Future implementation */
 	k_scrolldown();
 	return;
 }
 
 void shell_delete(){
-	/* Future implementation */
+	k_deleteKey();
 	return;
 }
 
@@ -444,7 +436,7 @@ void shell_lclickListener(int x, int y){
 		if(sbar.menu_opened){
 			/* Logout */
 			if(x>=0 && x<8){
-				k_shellNotReady();
+				k_disableShell();
 				login_out();
 			}
 			closeStartMenu();
@@ -491,13 +483,13 @@ void shell_mclickListener(int x, int y){
 
 void openStartMenu(){
 	sbar.menu_opened = 1;
-	k_printSTARTMENU();
+	k_printStartMenu();
 	return;
 }
 
 void closeStartMenu(){
 	sbar.menu_opened = 0;
-	k_clearSTARTMENU();
+	k_clearStartMenu();
 	return;
 }
 
@@ -516,6 +508,9 @@ void parsecommand(char* s){
 		getParameter(shellbuff.buffer, clength);
 	}
 	// Execute the requested command 
+	if(!strcmp(shellbuff.command,"test")){
+		error = s_test(hasParameter, shellbuff.parameter);
+	}
 	if(!strcmp(shellbuff.command,"help")){
 		error = s_help(hasParameter, shellbuff.parameter);
 	}
@@ -731,8 +726,17 @@ int s_logout(int hp, char* p){
 	if(hp){
 		return 4;
 	}else{
-		k_shellNotReady();
+		k_disableShell();
 		login_out();
+		return 0;
+	}
+}
+
+int s_test(int hp, char* p){
+	if(hp){
+		return 1;
+	}else{
+		/* Put something to test here */
 		return 0;
 	}
 }

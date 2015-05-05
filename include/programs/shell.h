@@ -34,11 +34,6 @@ typedef struct{
 	int menu_opened;
 } start_bar;
 
-typedef struct{
-	char* init;
-	int limit;
-} shell_file;
-
 void shell(char*, char*);
 void shell_set_screen(void);
 void start_shell_buffer(void);
@@ -95,5 +90,6 @@ int s_speed(int, char*);
 int s_timestyle(int, char*);
 int s_bkg(int, char*);
 int s_logout(int, char*);
+int s_test(int, char*);
 
 #endif

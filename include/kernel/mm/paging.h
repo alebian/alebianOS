@@ -5,6 +5,7 @@
 
 #define PAGE_SIZE 4096 // 4096b = 4kb
 #define MAX_PAGES 1024*1024 //4GB, 4kb/page
+#define KERNEL_MAX_FRAMES 2
 
 typedef struct{
     // Bit 0: P -> Present, if set the page is present in memory

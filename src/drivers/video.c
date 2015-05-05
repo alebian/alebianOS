@@ -18,14 +18,14 @@ static char mouse_color = BACKGROUND_COLOR_RED+CHAR_COLOR_WHITE;
 static char last_mouse_color = BACKGROUND_COLOR_BLACK + CHAR_COLOR_LIGHT_GREY;
 static char last_mouse_char = CHAR_BLANK;
 static startmenu start_menu;
+static shell_file shellfile;
 
 void clearScreen(){
 	MousePosition mouse_pos = getMousePosition();
 	int i = min_row*160;
 	int final = (max_row+1)*160;
 	eraseMouse(mouse_pos.actual_x, mouse_pos.actual_y);
-	while(i < final)
-	{
+	while(i < final){
 		vidmem[i]=CHAR_BLANK;
 		i+=2;
 	};
@@ -279,6 +279,10 @@ void scrolldown(){
 		// Scroll the printable screen
 		i = min_row*160;
 		final = max_row*160;
+		// Save first row in shell file
+		if(k_isShellEnabled()){
+			save_shell_row(vidmem+i);
+		}
 		while(i < final){	
 			vidmem[i]= vidmem[i+160];
 			i++;
@@ -294,6 +298,35 @@ void scrolldown(){
 			i++;
 		};
 		cursor_pos-=160;
+		update_cursor(cursor_pos);
+		drawMouse(mouse_pos.actual_x, mouse_pos.actual_y);
+	}
+	return;
+}
+
+void scrollup(){
+	MousePosition mouse_pos = getMousePosition();
+	int i, j, k, final;
+	if(shellfile.scroll_downs > 0){
+		i = (min_row+1)*160;
+		final = max_row*160;
+		// Save last row in shell file
+		while(i < final){	
+			vidmem[i] = vidmem[i-160];
+			i++;
+			vidmem[i] = vidmem[i-160];
+			i++;
+		};
+		j = shellfile.writepos%160;
+		i = j-1;
+		final = shellfile.writepos;
+		k = final - 160;
+		j = min_row*160;
+		while(i < final){	
+			vidmem[j++] = shellfile.init[k++];
+			vidmem[j++] = shellfile.init[k++];
+		};
+		cursor_pos+=160;
 		update_cursor(cursor_pos);
 		drawMouse(mouse_pos.actual_x, mouse_pos.actual_y);
 	}
@@ -558,5 +591,29 @@ void clearSTARTMENU(){
 	memcpy((char*)VGA_PORT+(160*4), start_menu.savedthirdline, START_MENU_SIZE);
 	memcpy((char*)VGA_PORT+(160*5), start_menu.savedfourthline, START_MENU_SIZE);
 	memcpy((char*)VGA_PORT+(160*6), start_menu.savedfifthline, START_MENU_SIZE);
+	return;
+}
+
+void init_shell_file(){
+	/******************************************************/
+	/* WE SHOULD USE MALLOC BUT IT IS NOT IMPLEMENTED YET */
+	shellfile.init = (char*) 0x300000;
+	shellfile.limit = 0x100000;
+	/******************************************************/
+	reset_shell_file();
+	return;
+}
+
+void reset_shell_file(){
+	memset(shellfile.init, 0, shellfile.limit);
+	shellfile.writepos = 0;
+	shellfile.scroll_downs = 0;
+	return;
+}
+
+void save_shell_row(char* from){
+	memcpy((char*)from, shellfile.init+shellfile.writepos, 160);
+	shellfile.writepos+=160;
+	shellfile.scroll_downs++;
 	return;
 }

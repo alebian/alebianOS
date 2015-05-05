@@ -24,7 +24,7 @@ gcc -Wall -c ../../src/drivers/keyboard.c -o keyboard.o -fno-builtin
 gcc -Wall -c ../../src/drivers/mouse.c -o mouse.o -fno-builtin
 gcc -Wall -c ../../src/drivers/sound.c -o sound.o -fno-builtin
 gcc -Wall -c ../../src/lib/ctype.c -o ctype.o -fno-builtin
-gcc -Wall -c -fno-stack-protector ../../src/lib/stdio.c -o stdio.o -fno-builtin
+gcc -Wall -c ../../src/lib/stdio.c -o stdio.o -fno-builtin
 gcc -Wall -c ../../src/lib/stdlib.c -o stdlib.o -fno-builtin
 gcc -Wall -c ../../src/lib/string.c -o string.o -fno-builtin
 gcc -Wall -c ../../src/lib/math.c -o math.o -fno-builtin

@@ -65,6 +65,13 @@ typedef struct{
 	char savedfifthline[START_MENU_SIZE];
 } startmenu;
 
+typedef struct{
+	char* init;
+	int limit;
+	int writepos;
+	int scroll_downs;
+} shell_file;
+
 /* Functions*/
 void clearScreen(void); // Clears chars from screen between rows set by set_vga_size
 void clearLine(int); // Clears row selected by parameter (1 to 25)
@@ -88,6 +95,7 @@ void move_cursor_back(void);
 void move_cursor_forward(void);
 void update_cursor(int);
 void scrolldown(void);
+void scrollup(void);
 void printStartBar(char*);
 void drawMouse(int, int);
 void eraseMouse(int, int);
@@ -97,5 +105,8 @@ void setSTARTMENU(void);
 void setStartMenuColor(char);
 void printSTARTMENU(void);
 void clearSTARTMENU(void);
+void init_shell_file(void);
+void reset_shell_file(void);
+void save_shell_row(char*);
 
 #endif

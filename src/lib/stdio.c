@@ -12,12 +12,11 @@ int scanf(char* fmt, ...){
     char *p, *sval, *cval;
     int *ival;
     //char fp;
-    int read=0,i=0, c,k, j = 0;
+    int read = 0,i = 0,c ,k ,j = 0;
     va_start(ap, fmt);
-    char s[MAX_BUFFER];
-    while((c = getchar()) != '\n' && i < MAX_BUFFER-1)
-    {
-        if(c!=0){
+    static char s[MAX_BUFFER];
+    while((c = getchar()) != '\n' && i < MAX_BUFFER-1){
+        if(c != 0){
             if(c == '\b' && i >= 1){
                 i--;
                 putchar(c);
@@ -36,45 +35,40 @@ int scanf(char* fmt, ...){
     }
     s[i] = '\0';
     i = 0;
-    for (p = (char*)fmt; *p; p++) 
-    {
-        char aux [MAX_BUFFER] = {0};
-        if(*p != '%')
-        {
+    for (p = (char*)fmt; *p; p++) {
+        static char aux [MAX_BUFFER] = {0};
+        if(*p != '%'){
             c = s[j++];
             if(c =='\0' || *p != c)
                 return read;
             continue;
         }
-        switch (*++p)
-        {
+        switch (*++p){
             case 'd':
-                i=0;
+                i = 0;
                 ival = va_arg(ap,int*);
-                while(s[j] != '\0' && isdigit(s[j]))
-                {
+                while(s[j] != '\0' && isdigit(s[j])){
                     aux[i++] = s[j++];
                 }
                 aux[i] = '\0';
-                if(aux[0] == '\0')
+                if(aux[0] == '\0'){
                     return read;
-                *ival=atoi(aux);
+                }
+                *ival = atoi(aux);
                 read++;
                 break;
             case 's':
                 i = 0;
-                sval = va_arg(ap,char*);
-                while(s[j] != '\0' && s[j] != ' ')
-                {
+                sval = va_arg(ap, char*);
+                while(s[j] != '\0' && s[j] != ' '){
                     aux[i++] = s[j++];
                 }
                 aux[i] = '\0';
-                if(aux[0] == '\0')
+                if(aux[0] == '\0'){
                     return read;
-
+                }
                 k = 0;
-                while(aux[k] != '\0')
-                {
+                while(aux[k] != '\0'){
                     sval[k] = aux[k];
                     k++;
                 }
@@ -82,32 +76,33 @@ int scanf(char* fmt, ...){
                 read++;
                 break;
             case 'c':
-                cval = va_arg(ap,char*);
+                cval = va_arg(ap, char*);
                 c = s[j++];
-                if(c == '\0' )
+                if(c == '\0'){
                     return read;
+                }
                 *cval = c;
                 read++;
                 break;
             case 'x':
-                i=0;
-                ival = va_arg(ap,int*);
-                while(s[j] != '\0' && (isdigit(s[j]) || isxdigit(s[j])))
-                {
+                i = 0;
+                ival = va_arg(ap, int*);
+                while(s[j] != '\0' && (isdigit(s[j]) || isxdigit(s[j]))){
                     aux[i] = s[j];
                     i++;
                     j++;
                 }
                 aux[i] = '\0';
-                if(aux[0] == '\0')
+                if(aux[0] == '\0'){
                     return read;
+                }
                 read++;
                 break;
-            
             default:
                 c = s[j++];
-                if(!(c != EOF && c != '\n' && *p == c))
+                if(!(c != EOF && c != '\n' && *p == c)){
                     return read;
+                }
             break;
         }
     }
@@ -128,33 +123,34 @@ int printf(char* fmt, ...){
     va_start(ap, fmt);
     char *p, *sval;
     int ival;
-    char s[MAX_STRING_LENGTH];
-    for(p=fmt; *p; p++){
-        if(*p!='%'){
+    static char s[MAX_STRING_LENGTH];
+    for(p = fmt; *p; p++){
+        if(*p != '%'){
             putchar(*p);
             continue;   
         }
         switch(*++p){
             case 'd':
-            ival= va_arg(ap,int);
-            itoa(s,ival,10);
-            puts(s);
-            break;
+                ival = va_arg(ap, int);
+                itoa(s, ival, 10);
+                puts(s);
+                break;
             case 'x':
-            ival= va_arg(ap,int);
-            itoa(s,ival,16);
-            puts(s);
-            break;
+                ival = va_arg(ap, int);
+                itoa(s, ival, 16);
+                puts(s);
+                break;
             case 'c':
-            ival= va_arg(ap,int);          
-            putchar(ival);
-            break;
+                ival = va_arg(ap, int);          
+                putchar(ival);
+                break;
             case 's':
-            for(sval=va_arg(ap,char*);*sval;sval++)
-                putchar(*sval);
-            break;
+                for(sval = va_arg(ap, char*); *sval; sval++){
+                    putchar(*sval);
+                }
+                break;
             default:
-            putchar(*p);
+                putchar(*p);
             break;
         }
     }
