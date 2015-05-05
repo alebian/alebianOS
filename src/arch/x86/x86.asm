@@ -11,8 +11,10 @@ GLOBAL  _Cli
 GLOBAL  _Sti
 GLOBAL  _XORdx
 GLOBAL  _inb
+GLOBAL  _inw
 GLOBAL  _indw
 GLOBAL  _outb
+GLOBAL  _outw
 GLOBAL  _outdw
 
 GLOBAL  _int_14_hand
@@ -118,6 +120,18 @@ _inb:
     pop     ebp
     ret
 
+_inw:
+    push    ebp
+    mov     ebp, esp
+
+    mov     eax, 0
+    mov     dx, word[ebp + 8]
+    in      ax, dx
+
+    mov     esp, ebp
+    pop     ebp
+    ret
+
 _indw:
     push    ebp
     mov     ebp, esp
@@ -137,6 +151,18 @@ _outb:
     mov     dx, word[ebp + 8]
     mov     al, byte[ebp + 12]
     out     dx, al
+
+    mov     esp, ebp
+    pop     ebp
+    ret
+
+_outw:
+    push    ebp
+    mov     ebp, esp
+
+    mov     dx, word[ebp + 8]
+    mov     ax, word[ebp + 12]
+    out     dx, ax
 
     mov     esp, ebp
     pop     ebp

@@ -30,9 +30,11 @@ void	_irq_12_hand(void);
 
 /* Outport */
 void 	_outb(word, byte);
+void 	_outw(word, word);
 void 	_outdw(word, dword);
 /* Inport */
 byte 	_inb(word);
+word 	_inw(word);
 dword 	_indw(word);
 
 #endif

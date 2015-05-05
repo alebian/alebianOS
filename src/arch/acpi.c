@@ -100,7 +100,7 @@ int acpiCheckHeader(unsigned int *ptr, char *sig)
 int acpiEnable(void)
 {
    // check if acpi is enabled
-   if ( (_indw((unsigned int) PM1a_CNT) &SCI_EN) == 0 )
+   if ( (_inw((unsigned int) PM1a_CNT) &SCI_EN) == 0 )
    {
       // check if acpi can be enabled
       if (SMI_CMD != 0 && ACPI_ENABLE != 0)
@@ -110,14 +110,14 @@ int acpiEnable(void)
          int i;
          for (i=0; i<300; i++ )
          {
-            if ( (_indw((unsigned int) PM1a_CNT) &SCI_EN) == 1 )
+            if ( (_inw((unsigned int) PM1a_CNT) &SCI_EN) == 1 )
                break;
             k_sleep(10);
          }
          if (PM1b_CNT != 0)
             for (; i<300; i++ )
             {
-               if ( (_indw((unsigned int) PM1b_CNT) &SCI_EN) == 1 )
+               if ( (_inw((unsigned int) PM1b_CNT) &SCI_EN) == 1 )
                   break;
                k_sleep(10);
             }
@@ -247,9 +247,9 @@ void acpiPowerOff(void)
    acpiEnable();
 
    // send the shutdown command
-   _outdw((unsigned int) PM1a_CNT, SLP_TYPa | SLP_EN );
+   _outw((unsigned int) PM1a_CNT, SLP_TYPa | SLP_EN );
    if ( PM1b_CNT != 0 )
-      _outdw((unsigned int) PM1b_CNT, SLP_TYPb | SLP_EN );
+      _outw((unsigned int) PM1b_CNT, SLP_TYPb | SLP_EN );
 
    k_printerror("acpi poweroff failed.\n");
 }
