@@ -737,6 +737,7 @@ int s_test(int hp, char* p){
 		return 1;
 	}else{
 		/* Put something to test here */
+		song_pacman();
 		return 0;
 	}
 }

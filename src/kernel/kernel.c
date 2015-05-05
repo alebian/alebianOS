@@ -13,15 +13,6 @@ static char* months[] = { "000", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"
 "Aug", "Sep", "Oct", "Nov", "Dec" };
 
 void k_showLoadingScreen(){
-	/*k_printalert("\n");
-	k_printalert("            $$            $$        $$                      $$$$$$    $$$$$$   \n");
-	k_printalert("            $$            $$                               $$    $$  $$    $$  \n");
-	k_printalert("   $$$$$$   $$    $$$$$   $$        $$  $$$$$$   $$ $$$    $$    $$  $$        \n");
-	k_printalert("        $$  $$   $$   $$  $$$$$$$   $$       $$  $$$  $$$  $$    $$   $$$$$$   \n");
-	k_printalert("    $$$$$$  $$   $$$$$$   $$    $$  $$   $$$$$$  $$    $$  $$    $$        $$  \n");
-	k_printalert("   $$   $$  $$   $$       $$    $$  $$  $$   $$  $$    $$  $$    $$  $$    $$  \n");
-	k_printalert("    $$$$$$   $$   $$$$$$  $$$$$$$   $$   $$$$$$  $$    $$   $$$$$$    $$$$$$   \n");
-	k_printalert("\nloading\n");*/
 	k_printalert("\n");
 	k_printalert("                                    $$$$$$    $$$$$$ \n");
 	k_printalert("                                   $$    $$  $$    $$\n");
@@ -162,18 +153,10 @@ void k_exitScreen(){
 	MARIO();
 	set_vga_size(1,25);
 	k_printalert("                         Please turn off your computer...");
-	//song_pacman();
-	//_Cli();
-	/*
-	k_clearFullScreen();
-	k_setFullBackgroundColor(BACKGROUND_COLOR_BLACK);
-	set_vga_size(10, 25);
-	k_printalert("                            Goodbye! See you soon!\n\n\n");
-	k_printalert("                         Please turn off your computer");
-	*/
-	/* Change for ACPI turn off */
 	k_sleep(30);
-	//acpiPowerOff();
+	acpiPowerOff();
+	_Cli();
+	while(1){}
 	return;
 }
 

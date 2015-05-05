@@ -14,23 +14,24 @@ void kmain(multiboot_info_t* mboot, int multiboot_magic){
 		return;
 	}
 
-	//initAcpi();
-	k_loading_log("ACPI loaded");
-
+	_Cli();
 	setup_GDT();
 	k_loading_log("GDT set up completed");
-
 	setup_IDT();
 	k_loading_log("IDT set up completed");
+	_Sti();
+
+	start_paging(mboot);
+	k_loading_log("Paging set up completed");
 
 	k_SetUpDrivers();
 	k_loading_log("Drivers set up completed");
 
+	initAcpi();
+	k_loading_log("ACPI loaded");
+
 	startSMBIOS();
 	k_loading_log("SMBIOS loaded");
-
-	start_paging(mboot);
-	k_loading_log("Paging set up completed");
 
 	k_sleep(30); // Just to see if everything went well
 	loadingscreen = 0;
@@ -55,32 +56,6 @@ int k_isLoading(){
 }
 
 void k_LoadingScreenEffect(){
-	/*switch(loadingscreen){
-		case 1:
-			printxyc(' ', CHAR_COLOR_LIGHT_BROWN, 7, 9);
-			printxyc(' ', CHAR_COLOR_LIGHT_BROWN, 8, 9);
-			printxyc(' ', CHAR_COLOR_LIGHT_BROWN, 9, 9);
-			loadingscreen++;
-			break;
-		case 5:
-			printxyc('.', CHAR_COLOR_LIGHT_BROWN, 7, 9);
-			loadingscreen++;
-			break;
-		case 10:
-			printxyc('.', CHAR_COLOR_LIGHT_BROWN, 8, 9);
-			loadingscreen++;
-			break;
-		case 15:
-			printxyc('.', CHAR_COLOR_LIGHT_BROWN, 9, 9);
-			loadingscreen++;
-			break;
-		case 20:
-			loadingscreen = 1;
-			break;
-		default:
-			loadingscreen++;
-			break;
-	}*/
 	switch(loadingscreen){
 		case 1:
 			printxyc(' ', CHAR_COLOR_LIGHT_BROWN, 50, 9);

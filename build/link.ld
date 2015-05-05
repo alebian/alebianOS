@@ -1,7 +1,10 @@
-ENTRY (_loader)
+ENTRY (start)
 SECTIONS{
-    .text 0x00100000 :{
+    . = 1M;
+
+    .text : {
         code = .;
+        *(.multiboot)
         *(.text)
     }
 
@@ -16,7 +19,7 @@ SECTIONS{
     }
 
     .bss : {
-        _sbss = .;
+        bss = .;
         *(COMMON)
         *(.bss)
         _ebss = .;

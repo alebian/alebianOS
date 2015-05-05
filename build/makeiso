@@ -6,9 +6,10 @@ sudo rm -rf *
 
 echo "Compiling ASM..."
 nasm -f aout ../../src/arch/x86/x86.asm -o x86.o
-nasm -f aout ../../src/arch/x86/loader.asm -o loader.o
+nasm -f aout ../../src/arch/x86/start.asm -o loader.o
 
 echo "Compiling C..."
+gcc -Wall -c ../../src/arch/acpi.c -o acpi.o -fno-builtin
 gcc -Wall -c ../../src/kernel/main.c -o main.o -fno-builtin
 gcc -Wall -c ../../src/kernel/interrupts.c -o interrupts.o -fno-builtin
 gcc -Wall -c ../../src/kernel/kernel.c -o kernel.o -fno-builtin
@@ -34,7 +35,7 @@ gcc -Wall -c ../../src/programs/shell.c -o shell.o -fno-builtin
 if [ -f ../img/alebianOS.img ]; then
 echo "Linkediting..."
 
-if ld -T ../link.ld -o kernel.bin x86.o loader.o main.o gdt.o idt.o kheap.o paging.o smbios.o interrupts.o kernel.o syscalls.o video.o keyboard.o mouse.o sound.o ctype.o stdio.o stdlib.o string.o math.o login.o shell.o buffers.o; then
+if ld -T ../link.ld -o kernel.bin x86.o loader.o acpi.o main.o gdt.o idt.o kheap.o paging.o smbios.o interrupts.o kernel.o syscalls.o video.o keyboard.o mouse.o sound.o ctype.o stdio.o stdlib.o string.o math.o login.o shell.o buffers.o; then
 cd ..;
 
 echo "Updating Disk Image";
