@@ -26,6 +26,9 @@ void kmain(multiboot_info_t* mboot, int multiboot_magic){
 	startSMBIOS();
 	k_loading_log("SMBIOS loaded");
 
+	//initAcpi();
+	k_loading_log("ACPI loaded");
+
 	start_paging(mboot);
 	k_loading_log("Paging set up completed");
 

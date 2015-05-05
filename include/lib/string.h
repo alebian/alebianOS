@@ -5,6 +5,7 @@
 
 void* memcpy(void*, const void*, int);
 void* memset(void*, int, int);
+int memcmp(const void*, const void*, int);
 void* memsetw(void*, int, int);
 void* memsetw(void*, int, int);
 char* strcpy(char*, const char*);

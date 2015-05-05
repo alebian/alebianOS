@@ -162,8 +162,8 @@ void k_exitScreen(){
 	MARIO();
 	set_vga_size(1,25);
 	k_printalert("                         Please turn off your computer...");
-	song_pacman();
-	_Cli();
+	//song_pacman();
+	//_Cli();
 	/*
 	k_clearFullScreen();
 	k_setFullBackgroundColor(BACKGROUND_COLOR_BLACK);
@@ -172,7 +172,8 @@ void k_exitScreen(){
 	k_printalert("                         Please turn off your computer");
 	*/
 	/* Change for ACPI turn off */
-	while(1){}
+	k_sleep(30);
+	//acpiPowerOff();
 	return;
 }
 

@@ -16,6 +16,18 @@ void* memset(void* s, int c, int n){
     return s;
 }
 
+int memcmp(const void *str1, const void *str2, int n){
+    int ans = 1;
+    int i;
+    for(i = 0 ; i < n ; i++){
+        if(*((byte*)str1 + i) != *((byte*)str2 + i)){
+            ans = 0;
+            break;
+        }
+    }
+    return ans;
+}
+
 void* memsetw(void* s, int c, int n){
     int i;
     for (i = 0; i < n; i++){

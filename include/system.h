@@ -13,6 +13,7 @@
 #include "kernel/interrupts.h"
 #include "kernel/buffers.h"
 #include "kernel/smbios.h"
+#include "arch/acpi.h"
 #include "drivers/video.h"
 #include "drivers/keyboard.h"
 #include "drivers/mouse.h"
