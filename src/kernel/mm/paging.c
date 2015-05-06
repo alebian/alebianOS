@@ -1,5 +1,7 @@
 #include "../../../include/system.h"
 
+extern u32int end;
+
 page_directory* page_dir;
 int nframes;
 
@@ -16,7 +18,7 @@ void start_paging(multiboot_info_t* mboot){
 	/******************************************************/
 	/* WE SHOULD USE MALLOC BUT IT IS NOT IMPLEMENTED YET */
 	/*    Arbitrary address until malloc is implemented   */
-	diraddr = 0x400000;
+	diraddr = (u32int)&end;
 	/******************************************************/
 	page_dir = (page_directory*)diraddr;
 
@@ -96,5 +98,6 @@ void print_memory_map(multiboot_info_t* mboot){
 		i += *size + 4;
 	}
 	printf("%s%x%s\n", "Total memory: 0x", ((mboot->mem_lower + mboot->mem_upper) * 1024), " bytes.");
+	printf("End of kernel addr: 0x%x\n", (u32int)&end);
 	return;
 }

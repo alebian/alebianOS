@@ -1,7 +1,7 @@
+# Why can't I make the stack bigger?
 # Memory manager
 # Paging
-# Create stack
-# Check linker file
+# Check ACPI
 # Exception handlers better than halting
 # Get more info from SMBIOS
 # Video drivers: scroll, print from file

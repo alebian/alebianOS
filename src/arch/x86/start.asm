@@ -16,13 +16,13 @@ MULTIBOOT_CHECKSUM	equ -(MULTIBOOT_HEADER_MAGIC + MULTIBOOT_HEADER_FLAGS)
 
 section .text
 
-global mboot
-extern code, bss, end ; Defined in link.ld
+GLOBAL mboot
+EXTERN code, bss, end ; Defined in link.ld
 
 ;**************************************************************
 ; GRUB header
 ;**************************************************************;
-
+ALIGN 4
 mboot:
 	dd MULTIBOOT_HEADER_MAGIC  ; Header's identity number, must be 0x1BADB002
 	dd MULTIBOOT_HEADER_FLAGS  ; 0-15 bits indicate image's requirements, 16-31 bits indicate optional features
@@ -34,14 +34,14 @@ mboot:
 	dd end
 	dd start	; Img entry point.
 
-global start		; making entry point visible to linker
-extern kmain		; _main is defined elsewhere
+GLOBAL start		; making entry point visible to linker
+EXTERN kmain		; _main is defined elsewhere
 
-[global start]
-[extern kmain] ; in main.c
+[GLOBAL start]
+[EXTERN kmain] ; in main.c
 
 start:
-	mov esp, stack + 32768
+    mov  esp, stack_end  ; Set the stack pointer
 	push eax		; pass Multiboot magic number
 	push ebx		; pass Multiboot info structure
 	mov ebp, 0
@@ -50,5 +50,5 @@ start:
   	jmp $
 
 section .bss
-stack:
-    ;resb 32768
+    resb 8192  ; Reserve stack space
+stack_end:
