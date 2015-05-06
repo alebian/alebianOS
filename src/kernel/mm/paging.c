@@ -5,7 +5,7 @@ extern u32int end;
 page_directory* page_dir;
 int nframes;
 
-void start_paging(multiboot_info_t* mboot){
+int init_paging(multiboot_info_t* mboot){
 	unsigned int diraddr, tableaddr;
 	int i, dentries, aux;
 	int j = 0;
@@ -13,7 +13,7 @@ void start_paging(multiboot_info_t* mboot){
 	if (!CHECK_BIT(mboot->flags, 6)){
 		k_panic("Memory map not provided by GRUB.");
 	}
-	print_memory_map(mboot);
+	//print_memory_map(mboot);
 
 	/******************************************************/
 	/* WE SHOULD USE MALLOC BUT IT IS NOT IMPLEMENTED YET */
@@ -79,7 +79,7 @@ void start_paging(multiboot_info_t* mboot){
 	/* Finally we enable paging */
 	_write_cr3((unsigned int)page_dir);
 	_write_cr0(_read_cr0() | 0x80000000); // Set the paging bit in CR0 to 1
-	return;
+	return nframes;
 }
 
 /*

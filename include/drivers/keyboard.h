@@ -1,10 +1,19 @@
 #ifndef _keyboard_
 #define _keyboard_
 
+#include "../kernel/kernel.h"
+
+#define KEYBOARD_BUFFER_SIZE  32
+
+typedef struct{
+	unsigned char vec[KEYBOARD_BUFFER_SIZE]; 
+	int read;
+	int write;
+} __attribute__ ((aligned)) keyboard_buffer;
+
 // LED States
 #define SET_LED 0xED
 
-#define NOP 0x00
 #define ESC 27
 #define BACKSPACE '\b'
 #define TAB '\t'
@@ -71,6 +80,10 @@
 #define MAKE_SCROLL_LOCK 0x46
 #define BREAK_CAPS_LOCK 0xBA
 
+int init_keyboard(void);
+void reinit_keyboard(void);
+unsigned char get_char_from_keyboard_buffer(void);
+void add_to_keyboard_buffer(unsigned char);
 unsigned char scanCodeToAscii(int);
 int printable(unsigned char);
 void turn_on_leds(void);

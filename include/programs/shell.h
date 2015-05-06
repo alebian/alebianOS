@@ -72,8 +72,6 @@ void shell_updateStartBar(void);
 /* Listeners */
 void shell_keyboardListener(void);
 void shell_lclickListener(int, int);
-void shell_rclickListener(int, int);
-void shell_mclickListener(int, int);
 void openStartMenu(void);
 void closeStartMenu(void);
 /* Functions to parse commands*/

@@ -20,7 +20,7 @@ void int_01(){
 
 void int_02(){
 	//k_panic("Non maskable interrupt.");
-	k_exitScreen();
+	k_shutdown();
 	return;
 }
 
@@ -136,7 +136,7 @@ void int_80(int eax, int ebx, int ecx, int edx){
 void irq_00(){
 	timer_ticks++;
 	if(k_isLoading()){
-		k_LoadingScreenEffect();
+		k_LoadingScreenAnimation();
 	}
 	if(k_isShellEnabled()){
 		if(timer_ticks%20 == 0){
@@ -148,7 +148,7 @@ void irq_00(){
 
 void irq_01(int scanCode){
 	unsigned char c = scanCodeToAscii(scanCode);
-	if(c != NOP){
+	if(c != 0){
 		k_syscall(4, 2, (dword)&c, 1);
 	}
 	_Sti();

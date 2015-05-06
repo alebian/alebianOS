@@ -1,10 +1,10 @@
-#include "../../../include/system.h"
+#include "../../include/system.h"
 
-GDT_ENTRY gdt[5];
+GDT_ENTRY gdt[GDT_SIZE];
 GDT_PTR gdt_ptr;
 
-void setup_GDT(){
-	gdt_ptr.limit = (sizeof(GDT_ENTRY) * 5) - 1;
+int init_GDT(){
+	gdt_ptr.limit = (sizeof(GDT_ENTRY) * GDT_SIZE) - 1;
 	gdt_ptr.base  = (u32int)&gdt;
 
 	gdt_set_gate(0, 0, 0, 0, 0);                // Null segment
@@ -14,7 +14,7 @@ void setup_GDT(){
 	gdt_set_gate(4, 0, 0xFFFFFFFF, 0xF2, 0xCF); // User mode data segment
 
 	_lgdt(&gdt_ptr);
-	return;
+	return GDT_SIZE;
 }
 
 void gdt_set_gate(s32int num, u32int base, u32int limit, u8int access, u8int gran){

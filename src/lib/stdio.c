@@ -28,7 +28,7 @@ int scanf(char* fmt, ...){
                     putchar(c); 
                 }
                 if(i == MAX_BUFFER - 1){
-                    k_beep();
+                    beep();
                 }
             }
         }

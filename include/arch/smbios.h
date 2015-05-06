@@ -26,7 +26,8 @@ typedef struct {
  	unsigned short Handle;
  } __attribute__ ((packed)) SMBIOS_structure_header;
 
-void startSMBIOS(void);
+int init_SMBIOS(void);
 void smb_BIOSinfo(void);
+void smb_SystemSpeed(void);
 
 #endif

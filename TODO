@@ -1,7 +1,7 @@
 # Why can't I make the stack bigger?
+# Change error messages from ACPI
 # Memory manager
 # Paging
-# Check ACPI
 # Exception handlers better than halting
 # Get more info from SMBIOS
 # Video drivers: scroll, print from file

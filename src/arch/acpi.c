@@ -1,6 +1,6 @@
 #include "../../include/system.h"
 
-/* Code written by kaworu */
+/* Based on code written by kaworu */
 /* http://forum.osdev.org/viewtopic.php?t=16990 */
 
 dword *SMI_CMD;
@@ -112,28 +112,28 @@ int acpiEnable(void)
          {
             if ( (_inw((unsigned int) PM1a_CNT) &SCI_EN) == 1 )
                break;
-            k_sleep(10);
+            sleep(10);
          }
          if (PM1b_CNT != 0)
             for (; i<300; i++ )
             {
                if ( (_inw((unsigned int) PM1b_CNT) &SCI_EN) == 1 )
                   break;
-               k_sleep(10);
+               sleep(10);
             }
          if (i<300) {
-            k_printerror("enabled acpi.\n");
+            //printf("enabled acpi.\n");
             return 0;
          } else {
-            k_printerror("couldn't enable acpi.\n");
+            //k_printerror("couldn't enable acpi.\n");
             return -1;
          }
       } else {
-         k_printerror("no known way to enable acpi.\n");
+         //k_printerror("no known way to enable acpi.\n");
          return -1;
       }
    } else {
-      //k_printerror("acpi was already enabled.\n");
+      //printf("acpi was already enabled.\n");
       return 0;
    }
 }
@@ -156,7 +156,7 @@ int acpiEnable(void)
 //
 // (Pkglength bit 6-7 encode additional PkgLength bytes [shouldn't be the case here])
 //
-int initAcpi(void)
+int init_ACPI(void)
 {
    unsigned int *ptr = acpiGetRSDPtr();
 
@@ -219,22 +219,21 @@ int initAcpi(void)
 
                      return 0;
                   } else {
-                     k_printerror("\\_S5 parse error.\n");
+                     //k_printerror("\\_S5 parse error.\n");
                   }
                } else {
-                  k_printerror("\\_S5 not present.\n");
+                  //k_printerror("\\_S5 not present.\n");
                }
             } else {
-               k_printerror("DSDT invalid.\n");
+               //k_printerror("DSDT invalid.\n");
             }
          }
          ptr++;
       }
-      k_printerror("no valid FACP present.\n");
+      //k_printerror("no valid FACP present.\n");
    } else {
-      k_printerror("no acpi.\n");
+      //k_printerror("no acpi.\n");
    }
-
    return -1;
 }
 

@@ -17,7 +17,7 @@ void login(){
 	login_out();
 	error = 1;
 	while(error!=0){
-		k_clearScreen();
+		clearScreen();
 		login_restart_buffers();
 		stage = 1;
 		printf("%s", "username: ");
@@ -34,8 +34,8 @@ void login(){
 			k_printerror("\nIncorrect password..");
 		}
 		if(error!=0){
-			k_beep();
-			k_sleep(10);
+			beep();
+			sleep(10);
 		}
 	}
 	login_in();
@@ -47,10 +47,10 @@ void login(){
 
 void login_set_screen(){
 	/* Prepare screen to show the login screen */
-	k_clearFullScreen();
-	k_set_vga_size(1, 25);
-	k_setFullBackgroundColor(BACKGROUND_COLOR_BLACK);
-	k_setCharacterColor(CHAR_COLOR_WHITE);
+	clearFullScreen();
+	set_vga_size(1, 25);
+	setFullBackgroundColor(BACKGROUND_COLOR_BLACK);
+	setCharacterColor(CHAR_COLOR_WHITE);
 	k_printalert("\nWelcome to ");
 	k_printalert(OS_NAME);
 	k_printwarning(" v");
@@ -67,7 +67,7 @@ void login_set_screen(){
 		printf("\n\n\n");
 	}
 	printf("\n%s", "________________________________________________________________________________");
-	k_set_vga_size(12, 25);
+	set_vga_size(12, 25);
 	return;
 }
 
@@ -103,13 +103,13 @@ void login_keyboardGetUserListener(){
 		}
 		else if(c == LEFT){
 			if(current > 0){
-				k_move_cursor_back();
+				move_cursor_back();
 				current--;
 			}
 		}
 		else if(c == RIGHT){
 			if(current > 0 && current < max_current){
-				k_move_cursor_forward();
+				move_cursor_forward();
 				current++;
 			}
 		}
@@ -122,7 +122,7 @@ void login_keyboardGetUserListener(){
 				putchar(c);	
 			}
 			else if(current == USERNAME_MAX_SIZE - 1){
-				k_beep();
+				beep();
 			}
 		}
 	}
@@ -144,13 +144,13 @@ void login_keyboardGetPassListener(){
 		}
 		else if(c == LEFT){
 			if(current > 0){
-				k_move_cursor_back();
+				move_cursor_back();
 				current--;
 			}
 		}
 		else if(c == RIGHT){
 			if(current > 0 && current < max_current){
-				k_move_cursor_forward();
+				move_cursor_forward();
 				current++;
 			}
 		}
@@ -163,7 +163,7 @@ void login_keyboardGetPassListener(){
 				putchar('*');	
 			}
 			else if(current == PASSWORD_MAX_SIZE - 1){
-				k_beep();
+				beep();
 			}
 		}
 	}
@@ -178,7 +178,7 @@ void login_lclickListener(int x, int y){
 	}
 	else if(y==8){
 		if(x>=43 && x<=50){
-			k_exitScreen();
+			k_shutdown();
 		}
 	}
 	return;

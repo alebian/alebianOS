@@ -8,7 +8,7 @@ static int present = 0;
  * Finds the SMBIOS header _SM_
  * It should be somehwere between 0xF0000 and 0xFFFFF
  */
-void startSMBIOS(){
+int init_SMBIOS(){
 	char* mem = (char*) SMBIOS_START;
 	int length, i;
 	unsigned char checksum;
@@ -30,9 +30,10 @@ void startSMBIOS(){
 	if(present){
 		BIOS_info = (SMBIOS_structure_header*) SMBIOS->TableAddress;
 	}else{
-		k_printerror("Unable to find SMBIOS.");
+		// "Unable to find SMBIOS."
+		return 1;
 	}
-	return;
+	return 0;
 }
 
 void smb_BIOSinfo(){
@@ -63,5 +64,22 @@ void smb_BIOSinfo(){
 	}else{
 		k_printerror("Unable to find SMBIOS.");
 	}
+	return;
+}
+
+
+void smb_SystemSpeed(){
+	/*k_findSMBIOS();
+	word * mem = (word*) SMBIOS->TableAddress + SMBIOShead->Length;
+	printf("%s\n", "System speed:");
+	printf("\t%s", "External clock frequency: ");
+	printf("%d", mem[0x12]);
+	printf("%s\n", "Mhz");
+	printf("\t%s", "Maximum CPU speed: ");
+	printf("%d", mem[0x14]);
+	printf("%s\n", "Mhz");
+	printf("\t%s", "Current CPU speed: ");
+	printf("%d", mem[0x16]);
+	printf("%s\n", "Mhz");*/
 	return;
 }

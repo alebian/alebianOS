@@ -1,5 +1,5 @@
 #include "../../include/drivers/sound.h"
-#include "../../include/kernel/kernel.h"
+#include "../../include/drivers/timer.h"
 #include "../../include/arch/x86/x86.h"
 
 /*
@@ -47,7 +47,7 @@ void nosound(){
 
 void beep(){
 	play_sound(1000);
-	k_sleep(10);
+	sleep(10);
 	nosound();
 	return;
 }
@@ -175,7 +175,7 @@ void playNote(char* note, int milliseconds){
 	}
 
 	play_sound(frequency);
-	k_sleep(milliseconds);
+	sleep(milliseconds);
 	nosound();
 	return;
 }

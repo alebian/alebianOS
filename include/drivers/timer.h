@@ -1,5 +1,7 @@
-#ifndef _time_
-#define _time_
+#ifndef _timer_
+#define _timer_
+
+#define TIME_STYLES 3
 
 typedef long time_t;
 typedef long clock_t;
@@ -15,5 +17,13 @@ typedef struct {
 	int tm_yday;        /* day in the year, range 0 to 365  */
 	int tm_isdst;       /* daylight saving time             */
 } __attribute__ ((aligned)) tm;
+
+
+int set_frecuency(int);
+void sleep(int);
+void read_time(tm*);
+char* get_time(void);
+void set_time_style(int);
+void change_time_style(void);
 
 #endif

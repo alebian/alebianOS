@@ -65,7 +65,7 @@ typedef struct{
     page_dir_entry tables[1024];
 } __attribute__ ((packed)) page_directory;
 
-void start_paging(multiboot_info_t*);
+int init_paging(multiboot_info_t*);
 void print_memory_map(multiboot_info_t*);
 
 #endif

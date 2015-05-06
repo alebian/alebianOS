@@ -1,9 +1,46 @@
-#include "../../include/kernel/kernel.h"
+#include "../../include/kernel/events.h"
 #include "../../include/arch/x86/x86.h"
 #include "../../include/drivers/keyboard.h"
 
 static int shifted = 0;
 static int capsLock = 0;
+static keyboard_buffer k_buffer;
+
+int init_keyboard(){
+    int j;
+    reinit_keyboard();
+    for (j = 0; j < KEYBOARD_BUFFER_SIZE; j++){
+        k_buffer.vec[j] = 0;
+    }
+    return 0;
+}
+
+void reinit_keyboard(){
+    k_buffer.read=0;
+    k_buffer.write=0;
+    return;
+}
+
+void add_to_keyboard_buffer(unsigned char c){
+    k_buffer.vec[k_buffer.write++]=c;
+    if(k_buffer.write>=KEYBOARD_BUFFER_SIZE){
+        k_buffer.write=0;
+    }
+    return;
+}
+
+unsigned char get_char_from_keyboard_buffer(){
+    unsigned char c;
+    if(k_buffer.read==k_buffer.write){
+        //reinit_keyboard();
+        return 0;
+    }
+    c = k_buffer.vec[k_buffer.read++];
+    if(k_buffer.read>=KEYBOARD_BUFFER_SIZE){
+        k_buffer.read=0;
+    }
+    return c;
+}
 
 /* 0 1 2 3 4 5 6 7 8 9 A B C D E F
  * 0
@@ -15,36 +52,36 @@ static int capsLock = 0;
  */
 
 static char scanCodeToAsciiTable[] = {
-NOP, ESC, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', BACKSPACE, TAB,
-'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', ENTER, NOP, 'a', 's',
-'d', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\'', '`', NOP, '\\', 'z', 'x', 'c', 'v',
-'b', 'n', 'm', ',', '.', '/', NOP, '*', NOP, ' ', NOP, KF1, KF2, KF3, KF4, KF5,
-KF6, KF7, KF8, KF9, KF10, NOP, NOP, KHOME, KUP, KPGUP, '-', KLEFT, NOP, KRIGHT, '+', KEND,
-KDOWN, KPGDN, KINS, KDEL, NOP, NOP, NOP, KF11, KF12 };
+0, ESC, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', BACKSPACE, TAB,
+'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', ENTER, 0, 'a', 's',
+'d', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\'', '`', 0, '\\', 'z', 'x', 'c', 'v',
+'b', 'n', 'm', ',', '.', '/', 0, '*', 0, ' ', 0, KF1, KF2, KF3, KF4, KF5,
+KF6, KF7, KF8, KF9, KF10, 0, 0, KHOME, KUP, KPGUP, '-', KLEFT, 0, KRIGHT, '+', KEND,
+KDOWN, KPGDN, KINS, KDEL, 0, 0, 0, KF11, KF12 };
 
 static char scanCodeToAsciiShiftedTable[] = {
-NOP, ESC, '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', BACKSPACE, NOP,
-'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '{', '}', ENTER, NOP, 'A', 'S',
-'D', 'F', 'G', 'H', 'J', 'K', 'L', ':', '"', '~', NOP, '|', 'Z', 'X', 'C', 'V',
-'B', 'N', 'M', '<', '>', '?', NOP, NOP, NOP, ' ', NOP, KF1, KF2, KF3, KF4, KF5,
-KF6, KF7, KF8, KF9, KF10, NOP, NOP, KHOME, KUP, KPGUP, '-', KLEFT, NOP, KRIGHT, '+', KEND,
-KDOWN, KPGDN, KINS, KDEL, NOP, NOP, NOP, KF11, KF12 };
+0, ESC, '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', BACKSPACE, 0,
+'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '{', '}', ENTER, 0, 'A', 'S',
+'D', 'F', 'G', 'H', 'J', 'K', 'L', ':', '"', '~', 0, '|', 'Z', 'X', 'C', 'V',
+'B', 'N', 'M', '<', '>', '?', 0, 0, 0, ' ', 0, KF1, KF2, KF3, KF4, KF5,
+KF6, KF7, KF8, KF9, KF10, 0, 0, KHOME, KUP, KPGUP, '-', KLEFT, 0, KRIGHT, '+', KEND,
+KDOWN, KPGDN, KINS, KDEL, 0, 0, 0, KF11, KF12 };
 
 static char scanCodeToAsciiCapsLockTable[] = {
-NOP, ESC, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', BACKSPACE, TAB,
-'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '[', ']', ENTER, NOP, 'A', 'S',
-'D', 'F', 'G', 'H', 'J', 'K', 'L', ';', '\'', '`', NOP, '\\', 'Z', 'X', 'C', 'V',
-'B', 'N', 'M', ',', '.', '/', NOP, '*', NOP, ' ', NOP, KF1, KF2, KF3, KF4, KF5,
-KF6, KF7, KF8, KF9, KF10, NOP, NOP, KHOME, KUP, KPGUP, '-', KLEFT, NOP, KRIGHT, '+', KEND,
-KDOWN, KPGDN, KINS, KDEL, NOP, NOP, NOP, KF11, KF12 };
+0, ESC, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', BACKSPACE, TAB,
+'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '[', ']', ENTER, 0, 'A', 'S',
+'D', 'F', 'G', 'H', 'J', 'K', 'L', ';', '\'', '`', 0, '\\', 'Z', 'X', 'C', 'V',
+'B', 'N', 'M', ',', '.', '/', 0, '*', 0, ' ', 0, KF1, KF2, KF3, KF4, KF5,
+KF6, KF7, KF8, KF9, KF10, 0, 0, KHOME, KUP, KPGUP, '-', KLEFT, 0, KRIGHT, '+', KEND,
+KDOWN, KPGDN, KINS, KDEL, 0, 0, 0, KF11, KF12 };
 
 static char scanCodeToAsciiShiftedCapsLockTable[] = {
-NOP, ESC, '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', BACKSPACE, NOP,
-'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '{', '}', ENTER, NOP, 'a', 's',
-'d', 'f', 'g', 'h', 'j', 'k', 'l', ':', '"', '~', NOP, '|', 'z', 'x', 'c', 'v',
-'b', 'n', 'm', '<', '>', '?', NOP, NOP, NOP, ' ', NOP, KF1, KF2, KF3, KF4, KF5,
-KF6, KF7, KF8, KF9, KF10, NOP, NOP, KHOME, KUP, KPGUP, '-', KLEFT, NOP, KRIGHT, '+', KEND,
-KDOWN, KPGDN, KINS, KDEL, NOP, NOP, NOP, KF11, KF12 };
+0, ESC, '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', BACKSPACE, 0,
+'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '{', '}', ENTER, 0, 'a', 's',
+'d', 'f', 'g', 'h', 'j', 'k', 'l', ':', '"', '~', 0, '|', 'z', 'x', 'c', 'v',
+'b', 'n', 'm', '<', '>', '?', 0, 0, 0, ' ', 0, KF1, KF2, KF3, KF4, KF5,
+KF6, KF7, KF8, KF9, KF10, 0, 0, KHOME, KUP, KPGUP, '-', KLEFT, 0, KRIGHT, '+', KEND,
+KDOWN, KPGDN, KINS, KDEL, 0, 0, 0, KF11, KF12 };
 
 /*
  * Transforms the ScanCode readed from the keyboard into ASCII

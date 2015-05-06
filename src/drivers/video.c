@@ -18,26 +18,25 @@ static char mouse_color = BACKGROUND_COLOR_RED+CHAR_COLOR_WHITE;
 static char last_mouse_color = BACKGROUND_COLOR_BLACK + CHAR_COLOR_LIGHT_GREY;
 static char last_mouse_char = CHAR_BLANK;
 static startmenu start_menu;
-static shell_file shellfile;
 
 void clearScreen(){
 	MousePosition mouse_pos = getMousePosition();
 	int i = min_row*160;
 	int final = (max_row+1)*160;
-	eraseMouse(mouse_pos.actual_x, mouse_pos.actual_y);
+	erase_mouse(mouse_pos.actual_x, mouse_pos.actual_y);
 	while(i < final){
 		vidmem[i]=CHAR_BLANK;
 		i+=2;
 	};
 	cursor_pos=min_row*160;
 	update_cursor(cursor_pos);
-	drawMouse(mouse_pos.actual_x, mouse_pos.actual_y);
+	draw_mouse(mouse_pos.actual_x, mouse_pos.actual_y);
 	return;
 }
 
 void clearLine(int x){
 	MousePosition mouse_pos = getMousePosition();
-	eraseMouse(mouse_pos.actual_x, mouse_pos.actual_y);
+	erase_mouse(mouse_pos.actual_x, mouse_pos.actual_y);
 	int i = (x-1)*160;
 	int final = x*160;
 	while(i < final){
@@ -45,7 +44,7 @@ void clearLine(int x){
 		i+=2;
 	}
 	update_cursor(cursor_pos);
-	drawMouse(mouse_pos.actual_x, mouse_pos.actual_y);
+	draw_mouse(mouse_pos.actual_x, mouse_pos.actual_y);
 	return;
 }
 
@@ -57,7 +56,7 @@ void clearCurrentLine(){
 void clearFullScreen(){
 	MousePosition mouse_pos = getMousePosition();
 	int i=0;
-	eraseMouse(mouse_pos.actual_x, mouse_pos.actual_y);
+	erase_mouse(mouse_pos.actual_x, mouse_pos.actual_y);
 	while(i < TOTAL_CHARS)
 	{
 		vidmem[i]=CHAR_BLANK;
@@ -65,7 +64,7 @@ void clearFullScreen(){
 	};
 	cursor_pos=0;
 	update_cursor(cursor_pos);
-	//drawMouse(mouse_pos.actual_x, mouse_pos.actual_y);
+	//draw_mouse(mouse_pos.actual_x, mouse_pos.actual_y);
 	return;
 }
 
@@ -74,6 +73,7 @@ char getBackgroundColor(){
 }
 
 void setBackgroundColor(char backcolor){
+	backcolor = SECONDBYTE(backcolor);
 	int i = (min_row*160)+1;
 	int final = (max_row+1)*160;
 	char old;
@@ -88,6 +88,7 @@ void setBackgroundColor(char backcolor){
 }
 
 void setFullBackgroundColor(char backcolor){
+	backcolor = SECONDBYTE(backcolor);
 	int i = 1;
 	char old;
 	while(i < TOTAL_CHARS){
@@ -105,11 +106,12 @@ char getCharacterColor(){
 }
 
 void setCharacterColor(char color){
-	character_color = color;
+	character_color = FIRSTBYTE(color);
 	return;
 }
 
 void setAllCharacterColor(char color){
+	color = FIRSTBYTE(color);
 	int i = (min_row*160)+1;
 	int final = (max_row+1)*160;
 	while(i < final){
@@ -124,7 +126,7 @@ void setAllCharacterColor(char color){
 
 void setStartBarColor(char color){
 	startbar_color = color;
-	setStartMenuColor(color);
+	set_start_menuColor(color);
 	return;
 }
 
@@ -133,7 +135,9 @@ char getMouseColor(){
 }
 
 void setMouseColor(char back, char arrow){
-	mouse_color = back+arrow;
+	back = SECONDBYTE(back);
+	arrow = FIRSTBYTE(arrow);
+	mouse_color = back + arrow;
 	return;
 }
 
@@ -151,18 +155,18 @@ void set_vga_size(int min, int max){
 /* Prints a character in a specified VGA screen position without changing cursor */
 void printxy(char c, int x, int y){
 	MousePosition mouse_pos = getMousePosition();
-	eraseMouse(mouse_pos.actual_x, mouse_pos.actual_y);
+	erase_mouse(mouse_pos.actual_x, mouse_pos.actual_y);
 	vidmem[(y*160)+(x*2)] = c;
-	drawMouse(mouse_pos.actual_x, mouse_pos.actual_y);
+	draw_mouse(mouse_pos.actual_x, mouse_pos.actual_y);
 	return;
 }
 
 void printxyc(char c, char color, int x, int y){
 	MousePosition mouse_pos = getMousePosition();
-	eraseMouse(mouse_pos.actual_x, mouse_pos.actual_y);
+	erase_mouse(mouse_pos.actual_x, mouse_pos.actual_y);
 	vidmem[(y*160)+(x*2)] = c;
 	vidmem[(y*160)+(x*2)+1] = color;
-	drawMouse(mouse_pos.actual_x, mouse_pos.actual_y);
+	draw_mouse(mouse_pos.actual_x, mouse_pos.actual_y);
 	return;
 }
 
@@ -206,12 +210,12 @@ void print(char c, char color){
 	    	    scrolldown();
 	    	    cursor_pos=(max_row)*160;
 	    	}
-	    	eraseMouse(mouse_pos.actual_x, mouse_pos.actual_y);
+	    	erase_mouse(mouse_pos.actual_x, mouse_pos.actual_y);
 	    	vidmem[cursor_pos] = c;
 	    	cursor_pos++;
 	    	vidmem[cursor_pos] = (vidmem[cursor_pos]-vidmem[cursor_pos]%16) + color;
 	    	cursor_pos++;
-	    	drawMouse(mouse_pos.actual_x, mouse_pos.actual_y);
+	    	draw_mouse(mouse_pos.actual_x, mouse_pos.actual_y);
 	    	break;
 	}
 	update_cursor(cursor_pos);
@@ -275,14 +279,10 @@ void scrolldown(){
 	int i, final;
 	/* If we are not in the first printable line */
 	if( (min_row*160) != (cursor_pos-(cursor_pos%160)) ){
-		eraseMouse(mouse_pos.actual_x, mouse_pos.actual_y);
+		erase_mouse(mouse_pos.actual_x, mouse_pos.actual_y);
 		// Scroll the printable screen
 		i = min_row*160;
 		final = max_row*160;
-		// Save first row in shell file
-		if(k_isShellEnabled()){
-			save_shell_row(vidmem+i);
-		}
 		while(i < final){	
 			vidmem[i]= vidmem[i+160];
 			i++;
@@ -299,37 +299,12 @@ void scrolldown(){
 		};
 		cursor_pos-=160;
 		update_cursor(cursor_pos);
-		drawMouse(mouse_pos.actual_x, mouse_pos.actual_y);
+		draw_mouse(mouse_pos.actual_x, mouse_pos.actual_y);
 	}
 	return;
 }
 
 void scrollup(){
-	MousePosition mouse_pos = getMousePosition();
-	int i, j, k, final;
-	if(shellfile.scroll_downs > 0){
-		i = (min_row+1)*160;
-		final = max_row*160;
-		// Save last row in shell file
-		while(i < final){	
-			vidmem[i] = vidmem[i-160];
-			i++;
-			vidmem[i] = vidmem[i-160];
-			i++;
-		};
-		j = shellfile.writepos%160;
-		i = j-1;
-		final = shellfile.writepos;
-		k = final - 160;
-		j = min_row*160;
-		while(i < final){	
-			vidmem[j++] = shellfile.init[k++];
-			vidmem[j++] = shellfile.init[k++];
-		};
-		cursor_pos+=160;
-		update_cursor(cursor_pos);
-		drawMouse(mouse_pos.actual_x, mouse_pos.actual_y);
-	}
 	return;
 }
 
@@ -337,7 +312,7 @@ void printStartBar(char* startBar){
 	MousePosition mouse_pos = getMousePosition();
 	int i, j;
 	i = j = 0;
-	eraseMouse(mouse_pos.actual_x, mouse_pos.actual_y);
+	erase_mouse(mouse_pos.actual_x, mouse_pos.actual_y);
 	while(j<VGA_WIDTH){
 		vidmem[i++] = startBar[j++];
 		vidmem[i++] = CHAR_COLOR_GREEN + startbar_color;
@@ -358,12 +333,15 @@ void printStartBar(char* startBar){
 		vidmem[i++] = '_';
 		vidmem[i++] = CHAR_COLOR_BLACK + startbar_color;
 	}
-	drawMouse(mouse_pos.actual_x, mouse_pos.actual_y);
+	draw_mouse(mouse_pos.actual_x, mouse_pos.actual_y);
 	return;
 }
 
-void drawMouse(int x, int y){
+void draw_mouse(){
 	if(k_isMouseEnabled()){
+		MousePosition mouse_pos = getMousePosition();
+		int x = mouse_pos.actual_x;
+		int y = mouse_pos.actual_y;
 		int s = (y*160)+(x*2);
 		if(s%2==0){
 			s++;
@@ -376,8 +354,11 @@ void drawMouse(int x, int y){
 	return;
 }
 
-void eraseMouse(int x, int y){
+void erase_mouse(){
 	if(k_isMouseEnabled()){
+		MousePosition mouse_pos = getMousePosition();
+		int x = mouse_pos.actual_x;
+		int y = mouse_pos.actual_y;
 		int s = (y*160)+(x*2);
 		if(s%2==0){
 			s++;
@@ -385,135 +366,6 @@ void eraseMouse(int x, int y){
 		vidmem[s-1] = last_mouse_char;
 		vidmem[s] = last_mouse_color;
 	}
-	return;
-}
-
-void MARIO(){
-	clearFullScreen();
-	setFullBackgroundColor(BACKGROUND_COLOR_BLACK);
-	// 1 row
-	printSquare(28, 1, 0x44);
-	printSquare(32, 1, 0x44);
-	printSquare(36, 1, 0x44);
-	printSquare(40, 1, 0x44);
-	printSquare(44, 1, 0x44);
-	// 2 row
-	printSquare(24, 3, 0x44);
-	printSquare(28, 3, 0x44);
-	printSquare(32, 3, 0x44);
-	printSquare(36, 3, 0x44);
-	printSquare(40, 3, 0x44);
-	printSquare(44, 3, 0x44);
-	printSquare(48, 3, 0x44);
-	printSquare(52, 3, 0x44);
-	printSquare(56, 3, 0x44);
-	// 3 row
-	printSquare(24, 5, 0x66);
-	printSquare(28, 5, 0x66);
-	printSquare(32, 5, 0x66);
-	printSquare(36, 5, 0xFF);
-	printSquare(40, 5, 0xFF);
-	printSquare(44, 5, 0x00);
-	printSquare(48, 5, 0xFF);
-	// 4 row
-	printSquare(20, 7, 0x66);
-	printSquare(24, 7, 0xFF);
-	printSquare(28, 7, 0x66);
-	printSquare(32, 7, 0xFF);
-	printSquare(36, 7, 0xFF);
-	printSquare(40, 7, 0xFF);
-	printSquare(44, 7, 0x00);
-	printSquare(48, 7, 0xFF);
-	printSquare(52, 7, 0xFF);
-	printSquare(56, 7, 0xFF);
-	// 5 row
-	printSquare(20, 9, 0x66);
-	printSquare(24, 9, 0xFF);
-	printSquare(28, 9, 0x66);
-	printSquare(32, 9, 0x66);
-	printSquare(36, 9, 0xFF);
-	printSquare(40, 9, 0xFF);
-	printSquare(44, 9, 0xFF);
-	printSquare(48, 9, 0x66);
-	printSquare(52, 9, 0xFF);
-	printSquare(56, 9, 0xFF);
-	printSquare(60, 9, 0xFF);
-	// 6 row
-	printSquare(20, 11, 0x66);
-	printSquare(24, 11, 0x66);
-	printSquare(28, 11, 0xFF);
-	printSquare(32, 11, 0xFF);
-	printSquare(36, 11, 0xFF);
-	printSquare(40, 11, 0xFF);
-	printSquare(44, 11, 0x66);
-	printSquare(48, 11, 0x66);
-	printSquare(52, 11, 0x66);
-	printSquare(56, 11, 0x66);
-	// 7 row
-	printSquare(28, 13, 0xFF);
-	printSquare(32, 13, 0xFF);
-	printSquare(36, 13, 0xFF);
-	printSquare(40, 13, 0xFF);
-	printSquare(44, 13, 0xFF);
-	printSquare(48, 13, 0xFF);
-	printSquare(52, 13, 0xFF);
-	// 8 row
-	printSquare(24, 15, 0x11);
-	printSquare(28, 15, 0x11);
-	printSquare(32, 15, 0x44);
-	printSquare(36, 15, 0x11);
-	printSquare(40, 15, 0x11);
-	printSquare(44, 15, 0x11);
-	// 9 row
-	printSquare(20, 17, 0x11);
-	printSquare(24, 17, 0x11);
-	printSquare(28, 17, 0x11);
-	printSquare(32, 17, 0x44);
-	printSquare(36, 17, 0x11);
-	printSquare(40, 17, 0x11);
-	printSquare(44, 17, 0x44);
-	printSquare(48, 17, 0x11);
-	printSquare(52, 17, 0x11);
-	printSquare(56, 17, 0x11);
-	// 10 row
-	printSquare(16, 19, 0x11);
-	printSquare(20, 19, 0x11);
-	printSquare(24, 19, 0x11);
-	printSquare(28, 19, 0x11);
-	printSquare(32, 19, 0x44);
-	printSquare(36, 19, 0x11);
-	printSquare(40, 19, 0x11);
-	printSquare(44, 19, 0x44);
-	printSquare(48, 19, 0x11);
-	printSquare(52, 19, 0x11);
-	printSquare(56, 19, 0x11);
-	printSquare(60, 19, 0x11);
-	// 11 row
-	printSquare(16, 21, 0xFF);
-	printSquare(20, 21, 0xFF);
-	printSquare(24, 21, 0x11);
-	printSquare(28, 21, 0x11);
-	printSquare(32, 21, 0x44);
-	printSquare(36, 21, 0x44);
-	printSquare(40, 21, 0x44);
-	printSquare(44, 21, 0x44);
-	printSquare(48, 21, 0x11);
-	printSquare(52, 21, 0x11);
-	printSquare(56, 21, 0xFF);
-	printSquare(60, 21, 0xFF);
-	// 12 row
-	printSquare(16, 23, 0xFF);
-	printSquare(20, 23, 0xFF);
-	printSquare(24, 23, 0xFF);
-	printSquare(28, 23, 0x44);
-	printSquare(32, 23, 0xEE);
-	printSquare(36, 23, 0x44);
-	printSquare(40, 23, 0x44);
-	printSquare(44, 23, 0xEE);
-	printSquare(48, 23, 0x44);
-	printSquare(52, 23, 0xFF);
-	printSquare(56, 23, 0xFF);
-	printSquare(60, 23, 0xFF);
 	return;
 }
 
@@ -528,7 +380,7 @@ void printSquare(int x, int y, char color){
 	return;
 }
 
-void setSTARTMENU(){
+void set_start_menu(){
 	/* Shutdown   | */
 	/* Reboot     | */
 	/* Logout     | */
@@ -539,11 +391,11 @@ void setSTARTMENU(){
 	memcpy(start_menu.thirdline,  "LLooggoouutt          ||", START_MENU_SIZE);
 	memcpy(start_menu.fourthline, "TThheemmee::          ||", START_MENU_SIZE);
 	memcpy(start_menu.fifthline,  "------------------------", START_MENU_SIZE);
-	setStartMenuColor(startbar_color);
+	set_start_menuColor(startbar_color);
 	return;
 }
 
-void setStartMenuColor(char color){
+void set_start_menuColor(char color){
 	char menucharcolor;
 	if(color == BACKGROUND_COLOR_LIGHT_GREY){
 		menucharcolor = CHAR_COLOR_BLACK;
@@ -569,7 +421,7 @@ void setStartMenuColor(char color){
 	return;
 }
 
-void printSTARTMENU(){
+void print_start_menu(){
 	/* Save first */
 	memcpy(start_menu.savedfirstline, (char*)VGA_PORT+(160*2), START_MENU_SIZE);
 	memcpy(start_menu.savedsecondline, (char*)VGA_PORT+(160*3), START_MENU_SIZE);
@@ -585,7 +437,7 @@ void printSTARTMENU(){
 	return;
 }
 
-void clearSTARTMENU(){
+void clear_start_menu(){
 	memcpy((char*)VGA_PORT+(160*2), start_menu.savedfirstline, START_MENU_SIZE);
 	memcpy((char*)VGA_PORT+(160*3), start_menu.savedsecondline, START_MENU_SIZE);
 	memcpy((char*)VGA_PORT+(160*4), start_menu.savedthirdline, START_MENU_SIZE);
@@ -594,26 +446,34 @@ void clearSTARTMENU(){
 	return;
 }
 
-void init_shell_file(){
-	/******************************************************/
-	/* WE SHOULD USE MALLOC BUT IT IS NOT IMPLEMENTED YET */
-	shellfile.init = (char*) 0x300000;
-	shellfile.limit = 0x100000;
-	/******************************************************/
-	reset_shell_file();
+void switch_VGA_style(int vga_style){
+	switch(vga_style){
+		case 0:
+			set_VGA_style(BACKGROUND_COLOR_LIGHT_GREY, CHAR_COLOR_BLACK, BACKGROUND_COLOR_BLACK, CHAR_COLOR_LIGHT_GREY, BACKGROUND_COLOR_LIGHT_GREY);
+			vga_style++;
+			break;
+		case 1:
+			set_VGA_style(BACKGROUND_COLOR_BLUE, CHAR_COLOR_WHITE, BACKGROUND_COLOR_BLACK, CHAR_COLOR_RED, BACKGROUND_COLOR_BLUE);
+			vga_style++;
+			break;
+		case 2:
+			set_VGA_style(BACKGROUND_COLOR_RED, CHAR_COLOR_WHITE, BACKGROUND_COLOR_BLACK, CHAR_COLOR_RED, BACKGROUND_COLOR_RED);
+			vga_style++;
+			break;
+		default:
+			set_VGA_style(BACKGROUND_COLOR_BLACK, CHAR_COLOR_LIGHT_GREY, BACKGROUND_COLOR_RED, CHAR_COLOR_WHITE, BACKGROUND_COLOR_LIGHT_GREY);
+			vga_style = 0;
+			break;
+	}
 	return;
 }
 
-void reset_shell_file(){
-	memset(shellfile.init, 0, shellfile.limit);
-	shellfile.writepos = 0;
-	shellfile.scroll_downs = 0;
-	return;
-}
-
-void save_shell_row(char* from){
-	memcpy((char*)from, shellfile.init+shellfile.writepos, 160);
-	shellfile.writepos+=160;
-	shellfile.scroll_downs++;
+void set_VGA_style(char background, char character, char mouseback, char mousechar, char startbar){
+	setBackgroundColor(background);
+	setAllCharacterColor(character);
+	erase_mouse();
+	setMouseColor(mouseback, mousechar);
+	draw_mouse();
+	k_setStartBarColor(startbar);
 	return;
 }

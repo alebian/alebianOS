@@ -8,32 +8,22 @@
 static int loadingscreen = 1;
 
 void kmain(multiboot_info_t* mboot, int multiboot_magic){
-	k_set_loading_screen();
+	k_showLoadingScreen();
 	if(multiboot_magic!=0x2BADB002){
 		k_panic("The OS wasn't loaded by a Multiboot-compliant bootloader and it's impossible to continue.");
 		return;
 	}
 
-	_Cli();
-	setup_GDT();
-	k_loading_log("GDT set up completed");
-	setup_IDT();
-	k_loading_log("IDT set up completed");
-	_Sti();
+	loading_log(init_GDT(), "GDT initialized.", "Unable to initialize GDT.");
+	loading_log(init_IDT(), "IDT initialized.", "Unable to initialize IDT.");
+	loading_log(set_frecuency(20), "PIC initialized.", "Unable to initialize PIC.");
+	loading_log(init_paging(mboot), "Paging initialized.", "Unable to initialize paging.");
+	loading_log(init_keyboard(), "Keyboard driver initialized.", "Unable to initialize keyboard driver.");
+	loading_log(init_mouse(), "Mouse driver initialized.", "Unable to initialize mouse driver.");
+	loading_log(init_ACPI(), "ACPI loaded.", "Unable to load ACPI.");
+	loading_log(init_SMBIOS(), "SMBIOS loaded.", "Unable to load SMBIOS.");
 
-	start_paging(mboot);
-	k_loading_log("Paging set up completed");
-
-	k_SetUpDrivers();
-	k_loading_log("Drivers set up completed");
-
-	initAcpi();
-	k_loading_log("ACPI loaded");
-
-	startSMBIOS();
-	k_loading_log("SMBIOS loaded");
-
-	k_sleep(30); // Just to see if everything went well
+	sleep(30); // Just to see if everything went well
 	loadingscreen = 0;
 	while(1){
 		login();
@@ -41,60 +31,21 @@ void kmain(multiboot_info_t* mboot, int multiboot_magic){
 	return;
 }
 
-void k_set_loading_screen(){
-	/* Prepare screen to show the loading screen */
-	k_clearFullScreen();
-	k_setFullBackgroundColor(BACKGROUND_COLOR_BLACK);
-	k_setCharacterColor(CHAR_COLOR_WHITE);
-	k_showLoadingScreen();
-	k_set_vga_size(12, 25);
-	return;
-}
-
 int k_isLoading(){
 	return loadingscreen!=0;
 }
 
-void k_LoadingScreenEffect(){
-	switch(loadingscreen){
-		case 1:
-			printxyc(' ', CHAR_COLOR_LIGHT_BROWN, 50, 9);
-			printxyc(' ', CHAR_COLOR_LIGHT_BROWN, 51, 9);
-			printxyc(' ', CHAR_COLOR_LIGHT_BROWN, 52, 9);
-			loadingscreen++;
-			break;
-		case 5:
-			printxyc('.', CHAR_COLOR_LIGHT_BROWN, 50, 9);
-			loadingscreen++;
-			break;
-		case 10:
-			printxyc('.', CHAR_COLOR_LIGHT_BROWN, 51, 9);
-			loadingscreen++;
-			break;
-		case 15:
-			printxyc('.', CHAR_COLOR_LIGHT_BROWN, 52, 9);
-			loadingscreen++;
-			break;
-		case 20:
-			loadingscreen = 1;
-			break;
-		default:
-			loadingscreen++;
-			break;
+void loading_log(int ret, char* completed, char* error){
+	if(ret != -1){
+		printf("%s", "[");
+		k_printwarning("OK");
+		printf("%s", "] ");
+		printf("%s\n", completed);
+	}else{
+		printf("%s", "[");
+		k_printerror("X");
+		printf("%s", "] ");
+		printf("%s\n", error);
 	}
-	return;
-}
-
-void k_loading_log(char* message){
-	printf("%s", "[");
-	k_printwarning("+");
-	printf("%s", "] ");
-	printf("%s\n", message);
-	return;
-}
-
-void k_SetUpDrivers(){
-	start_keyboard_buffer();
-	start_mouse();
 	return;
 }

@@ -10,20 +10,23 @@ nasm -f aout ../../src/arch/x86/start.asm -o loader.o
 
 echo "Compiling C..."
 gcc -Wall -c ../../src/arch/acpi.c -o acpi.o -fno-builtin
+gcc -Wall -c ../../src/arch/smbios.c -o smbios.o -fno-builtin
 gcc -Wall -c ../../src/kernel/main.c -o main.o -fno-builtin
 gcc -Wall -c ../../src/kernel/interrupts.c -o interrupts.o -fno-builtin
 gcc -Wall -c ../../src/kernel/kernel.c -o kernel.o -fno-builtin
 gcc -Wall -c ../../src/kernel/syscalls.c -o syscalls.o -fno-builtin
-gcc -Wall -c ../../src/kernel/buffers.c -o buffers.o -fno-builtin
-gcc -Wall -c ../../src/kernel/mm/gdt.c -o gdt.o -fno-builtin
+gcc -Wall -c ../../src/kernel/gdt.c -o gdt.o -fno-builtin
 gcc -Wall -c ../../src/kernel/idt.c -o idt.o -fno-builtin
 gcc -Wall -c ../../src/kernel/mm/kheap.c -o kheap.o -fno-builtin
 gcc -Wall -c ../../src/kernel/mm/paging.c -o paging.o -fno-builtin
-gcc -Wall -c ../../src/kernel/smbios.c -o smbios.o -fno-builtin
+gcc -Wall -c ../../src/kernel/panic.c -o panic.o -fno-builtin
+gcc -Wall -c ../../src/kernel/events.c -o events.o -fno-builtin
+gcc -Wall -c ../../src/kernel/extras.c -o extras.o -fno-builtin
 gcc -Wall -c ../../src/drivers/video.c -o video.o -fno-builtin
 gcc -Wall -c ../../src/drivers/keyboard.c -o keyboard.o -fno-builtin
 gcc -Wall -c ../../src/drivers/mouse.c -o mouse.o -fno-builtin
 gcc -Wall -c ../../src/drivers/sound.c -o sound.o -fno-builtin
+gcc -Wall -c ../../src/drivers/timer.c -o timer.o -fno-builtin
 gcc -Wall -c ../../src/lib/ctype.c -o ctype.o -fno-builtin
 gcc -Wall -c ../../src/lib/stdio.c -o stdio.o -fno-builtin
 gcc -Wall -c ../../src/lib/stdlib.c -o stdlib.o -fno-builtin
@@ -35,7 +38,7 @@ gcc -Wall -c ../../src/programs/shell.c -o shell.o -fno-builtin
 if [ -f ../img/alebianOS.img ]; then
 echo "Linkediting..."
 
-if ld -T ../link.ld -o kernel.bin x86.o loader.o acpi.o main.o gdt.o idt.o kheap.o paging.o smbios.o interrupts.o kernel.o syscalls.o video.o keyboard.o mouse.o sound.o ctype.o stdio.o stdlib.o string.o math.o login.o shell.o buffers.o; then
+if ld -T ../link.ld -o kernel.bin x86.o loader.o acpi.o main.o gdt.o idt.o kheap.o paging.o smbios.o panic.o events.o extras.o interrupts.o kernel.o syscalls.o video.o keyboard.o mouse.o sound.o timer.o ctype.o stdio.o stdlib.o string.o math.o login.o shell.o; then
 cd ..;
 
 echo "Updating Disk Image";

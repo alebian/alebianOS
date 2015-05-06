@@ -31,7 +31,7 @@ unsigned int *acpiCheckRSDPtr(unsigned int*);
 unsigned int *acpiGetRSDPtr(void);
 int acpiCheckHeader(unsigned int*, char*);
 int acpiEnable(void);
-int initAcpi(void);
+int init_ACPI(void);
 void acpiPowerOff(void);
 
 #endif

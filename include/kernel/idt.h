@@ -20,11 +20,11 @@ typedef struct {
   dword base;
 } __attribute__ ((packed)) IDTR;
 
-void setup_IDT(void);
-void setup_IDT_content(void);
+int init_IDT(void);
+void init_IDT_content(void);
 void remapIRQ(void);
-void setup_IDT_entry(u8int, byte, dword, byte);
-void setup_IDTR(void);
+void init_IDT_entry(u8int, byte, dword, byte);
+void init_IDTR(void);
 void setup_PIC(void);
 
 #endif

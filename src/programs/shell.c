@@ -9,18 +9,16 @@ void shell(char* username, char* pcname){
 	sdata.user = username;
 	sdata.computername = pcname;
 	sbar.menu_opened = 0;
-	k_init_shell_file();
-	k_setStartMenu();
+	set_start_menu();
 	k_enableShell();
 	start_shell_buffer();
 	shell_updateStartBar();
+	switch_VGA_style(0);
 	prompt();
 	// Set the listeners
 	k_setKeyboardListener(&shell_keyboardListener);
 	if(k_isMouseEnabled()){
 		k_setLclickListener(&shell_lclickListener);
-		k_setRclickListener(&shell_rclickListener);
-		k_setMclickListener(&shell_mclickListener);
 	}
 	while(login_isLogued()){}
 	/******************************************************/
@@ -31,10 +29,10 @@ void shell(char* username, char* pcname){
 
 void shell_set_screen(){
 	/* Prepare screen to show shell properly */
-	k_clearFullScreen();
-	k_setFullBackgroundColor(BACKGROUND_COLOR_BLACK);
-	k_setCharacterColor(CHAR_COLOR_LIGHT_GREY);
-	k_set_vga_size(3, 25);
+	clearFullScreen();
+	setFullBackgroundColor(BACKGROUND_COLOR_BLACK);
+	setCharacterColor(CHAR_COLOR_LIGHT_GREY);
+	set_vga_size(3, 25);
 	return;
 }
 
@@ -121,8 +119,8 @@ void prompt(){
 
 void shell_updateStartBar(){
 	memcpy(&sbar.str, &START_LOGO, strlen(START_LOGO));
-	memcpy(&sbar.str[67], k_stime(), 13);
-	k_printStartBar(sbar.str);
+	memcpy(&sbar.str[67], get_time(), 13);
+	printStartBar(sbar.str);
 	return;
 }
 
@@ -223,7 +221,7 @@ void shell_print(unsigned char c){
 		putchar(c);	
 	}
 	else if(shellbuff.bpos == SHELL_BUFFER_SIZE - 1){
-		k_beep();
+		beep();
 	}
 	return;
 }
@@ -248,7 +246,7 @@ void shell_backspace(){
 
 void shell_left(){
 	if(shellbuff.bpos > 0){
-		k_move_cursor_back();
+		move_cursor_back();
 		shellbuff.bpos--;
 	}
 	return;
@@ -256,7 +254,7 @@ void shell_left(){
 
 void shell_right(){
 	if(shellbuff.bpos > 0 && shellbuff.bpos < shellbuff.max_bpos){
-		k_move_cursor_forward();
+		move_cursor_forward();
 		shellbuff.bpos++;
 	}
 	return;
@@ -292,17 +290,20 @@ void print_changed_buffer(){
 }
 
 void shell_pageup(){
-	k_scrollup();
+	scrollup();
 	return;
 }
 
 void shell_pagedown(){
-	k_scrolldown();
+	scrolldown();
 	return;
 }
 
 void shell_delete(){
-	k_deleteKey();
+	if(shellbuff.bpos > 0){
+		move_cursor_forward();
+		shell_backspace();
+	}
 	return;
 }
 
@@ -390,25 +391,10 @@ void shell_lclickListener(int x, int y){
 			if(!sbar.menu_opened){
 				openStartMenu();
 				return;
-			}else{
-				closeStartMenu();
-				return;
 			}
 		}
 		else if(x>=72){
-			int aux = k_getTimeStyle();
-			switch(aux){
-				case 2:
-					aux=0;
-					break;
-				default:
-					aux++;
-					break;
-			}
-			k_setTimeStyle(aux);
-			return;
-		}else{
-			closeStartMenu();
+			change_time_style();
 			return;
 		}
 	}
@@ -416,80 +402,67 @@ void shell_lclickListener(int x, int y){
 		if(sbar.menu_opened){
 			/* Shutdown */
 			if(x>=0 && x<8){
-				k_exitScreen();
+				closeStartMenu();
+				k_shutdown();
+				return;
 			}
-			closeStartMenu();
 		}
-		return;
 	}
 	else if(y==3){
 		if(sbar.menu_opened){
 			/* Reboot */
 			if(x>=0 && x<6){
+				closeStartMenu();
 				k_reboot();
+				return;
 			}
-			closeStartMenu();
 		}
-		return;
 	}
 	else if(y==4){
 		if(sbar.menu_opened){
 			/* Logout */
 			if(x>=0 && x<8){
+				closeStartMenu();
 				k_disableShell();
 				login_out();
+				return;
 			}
-			closeStartMenu();
 		}
-		return;
 	}
 	else if(y==5){
 		if(sbar.menu_opened){
 			closeStartMenu();
 			/* THEME: BLACK GREY RED BLUE */
 			if(x==7){
-				k_setVGAstyle(BACKGROUND_COLOR_BLACK, CHAR_COLOR_LIGHT_GREY, BACKGROUND_COLOR_RED, CHAR_COLOR_WHITE, BACKGROUND_COLOR_LIGHT_GREY);
+				switch_VGA_style(3);
 			}
 			if(x==8){
-				k_setVGAstyle(BACKGROUND_COLOR_LIGHT_GREY, CHAR_COLOR_BLACK, BACKGROUND_COLOR_BLACK, CHAR_COLOR_LIGHT_GREY, BACKGROUND_COLOR_LIGHT_GREY);
+				switch_VGA_style(0);
 			}
 			if(x==9){
-				k_setVGAstyle(BACKGROUND_COLOR_RED, CHAR_COLOR_WHITE, BACKGROUND_COLOR_BLACK, CHAR_COLOR_RED, BACKGROUND_COLOR_RED);
+				switch_VGA_style(2);
 			}
 			if(x==10){
-				k_setVGAstyle(BACKGROUND_COLOR_BLUE, CHAR_COLOR_WHITE, BACKGROUND_COLOR_BLACK, CHAR_COLOR_RED, BACKGROUND_COLOR_BLUE);
+				switch_VGA_style(1);
 			}
+			return;
 		}
-		return;
 	}
-	else{
-		if(sbar.menu_opened){
-			closeStartMenu();
-		}
-		return;
+	if(sbar.menu_opened){
+		closeStartMenu();
 	}
-	return;
-}
-
-void shell_rclickListener(int x, int y){
-	shell_lclickListener(x, y);
-	return;
-}
-
-void shell_mclickListener(int x, int y){
-	k_randomVGAstyle();
 	return;
 }
 
 void openStartMenu(){
 	sbar.menu_opened = 1;
-	k_printStartMenu();
+	print_start_menu();
 	return;
 }
 
 void closeStartMenu(){
 	sbar.menu_opened = 0;
-	k_clearStartMenu();
+	clear_start_menu();
 	return;
 }
 
@@ -542,8 +515,8 @@ void parsecommand(char* s){
 		error = s_logout(hasParameter, shellbuff.parameter);
 	}
 	else {
-		k_printosmsg("alebian says: COMMAND NOT FOUND\n");
-		k_beep();
+		k_printOSmsg("alebian says: COMMAND NOT FOUND\n");
+		beep();
 	}
 	// Print error messages if needed
 	switch(error){
@@ -627,7 +600,7 @@ int s_checkBIOS(int hp, char* p){
 	if(hp){
 		return 4;
 	}else{
-		k_checkBIOSinfo();
+		smb_BIOSinfo();
 		return 0;
 	}
 }
@@ -636,7 +609,7 @@ int s_exit(int hp, char* p){
 	if(hp){
 		return 4;
 	}else{
-		k_exitScreen();
+		k_shutdown();
 		return 0;
 	}
 }
@@ -654,7 +627,7 @@ int s_clear(int hp, char* p){
 	if(hp){
 		return 4;
 	}else{
-		k_clearScreen();
+		clearScreen();
 		return 0;
 	}
 }
@@ -663,7 +636,7 @@ int s_speed(int hp, char* p){
 	if(hp){
 		return 4;
 	}else{
-		k_checkSystemSpeed();
+		smb_SystemSpeed();
 		return 0;
 	}
 }
@@ -678,13 +651,13 @@ int s_timestyle(int hp, char* p){
 			return 0;
 		}
 		else if(!strcmp(p,"0")){
-			k_setTimeStyle(0);
+			set_time_style(0);
 		}
 		else if(!strcmp(p,"1")){
-			k_setTimeStyle(1);
+			set_time_style(1);
 		}
 		else if(!strcmp(p,"2")){
-			k_setTimeStyle(2);
+			set_time_style(2);
 		}else{
 			return 3;
 		}
@@ -715,7 +688,7 @@ int s_bkg(int hp, char* p){
 		}else{
 			return 3;
 		}
-		k_setBackgroundColor(color);
+		setBackgroundColor(color);
 		return 0;
 	}else{
 		return 2;

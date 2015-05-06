@@ -1,5 +1,5 @@
 #include "../../include/arch/x86/x86.h"
-#include "../../include/kernel/kernel.h"
+#include "../../include/kernel/events.h"
 #include "../../include/kernel/interrupts.h"
 #include "../../include/drivers/video.h"
 #include "../../include/drivers/mouse.h"
@@ -13,7 +13,7 @@ static MousePosition mouse_pos;
 static byte mouse_sensibility = 3;
 static int connected = 0;
 
-void start_mouse(){
+int init_mouse(){
   byte status;
   if(checkConnection()){
     _Cli();
@@ -47,8 +47,10 @@ void start_mouse(){
     connected = 1;
     
     _Sti();
+    return 0;
+  }else{
+    return -1;
   }
-  return;
 }
 
 int checkConnection(){
@@ -141,7 +143,7 @@ void mouse_handler(byte package){
 
     incX = mouse_bytes[1] % mouse_sensibility;
     incY = mouse_bytes[2] % mouse_sensibility;
-    k_eraseMouse();
+    erase_mouse();
     mouse_pos.last_x = mouse_pos.actual_x;
     mouse_pos.last_y = mouse_pos.actual_y;
     if(mouse_bytes[0] & 0x10){
@@ -158,7 +160,7 @@ void mouse_handler(byte package){
       mouse_pos.actual_x = incX;
       mouse_pos.actual_y = incY;
     }
-    k_drawMouse();
+    draw_mouse();
   }
   return;
 }

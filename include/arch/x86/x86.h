@@ -1,7 +1,7 @@
 #ifndef _asm_
 #define _asm_
 
-#include "../../kernel/mm/gdt.h"
+#include "../../kernel/gdt.h"
 #include "../../kernel/idt.h"
 
 unsigned int	_read_msw(void);

@@ -13,7 +13,7 @@ typedef struct{
 	int middle_click;
 } __attribute__ ((aligned)) MousePosition;
 
-void start_mouse(void);
+int init_mouse(void);
 int checkConnection(void);
 int isMouseConnected(void);
 void mouse_wait(byte);
