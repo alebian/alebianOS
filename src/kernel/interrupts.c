@@ -4,7 +4,7 @@ static long timer_ticks = 0;
 static int mouse_enabled = 0;
 
 void int_00(){
-	k_panic("Divide error exception.");
+	panic("Divide error exception.");
 	/*
 	int c;
 	k_printerror("%s\n", "Divide error exception, please press enter to continue.\n");
@@ -14,68 +14,68 @@ void int_00(){
 }
 
 void int_01(){
-	k_panic("Debug exception.");
+	panic("Debug exception.");
 	return;
 }
 
 void int_02(){
-	//k_panic("Non maskable interrupt.");
+	//panic("Non maskable interrupt.");
 	k_shutdown();
 	return;
 }
 
 void int_03(){
-	k_panic("Breakpoint exception.");
+	panic("Breakpoint exception.");
 	return;
 }
 
 void int_04(){
-	k_panic("Overflow exception.");
+	panic("Overflow exception.");
 	return;
 }
 
 void int_05(){
-	k_panic("Bounds check exception.");
+	panic("Bounds check exception.");
 	return;
 }
 
 void int_06(){
-	k_panic("Invalid opcode exception.");
+	panic("Invalid opcode exception.");
 	return;
 }
 
 void int_07(){
-	k_panic("Coprocessor not available exception.");
+	panic("Coprocessor not available exception.");
 	return;
 }
 
 void int_08(){
-	k_panic("Double fault exception.");
+	panic("Double fault exception.");
 	return;
 }
 
 void int_09(){
-	k_panic("Coprocessor segment overrun exception.");
+	panic("Coprocessor segment overrun exception.");
 	return;
 }
 
 void int_10(){
-	k_panic("Invalid TSS exception.");
+	panic("Invalid TSS exception.");
 	return;
 }
 
 void int_11(){
-	k_panic("Segment not present exception.");
+	panic("Segment not present exception.");
 	return;
 }
 
 void int_12(){
-	k_panic("Stack exception.");
+	panic("Stack exception.");
 	return;
 }
 
 void int_13(){
-	k_panic("General protection exception.");
+	panic("General protection exception.");
 	return;
 }
 
@@ -124,7 +124,7 @@ void int_14(int errorcode, int cr2){
 }
 
 void int_16(){
-	k_panic("Coprocessor error exception.");
+	panic("Coprocessor error exception.");
 	return;
 }
 

@@ -1,11 +1,10 @@
 #ifndef _paging_
 #define _paging_
 
-#include "../../multiboot.h"
-
 #define PAGE_SIZE 4096 // 4096b = 4kb
 #define MAX_PAGES 1024*1024 //4GB, 4kb/page
-#define KERNEL_MAX_FRAMES 2
+#define KERNEL_MAX_FRAMES 1
+#define PAGE_MASK 0xFFFFF000
 
 typedef struct{
     // Bit 0: P -> Present, if set the page is present in memory
@@ -65,7 +64,6 @@ typedef struct{
     page_dir_entry tables[1024];
 } __attribute__ ((packed)) page_directory;
 
-int init_paging(multiboot_info_t*);
-void print_memory_map(multiboot_info_t*);
+int init_paging();
 
 #endif

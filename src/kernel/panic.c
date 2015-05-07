@@ -1,6 +1,6 @@
 #include "../../include/system.h"
 
-void k_panic(char* message){
+void panic(char* message){
 	k_disableShell();
 	k_disableMouse();
 	clearFullScreen();

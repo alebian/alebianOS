@@ -29,10 +29,12 @@ void shell(char* username, char* pcname){
 
 void shell_set_screen(){
 	/* Prepare screen to show shell properly */
+	erase_mouse();
 	clearFullScreen();
 	setFullBackgroundColor(BACKGROUND_COLOR_BLACK);
 	setCharacterColor(CHAR_COLOR_LIGHT_GREY);
 	set_vga_size(3, 25);
+	draw_mouse();
 	return;
 }
 
