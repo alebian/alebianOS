@@ -1,3 +1,4 @@
+;         Based on code from Bran's kernel development tutorials.
 ;*****************************************************
 ; start.asm
 ;

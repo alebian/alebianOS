@@ -1,7 +1,7 @@
-#include "../../include/system.h"
-
 /* Based on code written by kaworu */
 /* http://forum.osdev.org/viewtopic.php?t=16990 */
+
+#include "../../include/system.h"
 
 dword *SMI_CMD;
 byte ACPI_ENABLE;

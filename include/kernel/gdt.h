@@ -1,3 +1,5 @@
+//         Based on code from Bran's kernel development tutorials.
+
 #ifndef _gdt_
 #define _gdt_
 

@@ -1,3 +1,5 @@
+//         Based on code from Bran's kernel development tutorials.
+
 #include "../../include/system.h"
 
 GDT_ENTRY gdt[GDT_SIZE];

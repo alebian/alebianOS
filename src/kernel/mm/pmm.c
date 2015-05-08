@@ -1,4 +1,4 @@
-/* Based on the JamesM tutorials */
+//         Based on code from Bran's kernel development tutorials.
 
 #include "../../../include/system.h"
 

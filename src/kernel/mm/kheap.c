@@ -1,4 +1,5 @@
-//            Written for JamesM's kernel development tutorials.
+//         Based on code from Bran's kernel development tutorials.
+
 #include "../../../include/system.h"
 
 // end is defined in the linker script.

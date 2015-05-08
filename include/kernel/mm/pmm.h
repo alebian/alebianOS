@@ -1,3 +1,5 @@
+//         Based on code from Bran's kernel development tutorials.
+
 #ifndef _pmm_
 #define _pmm_
 

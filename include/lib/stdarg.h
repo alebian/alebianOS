@@ -1,8 +1,3 @@
-#ifndef _stdarg_
-#define _stdarg_
-
-/* FUENTE: https://github.com/qcho/arnix/blob/master/include/stdarg.h */
-
 /*
  * stdarg.h
  *
@@ -110,5 +105,3 @@ typedef char* va_list;
 #endif /* Not RC_INVOKED */
 
 #endif /* not _STDARG_H_ */
-
-#endif

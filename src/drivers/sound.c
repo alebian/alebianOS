@@ -1,7 +1,3 @@
-#include "../../include/drivers/sound.h"
-#include "../../include/drivers/timer.h"
-#include "../../include/arch/x86/x86.h"
-
 /*
  * Copyright 2013 JS-OS <js@duck-squirell>
  * 
@@ -20,6 +16,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301, USA.
  */
+ 
+#include "../../include/drivers/sound.h"
+#include "../../include/drivers/timer.h"
+#include "../../include/arch/x86/x86.h"
 
 void play_sound(unsigned int freq){
 	unsigned int Div;

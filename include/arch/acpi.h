@@ -1,3 +1,6 @@
+/* Based on code written by kaworu */
+/* http://forum.osdev.org/viewtopic.php?t=16990 */
+
 #ifndef _ACPI_
 #define _ACPI_
 
