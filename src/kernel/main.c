@@ -38,7 +38,7 @@ void kmain(multiboot_info_t* mboot, int multiboot_magic){
 	loading_log(init_paging(mboot), "Paging initialized.", "Unable to initialize paging.");
 	loading_log(init_keyboard(), "Keyboard driver initialized.", "Unable to initialize keyboard driver.");
 	loading_log(init_mouse(), "Mouse driver initialized.", "Unable to initialize mouse driver.");
-	loading_log(init_ACPI(), "ACPI loaded.", "Unable to load ACPI.");
+	//loading_log(init_ACPI(), "ACPI loaded.", "Unable to load ACPI.");
 	loading_log(init_SMBIOS(), "SMBIOS loaded.", "Unable to load SMBIOS.");
 
 	sleep(30); // Just to see if everything went well

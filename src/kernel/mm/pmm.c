@@ -1,4 +1,20 @@
-//         Based on code from Bran's kernel development tutorials.
+/*
+* Copyright 2015 Alejandro Bezdjian
+* Based on code from JamesM's kernel development tutorials.
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #include "../../../include/system.h"
 
@@ -16,13 +32,13 @@ static u32int pmm_current;
 static byte pmm_paging_active = 0;
 
 int init_pmm(multiboot_info_t* mboot){
-	if (!CHECK_BIT(mboot->flags, 6)){
-		panic("Memory map not provided by GRUB.");
-	}
-	print_memory_map(mboot);
+    if (!CHECK_BIT(mboot->flags, 6)){
+      panic("Memory map not provided by GRUB.");
+    }
+    print_memory_map(mboot);
 
-	nframes = ((mboot->mem_lower + mboot->mem_upper) * 1024) / PAGE_SIZE;
-	pmm_stack_size = (nframes-(end/PAGE_SIZE)) * 4; // How many ints I need to store the max possible frames.
+    nframes = ((mboot->mem_lower + mboot->mem_upper) * 1024) / PAGE_SIZE;
+    pmm_stack_size = (nframes-(end/PAGE_SIZE)) * 4; // How many ints I need to store the max possible frames.
   	// Ensure the initial page allocation location is page-aligned.
   	pmm_start = (end + pmm_stack_size + 0x1000) & PAGE_MASK;
   	pmm_current = pmm_start;
@@ -65,33 +81,31 @@ void pmm_free_page(u32int p){
 }
 
 void pmm_paging_stop(){
-	u32int start, final;
-	start = pmm_start;
-	final = nframes*PAGE_SIZE;
-	pmm_paging_active = 0;
-	while(start<final){
-		pmm_free_page(start);
-		start += PAGE_SIZE;
-	}
-	return;
+    u32int start, final;
+    start = pmm_start;
+    final = nframes*PAGE_SIZE;
+    pmm_paging_active = 0;
+    while(start<final){
+        pmm_free_page(start);
+        start += PAGE_SIZE;
+    }
+    return;
 }
 
-/*
- * Prints on screen the memory map
- */
+/* Prints on screen the memory map */
 void print_memory_map(multiboot_info_t* mboot){
-	unsigned long i = mboot->mmap_addr;
-	unsigned long final = mboot->mmap_addr + mboot->mmap_length;
-	printf("%s\n", "Memory map:");
-	while (i < final){
-		unsigned int* size = (unsigned int*) i;
-		unsigned long* base_addr = (unsigned long*) (i + 4);
-		unsigned long* length = (unsigned long*) (i + 12);
-		unsigned int* type = (unsigned int*) (i + 20);
-		printf("\tbase addr: 0x%x length: 0x%x type: %d\n", *base_addr, *length, *type);
-		i += *size + 4;
-	}
-	printf("%s%x%s\n", "Total memory: 0x", ((mboot->mem_lower + mboot->mem_upper) * 1024), " bytes.");
-	printf("End of kernel addr: 0x%x\n", (u32int)&end);
-	return;
+  	unsigned long i = mboot->mmap_addr;
+    unsigned long final = mboot->mmap_addr + mboot->mmap_length;
+    printf("%s\n", "Memory map:");
+    while (i < final){
+        unsigned int* size = (unsigned int*) i;
+        unsigned long* base_addr = (unsigned long*) (i + 4);
+        unsigned long* length = (unsigned long*) (i + 12);
+        unsigned int* type = (unsigned int*) (i + 20);
+        printf("\tbase addr: 0x%x length: 0x%x type: %d\n", *base_addr, *length, *type);
+        i += *size + 4;
+    }
+    printf("%s%x%s\n", "Total memory: 0x", ((mboot->mem_lower + mboot->mem_upper) * 1024), " bytes.");
+    printf("End of kernel addr: 0x%x\n", (u32int)&end);
+    return;
 }

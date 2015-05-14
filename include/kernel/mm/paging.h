@@ -20,8 +20,12 @@
 
 #define PAGE_SIZE 4096 // 4096b = 4kb
 #define MAX_PAGES 1024*1024 //4GB, 4kb/page
-#define KERNEL_MAX_FRAMES 1
+#define FOUR_MEGA_BYTES 4*1024*1024
 #define PAGE_MASK 0xFFFFF000
+
+#define FRAME(x) ((u32int)x/PAGE_SIZE)
+#define PAGE_DIR_IDX(x) ((u32int)x/FOUR_MEGA_BYTES)
+#define PAGE_TABLE_IDX(x) ((u32int)(FRAME(x)%1024))
 
 typedef struct{
     // Bit 0: P -> Present, if set the page is present in memory
@@ -82,5 +86,8 @@ typedef struct{
 } __attribute__ ((packed)) page_directory;
 
 int init_paging();
+page_dir_entry set_page_dir_entry(u32int present, u32int write, u32int user, u32int frame);
+page set_page_table_entry(u32int present, u32int write, u32int user, u32int frame);
+void map(u32int va, u32int pa, u32int flags);
 
 #endif
