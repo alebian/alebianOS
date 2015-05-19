@@ -1,43 +1,137 @@
-//         Based on code from Bran's kernel development tutorials.
+/*
+* Copyright 2015 Alejandro Bezdjian
+* Based on code from JamesM's kernel development tutorials.
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #include "../../../include/system.h"
 
-// end is defined in the linker script.
-extern u32int end;
-u32int placement_address = (u32int)&end;
+u32int heap_max = HEAP_START;
+header_t *heap_first = 0;
 
-u32int kmalloc_int(u32int sz, int align, u32int *phys){
-    // This will eventually call malloc() on the kernel heap.
-    // For now, though, we just assign memory at placement_address
-    // and increment it by sz. Even when we've coded our kernel
-    // heap, this will be useful for use before the heap is initialised.
-    if (align == 1 && (placement_address & 0xFFFFF000) )
+void init_heap(){
+}
+
+void *kmalloc (u32int l)
+{
+  l += sizeof (header_t);
+
+  header_t *cur_header = heap_first, *prev_header = 0;
+  while (cur_header)
+  {
+    if (cur_header->allocated == 0 && cur_header->length >= l)
     {
-        // Align the placement address;
-        placement_address &= 0xFFFFF000;
-        placement_address += 0x1000;
+      split_chunk (cur_header, l);
+      cur_header->allocated = 1;
+      return (void*) ((u32int)cur_header + sizeof (header_t));
     }
-    if (phys)
-    {
-        *phys = placement_address;
-    }
-    u32int tmp = placement_address;
-    placement_address += sz;
-    return tmp;
+    prev_header = cur_header;
+    cur_header = cur_header->next;
+  }
+
+  u32int chunk_start;
+  if (prev_header)
+    chunk_start = (u32int)prev_header + prev_header->length;
+  else
+  {
+    chunk_start = HEAP_START;
+    heap_first = (header_t *)chunk_start;
+  }
+
+  alloc_chunk (chunk_start, l);
+  cur_header = (header_t *)chunk_start;
+  cur_header->prev = prev_header;
+  cur_header->next = 0;
+  cur_header->allocated = 1;
+  cur_header->length = l;
+
+  prev_header->next = cur_header;
+
+  return (void*) (chunk_start + sizeof (header_t));
 }
 
-u32int kmalloc_a(u32int sz){
-    return kmalloc_int(sz, 1, 0);
+/*void kfree (void *p)
+{
+  header_t *header = (header_t*)((u32int)p - sizeof(header_t));
+  header->allocated = 0;
+
+  glue_chunk (header);
+}*/
+
+void alloc_chunk (u32int start, u32int len)
+{
+  while (start + len > heap_max)
+  {
+    u32int page = pmm_alloc_page ();
+    map (heap_max, page, 0x3);
+    heap_max += 0x1000;
+  }
 }
 
-u32int kmalloc_p(u32int sz, u32int *phys){
-    return kmalloc_int(sz, 0, phys);
+/*void free_chunk (header_t *chunk)
+{
+  chunk->prev->next = 0;
+
+  if (chunk->prev == 0)
+  heap_first = 0;
+
+  // While the heap max can contract by a page and still be greater than the chunk address...
+  while ( (heap_max-0x1000) >= (u32int)chunk )
+  {
+    heap_max -= 0x1000;
+    u32int page;
+    get_mapping (heap_max, &page);
+    pmm_free_page (page);
+    unmap (heap_max);
+  }
+}*/
+
+void split_chunk (header_t *chunk, u32int len)
+{
+  // In order to split a chunk, once we split we need to know that there will be enough
+  // space in the new chunk to store the chunk header, otherwise it just isn't worthwhile.
+  if (chunk->length - len > sizeof (header_t))
+  {
+    header_t *newchunk = (header_t *) ((u32int)chunk + chunk->length);
+    newchunk->prev = chunk;
+    newchunk->next = 0;
+    newchunk->allocated = 0;
+    newchunk->length = chunk->length - len;
+
+    chunk->next = newchunk;
+    chunk->length = len;
+  }
 }
 
-u32int kmalloc_ap(u32int sz, u32int *phys){
-    return kmalloc_int(sz, 1, phys);
-}
+/*void glue_chunk (header_t *chunk)
+{
+  if (chunk->next && chunk->next->allocated == 0)
+  {
+    chunk->length = chunk->length + chunk->next->length;
+    chunk->next->next->prev = chunk;
+    chunk->next = chunk->next->next;
+  }
 
-u32int kmalloc(u32int sz){
-    return kmalloc_int(sz, 0, 0);
-}
+  if (chunk->prev && chunk->prev->allocated == 0)
+  {
+    chunk->prev->length = chunk->prev->length + chunk->length;
+    chunk->prev->next = chunk->next;
+    chunk->next->prev = chunk->prev;
+    chunk = chunk->prev;
+  }
+
+  if (chunk->next == 0)
+    free_chunk (chunk);
+}*/

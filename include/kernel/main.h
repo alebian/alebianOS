@@ -18,6 +18,8 @@
 #ifndef _main_
 #define _main_
 
+#include "../multiboot.h"
+
 void kmain(multiboot_info_t*, int);
 int k_isLoading(void);
 void loading_log(int, char*, char*);
