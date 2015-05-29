@@ -17,8 +17,8 @@ prepare:
 
 assembler:
 	@echo "Compiling ASM..."
-	@$(ASM) $(ASMFLAGS) src/arch/x86/start.asm -o $(BIN)start.o
-	@$(ASM) $(ASMFLAGS) src/arch/x86/x86.asm -o $(BIN)x86.o
+	@$(ASM) $(ASMFLAGS) src/arch/i386/start.asm -o $(BIN)start.o
+	@$(ASM) $(ASMFLAGS) src/arch/i386/i386.asm -o $(BIN)i386.o
 
 csources:
 	@echo "Compiling C..."
@@ -51,7 +51,7 @@ csources:
 
 link:
 	@echo "Linkediting..."
-	@$(LINK) $(LINKFLAGS) build/link.ld -o $(BIN)kernel.bin $(BIN)x86.o $(BIN)start.o $(BIN)acpi.o $(BIN)main.o $(BIN)gdt.o $(BIN)idt.o $(BIN)pmm.o $(BIN)paging.o $(BIN)kheap.o $(BIN)smbios.o $(BIN)panic.o $(BIN)events.o $(BIN)extras.o $(BIN)interrupts.o $(BIN)kernel.o $(BIN)syscalls.o $(BIN)video.o $(BIN)keyboard.o $(BIN)mouse.o $(BIN)sound.o $(BIN)timer.o $(BIN)ctype.o $(BIN)stdio.o $(BIN)stdlib.o $(BIN)string.o $(BIN)math.o $(BIN)login.o $(BIN)shell.o
+	@$(LINK) $(LINKFLAGS) build/link.ld -o $(BIN)kernel.bin $(BIN)i386.o $(BIN)start.o $(BIN)acpi.o $(BIN)main.o $(BIN)gdt.o $(BIN)idt.o $(BIN)pmm.o $(BIN)paging.o $(BIN)kheap.o $(BIN)smbios.o $(BIN)panic.o $(BIN)events.o $(BIN)extras.o $(BIN)interrupts.o $(BIN)kernel.o $(BIN)syscalls.o $(BIN)video.o $(BIN)keyboard.o $(BIN)mouse.o $(BIN)sound.o $(BIN)timer.o $(BIN)ctype.o $(BIN)stdio.o $(BIN)stdlib.o $(BIN)string.o $(BIN)math.o $(BIN)login.o $(BIN)shell.o
 
 update:
 	@echo "Updating Disk Image...";

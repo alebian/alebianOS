@@ -4,42 +4,48 @@ fi
 cd ./bin
 sudo rm -rf *
 
-echo "Compiling ASM..."
-nasm -f aout ../../src/arch/x86/x86.asm -o x86.o
-nasm -f aout ../../src/arch/x86/start.asm -o loader.o
+echo "Compiling Kernel ASM files..."
+nasm -f aout ../../kernel/arch/i386/i386.asm -o i386.o
+nasm -f aout ../../kernel/arch/i386/start.asm -o loader.o
 
-echo "Compiling C..."
-gcc -Wall -c ../../src/arch/acpi.c -o acpi.o -fno-builtin
-gcc -Wall -c ../../src/arch/smbios.c -o smbios.o -fno-builtin
-gcc -Wall -c ../../src/kernel/main.c -o main.o -fno-builtin
-gcc -Wall -c ../../src/kernel/interrupts.c -o interrupts.o -fno-builtin
-gcc -Wall -c ../../src/kernel/kernel.c -o kernel.o -fno-builtin
-gcc -Wall -c ../../src/kernel/syscalls.c -o syscalls.o -fno-builtin
-gcc -Wall -c ../../src/kernel/gdt.c -o gdt.o -fno-builtin
-gcc -Wall -c ../../src/kernel/idt.c -o idt.o -fno-builtin
-gcc -Wall -c ../../src/kernel/mm/pmm.c -o pmm.o -fno-builtin
-gcc -Wall -c ../../src/kernel/mm/paging.c -o paging.o -fno-builtin
-gcc -Wall -c ../../src/kernel/mm/kheap.c -o kheap.o -fno-builtin
-gcc -Wall -c ../../src/kernel/panic.c -o panic.o -fno-builtin
-gcc -Wall -c ../../src/kernel/events.c -o events.o -fno-builtin
-gcc -Wall -c ../../src/kernel/extras.c -o extras.o -fno-builtin
-gcc -Wall -c ../../src/drivers/video.c -o video.o -fno-builtin
-gcc -Wall -c ../../src/drivers/keyboard.c -o keyboard.o -fno-builtin
-gcc -Wall -c ../../src/drivers/mouse.c -o mouse.o -fno-builtin
-gcc -Wall -c ../../src/drivers/sound.c -o sound.o -fno-builtin
-gcc -Wall -c ../../src/drivers/timer.c -o timer.o -fno-builtin
-gcc -Wall -c ../../src/lib/ctype.c -o ctype.o -fno-builtin
-gcc -Wall -c ../../src/lib/stdio.c -o stdio.o -fno-builtin
-gcc -Wall -c ../../src/lib/stdlib.c -o stdlib.o -fno-builtin
-gcc -Wall -c ../../src/lib/string.c -o string.o -fno-builtin
-gcc -Wall -c ../../src/lib/math.c -o math.o -fno-builtin
-gcc -Wall -c ../../src/programs/login.c -o login.o -fno-builtin
-gcc -Wall -c ../../src/programs/shell.c -o shell.o -fno-builtin
+echo "Compiling Kernel C Files..."
+gcc -Wall -c ../../kernel/drivers/video.c -o video.o -fno-builtin
+gcc -Wall -c ../../kernel/drivers/keyboard.c -o keyboard.o -fno-builtin
+gcc -Wall -c ../../kernel/drivers/mouse.c -o mouse.o -fno-builtin
+gcc -Wall -c ../../kernel/drivers/sound.c -o sound.o -fno-builtin
+gcc -Wall -c ../../kernel/drivers/timer.c -o timer.o -fno-builtin
+gcc -Wall -c ../../kernel/drivers/acpi.c -o acpi.o -fno-builtin
+gcc -Wall -c ../../kernel/drivers/smbios.c -o smbios.o -fno-builtin
+gcc -Wall -c ../../kernel/mm/pmm.c -o pmm.o -fno-builtin
+gcc -Wall -c ../../kernel/mm/paging.c -o paging.o -fno-builtin
+gcc -Wall -c ../../kernel/mm/kheap.c -o kheap.o -fno-builtin
+gcc -Wall -c ../../kernel/main.c -o main.o -fno-builtin
+gcc -Wall -c ../../kernel/interrupts.c -o interrupts.o -fno-builtin
+gcc -Wall -c ../../kernel/klib.c -o klib.o -fno-builtin
+gcc -Wall -c ../../kernel/syscalls.c -o syscalls.o -fno-builtin
+gcc -Wall -c ../../kernel/gdt.c -o gdt.o -fno-builtin
+gcc -Wall -c ../../kernel/idt.c -o idt.o -fno-builtin
+gcc -Wall -c ../../kernel/panic.c -o panic.o -fno-builtin
+gcc -Wall -c ../../kernel/events.c -o events.o -fno-builtin
+gcc -Wall -c ../../kernel/extras.c -o extras.o -fno-builtin
+
+echo "Compiling Userland ASM files..."
+nasm -f aout ../../userland/syscall.asm -o syscall.o
+
+echo "Compiling Userland C Files..."
+gcc -Wall -c ../../userland/lib/ctype.c -o ctype.o -fno-builtin
+gcc -Wall -c ../../userland/lib/stdio.c -o stdio.o -fno-builtin
+gcc -Wall -c ../../userland/lib/stdlib.c -o stdlib.o -fno-builtin
+gcc -Wall -c ../../userland/lib/string.c -o string.o -fno-builtin
+gcc -Wall -c ../../userland/lib/math.c -o math.o -fno-builtin
+gcc -Wall -c ../../userland/lib/ulib.c -o ulib.o -fno-builtin
+gcc -Wall -c ../../userland/login.c -o login.o -fno-builtin
+gcc -Wall -c ../../userland/shell.c -o shell.o -fno-builtin
 
 if [ -f ../img/alebianOS.img ]; then
 echo "Linkediting..."
 
-if ld -T ../link.ld -o kernel.bin x86.o loader.o acpi.o main.o gdt.o idt.o kheap.o pmm.o paging.o smbios.o panic.o events.o extras.o interrupts.o kernel.o syscalls.o video.o keyboard.o mouse.o sound.o timer.o ctype.o stdio.o stdlib.o string.o math.o login.o shell.o; then
+if ld -T ../link.ld -o kernel.bin i386.o loader.o video.o keyboard.o mouse.o sound.o timer.o acpi.o smbios.o pmm.o paging.o kheap.o main.o interrupts.o klib.o syscalls.o gdt.o idt.o panic.o events.o extras.o syscall.o ctype.o stdio.o stdlib.o string.o math.o ulib.o login.o shell.o ; then
 cd ..;
 
 echo "Updating Disk Image";
