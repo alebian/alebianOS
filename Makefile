@@ -8,50 +8,56 @@ LINKFLAGS := -T
 
 BIN := build/bin/
 
-all: prepare assembler csources link update iso
+all: prepare kassembler kcsources link update iso
 
 prepare:
 	@sudo mkdir -p build/bin
 	@sudo mkdir -p build/img
 	@sudo mkdir -p build/isodir/boot/grub
 
-assembler:
-	@echo "Compiling ASM..."
-	@$(ASM) $(ASMFLAGS) src/arch/i386/start.asm -o $(BIN)start.o
-	@$(ASM) $(ASMFLAGS) src/arch/i386/i386.asm -o $(BIN)i386.o
+kassembler:
+	@echo "Compiling Kernel ASM..."
+	@$(ASM) $(ASMFLAGS) kernel/arch/i386/start.asm -o $(BIN)start.o
+	@$(ASM) $(ASMFLAGS) kernel/arch/i386/i386.asm -o $(BIN)i386.o
+	@$(ASM) $(ASMFLAGS) kernel/arch/i386/cpuid.asm -o $(BIN)cpuid.o
+	@echo "Compiling Userland ASM..."
+	@$(ASM) $(ASMFLAGS) userland/syscall.asm -o $(BIN)syscall.o
 
-csources:
-	@echo "Compiling C..."
-	@$(CC) $(CFLAGS) src/arch/acpi.c -o $(BIN)acpi.o
-	@$(CC) $(CFLAGS) src/arch/smbios.c -o $(BIN)smbios.o
-	@$(CC) $(CFLAGS) src/kernel/main.c -o $(BIN)main.o
-	@$(CC) $(CFLAGS) src/kernel/interrupts.c -o $(BIN)interrupts.o
-	@$(CC) $(CFLAGS) src/kernel/kernel.c -o $(BIN)kernel.o
-	@$(CC) $(CFLAGS) src/kernel/syscalls.c -o $(BIN)syscalls.o
-	@$(CC) $(CFLAGS) src/kernel/gdt.c -o $(BIN)gdt.o
-	@$(CC) $(CFLAGS) src/kernel/idt.c -o $(BIN)idt.o
-	@$(CC) $(CFLAGS) src/kernel/mm/pmm.c -o $(BIN)pmm.o
-	@$(CC) $(CFLAGS) src/kernel/mm/paging.c -o $(BIN)paging.o
-	@$(CC) $(CFLAGS) src/kernel/mm/kheap.c -o $(BIN)kheap.o
-	@$(CC) $(CFLAGS) src/kernel/panic.c -o $(BIN)panic.o
-	@$(CC) $(CFLAGS) src/kernel/events.c -o $(BIN)events.o
-	@$(CC) $(CFLAGS) src/kernel/extras.c -o $(BIN)extras.o
-	@$(CC) $(CFLAGS) src/drivers/video.c -o $(BIN)video.o
-	@$(CC) $(CFLAGS) src/drivers/keyboard.c -o $(BIN)keyboard.o
-	@$(CC) $(CFLAGS) src/drivers/mouse.c -o $(BIN)mouse.o
-	@$(CC) $(CFLAGS) src/drivers/sound.c -o $(BIN)sound.o
-	@$(CC) $(CFLAGS) src/drivers/timer.c -o $(BIN)timer.o
-	@$(CC) $(CFLAGS) src/lib/ctype.c -o $(BIN)ctype.o
-	@$(CC) $(CFLAGS) src/lib/stdio.c -o $(BIN)stdio.o
-	@$(CC) $(CFLAGS) src/lib/stdlib.c -o $(BIN)stdlib.o
-	@$(CC) $(CFLAGS) src/lib/string.c -o $(BIN)string.o
-	@$(CC) $(CFLAGS) src/lib/math.c -o $(BIN)math.o
-	@$(CC) $(CFLAGS) src/programs/login.c -o $(BIN)login.o
-	@$(CC) $(CFLAGS) src/programs/shell.c -o $(BIN)shell.o
+kcsources:
+	@echo "Compiling Kernel C..."
+	@$(CC) $(CFLAGS) kernel/drivers/acpi.c -o $(BIN)acpi.o
+	@$(CC) $(CFLAGS) kernel/drivers/cpudet.c -o $(BIN)cpudet.o
+	@$(CC) $(CFLAGS) kernel/drivers/keyboard.c -o $(BIN)keyboard.o
+	@$(CC) $(CFLAGS) kernel/drivers/mouse.c -o $(BIN)mouse.o
+	@$(CC) $(CFLAGS) kernel/drivers/smbios.c -o $(BIN)smbios.o
+	@$(CC) $(CFLAGS) kernel/drivers/sound.c -o $(BIN)sound.o
+	@$(CC) $(CFLAGS) kernel/drivers/timer.c -o $(BIN)timer.o
+	@$(CC) $(CFLAGS) kernel/drivers/video.c -o $(BIN)video.o
+	@$(CC) $(CFLAGS) kernel/mm/kheap.c -o $(BIN)kheap.o
+	@$(CC) $(CFLAGS) kernel/mm/paging.c -o $(BIN)paging.o
+	@$(CC) $(CFLAGS) kernel/mm/pmm.c -o $(BIN)pmm.o
+	@$(CC) $(CFLAGS) kernel/events.c -o $(BIN)events.o
+	@$(CC) $(CFLAGS) kernel/extras.c -o $(BIN)extras.o
+	@$(CC) $(CFLAGS) kernel/gdt.c -o $(BIN)gdt.o
+	@$(CC) $(CFLAGS) kernel/idt.c -o $(BIN)idt.o
+	@$(CC) $(CFLAGS) kernel/interrupts.c -o $(BIN)interrupts.o
+	@$(CC) $(CFLAGS) kernel/klib.c -o $(BIN)klib.o
+	@$(CC) $(CFLAGS) kernel/main.c -o $(BIN)main.o
+	@$(CC) $(CFLAGS) kernel/panic.c -o $(BIN)panic.o
+	@$(CC) $(CFLAGS) kernel/syscalls.c -o $(BIN)syscalls.o
+	@echo "Compiling Userland C..."
+	@$(CC) $(CFLAGS) userland/lib/ctype.c -o $(BIN)ctype.o
+	@$(CC) $(CFLAGS) userland/lib/math.c -o $(BIN)math.o
+	@$(CC) $(CFLAGS) userland/lib/stdio.c -o $(BIN)stdio.o
+	@$(CC) $(CFLAGS) userland/lib/stdlib.c -o $(BIN)stdlib.o
+	@$(CC) $(CFLAGS) userland/lib/string.c -o $(BIN)string.o
+	@$(CC) $(CFLAGS) userland/lib/ulib.c -o $(BIN)ulib.o
+	@$(CC) $(CFLAGS) userland/login.c -o $(BIN)login.o
+	@$(CC) $(CFLAGS) userland/shell.c -o $(BIN)shell.o
 
 link:
 	@echo "Linkediting..."
-	@$(LINK) $(LINKFLAGS) build/link.ld -o $(BIN)kernel.bin $(BIN)i386.o $(BIN)start.o $(BIN)acpi.o $(BIN)main.o $(BIN)gdt.o $(BIN)idt.o $(BIN)pmm.o $(BIN)paging.o $(BIN)kheap.o $(BIN)smbios.o $(BIN)panic.o $(BIN)events.o $(BIN)extras.o $(BIN)interrupts.o $(BIN)kernel.o $(BIN)syscalls.o $(BIN)video.o $(BIN)keyboard.o $(BIN)mouse.o $(BIN)sound.o $(BIN)timer.o $(BIN)ctype.o $(BIN)stdio.o $(BIN)stdlib.o $(BIN)string.o $(BIN)math.o $(BIN)login.o $(BIN)shell.o
+	@$(LINK) $(LINKFLAGS) build/link.ld -o $(BIN)kernel.bin $(BIN)start.o $(BIN)i386.o $(BIN)cpuid.o $(BIN)syscall.o $(BIN)acpi.o $(BIN)cpudet.o $(BIN)keyboard.o $(BIN)mouse.o $(BIN)smbios.o $(BIN)sound.o $(BIN)timer.o $(BIN)video.o $(BIN)kheap.o $(BIN)paging.o $(BIN)pmm.o $(BIN)events.o $(BIN)extras.o $(BIN)gdt.o $(BIN)idt.o $(BIN)interrupts.o $(BIN)klib.o $(BIN)main.o $(BIN)panic.o $(BIN)syscalls.o $(BIN)ctype.o $(BIN)math.o $(BIN)stdio.o $(BIN)stdlib.o $(BIN)string.o $(BIN)ulib.o $(BIN)login.o $(BIN)shell.o
 
 update:
 	@echo "Updating Disk Image...";

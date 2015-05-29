@@ -1,6 +1,7 @@
 *.o
 *.bin
-bin/*
+build/*
+build/bin*
 isodir/*
 bochsout.txt
 bochsrc.txt
