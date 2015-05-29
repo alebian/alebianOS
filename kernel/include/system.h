@@ -27,6 +27,7 @@
 #include "drivers/timer.h"
 #include "drivers/acpi.h"
 #include "drivers/smbios.h"
+#include "drivers/cpudet.h"
 #include "klib.h"
 #include "syscalls.h"
 #include "gdt.h"

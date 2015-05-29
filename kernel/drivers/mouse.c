@@ -189,3 +189,8 @@ void enableMousePackets(){
 MousePosition getMousePosition(){
   return mouse_pos;
 }
+
+void setMouseSensitivity(char sens){
+  mouse_sensibility = sens;
+  return;
+}

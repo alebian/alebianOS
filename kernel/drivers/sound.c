@@ -179,7 +179,7 @@ void playNote(char* note, int milliseconds){
 }
 
 void song_pacman(){
-	int wholeNote = 1100;
+	int wholeNote = 1100/16;
 	int quarter = wholeNote / 4, eigth = wholeNote / 8, sixteenth = wholeNote / 16;
 
 	//playNote("A5", eigth);

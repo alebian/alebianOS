@@ -18,8 +18,10 @@
 #include "include/shell.h"
 #include "include/login.h"
 #include "include/lib/stdio.h"
+#include "include/lib/stdlib.h"
 #include "include/lib/ulib.h"
 #include "include/lib/string.h"
+#include "include/syscall.h"
 #include "../common.h"
 
 static shell_buffer shellbuff;
@@ -316,9 +318,6 @@ void parsecommand(char* s){
 	else if(!strcmp(shellbuff.command,"about")){
 		error = s_about(hasParameter, shellbuff.parameter);
 	}
-	else if(!strcmp(shellbuff.command,"speed")){
-		error = s_speed(hasParameter, shellbuff.parameter);
-	}
 	else if(!strcmp(shellbuff.command,"timestyle")){
 		error = s_timestyle(hasParameter, shellbuff.parameter);
 	}
@@ -327,6 +326,12 @@ void parsecommand(char* s){
 	}
 	else if(!strcmp(shellbuff.command,"logout")){
 		error = s_logout(hasParameter, shellbuff.parameter);
+	}
+	else if(!strcmp(shellbuff.command,"cpu")){
+		error = s_cpu(hasParameter, shellbuff.parameter);
+	}
+	else if(!strcmp(shellbuff.command,"mouse")){
+		error = s_mouse(hasParameter, shellbuff.parameter);
 	}
 	else {
 		s_printError("COMMAND NOT FOUND\n");
@@ -399,11 +404,12 @@ int s_help(int hp, char* p){
 		printf("\t%s\n", "* bios: gives information about the BIOS.");
 		printf("\t%s\n", "* bkg: change the system background to the one given by parameter.");
 		printf("\t%s\n", "* clear: erases screen content.");
+		printf("\t%s\n", "* cpu: gives information about CPU.");
 		printf("\t%s\n", "* exit: turns off the computer.");
 		printf("\t%s\n", "* help: gives information about the system commands.");
+		printf("\t%s\n", "* mouse: sets the mouse sensitivity.");
 		printf("\t%s\n", "* logout: closes user session.");
 		printf("\t%s\n", "* reboot: sends reboot signal.");
-		printf("\t%s\n", "* speed: gives information about the system speed.");
 		printf("%s\n", "Some commands can receive parameters.");
 		printf("%s\n", "For more information try -help as parameter.");
 		return 0;
@@ -442,15 +448,6 @@ int s_clear(int hp, char* p){
 		return 4;
 	}else{
 		s_clearScreen();
-		return 0;
-	}
-}
-
-int s_speed(int hp, char* p){
-	if(hp){
-		return 4;
-	}else{
-		// Not implemented yet
 		return 0;
 	}
 }
@@ -506,6 +503,34 @@ int s_test(int hp, char* p){
 		return 1;
 	}else{
 		/* Put something to test here */
+		syscall(1100, 4, 0, 0); // Pacman
 		return 0;
+	}
+}
+
+int s_cpu(int hp, char* p){
+	if(hp){
+		return 4;
+	}else{
+		s_processorinfo();
+		return 0;
+	}
+}
+
+int s_mouse(int hp, char* p){
+	if(hp){
+		if(!strcmp(p,"-help")){
+			printf("%s\n", "Insert a number greater than 0.");
+			return 0;
+		}
+		int sens;
+		sens = atoi(p);
+		if(sens>0){
+			s_setmousesensitivity(sens);
+			return 0;
+		}
+		return 3;
+	}else{
+		return 2;
 	}
 }

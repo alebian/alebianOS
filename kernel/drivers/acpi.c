@@ -13,6 +13,7 @@ sint16_t SLP_TYPb;
 sint16_t SLP_EN;
 sint16_t SCI_EN;
 uint8_t PM1_CNT_LEN;
+sint8_t initialized;
 
 // check if the given address has a valid header
 unsigned int *acpiCheckRSDPtr(unsigned int *ptr)
@@ -217,6 +218,7 @@ int init_ACPI(void)
                      SLP_EN = 1<<13;
                      SCI_EN = 1;
 
+                     initialized = 1;
                      return 0;
                   } else {
                      //k_printError("\\_S5 parse error.\n");
@@ -234,6 +236,7 @@ int init_ACPI(void)
    } else {
       //k_printError("no acpi.\n");
    }
+   initialized = 0;
    return -1;
 }
 
@@ -251,4 +254,8 @@ void acpiPowerOff(void)
       _outw((unsigned int) PM1b_CNT, SLP_TYPb | SLP_EN );
 
    k_printError("acpi poweroff failed.\n");
+}
+
+sint8_t ACPIinitialized(){
+   return initialized;
 }

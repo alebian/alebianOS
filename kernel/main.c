@@ -17,6 +17,7 @@
 
 #include "include/system.h"
 #include "../userland/include/login.h"
+#include "../userland/include/shell.h"
 
 static start_bar sbar;
 static startmenu start_menu;
@@ -40,7 +41,7 @@ int kmain(multiboot_info_t* mboot, int multiboot_magic){
 	//k_loading_log(init_paging(mboot), "Paging initialized.", "Unable to initialize paging.");
 	k_loading_log(init_keyboard(), "Keyboard driver initialized.", "Unable to initialize keyboard driver.");
 	k_loading_log(init_mouse(), "Mouse driver initialized.", "Unable to initialize mouse driver.");
-	//k_loading_log(init_ACPI(), "ACPI loaded.", "Unable to load ACPI.");
+	k_loading_log(init_ACPI(), "ACPI loaded.", "Unable to load ACPI.");
 	k_loading_log(init_SMBIOS(), "SMBIOS loaded.", "Unable to load SMBIOS.");
 
 	sleep(30); // Just to see if everything went well
@@ -50,6 +51,8 @@ int kmain(multiboot_info_t* mboot, int multiboot_magic){
 
 	while(1){
 		login();
+		//REMOVE SHELL HEADER AFTER TESTS
+		//shell("test", "x86");
 	}
 
 	return 0xDEADC0DE;

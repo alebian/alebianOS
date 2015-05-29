@@ -15,25 +15,34 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _ulib_
-#define _ulib_
+#include "../include/klib.h"
+#include "../include/arch/i386/cpuid.h"
+#include "../include/drivers/cpudet.h"
 
-void s_beep(void);
-void s_setKBlistener(int);
-void s_printError(char*);
-void s_printAlert(char*);
-void s_printSuccess(char*);
-void s_sleep(int);
-void s_clearScreen(void);
-void s_move_cursor_back(void);
-void s_move_cursor_forward(void);
-void s_setBackgroundColor(char);
-void s_switchTimeStyle(void);
-void s_shutdown(void);
-void s_reboot(void);
-void s_scrolldown(void);
-void s_smb_BIOSinfo(void);
-void s_setmousesensitivity(char);
-void s_processorinfo(void);
+int detect_cpu(){ 
+	int vendor = _cpuvendor();
+	switch(vendor) {
+		case 0x756e6547: /* Intel Magic Code */
+		do_intel();
+		return 1;
+		break;
+		case 0x68747541: /* AMD Magic Code */
+		do_amd();
+		return 1;
+		break;
+		default:
+		k_printf("Unknown x86 CPU Detected\n");
+		return -1;
+		break;
+	}
+}
 
-#endif
+void do_intel(){
+	k_printf("Intel\n");
+	return;
+}
+
+void  do_amd(){
+	k_printf("AMD\n");
+	return;
+}

@@ -74,10 +74,11 @@ int s_checkBIOS(int, char*);
 int s_exit(int, char*);
 int s_k_reboot(int, char*);
 int s_clear(int, char*);
-int s_speed(int, char*);
 int s_timestyle(int, char*);
 int s_bkg(int, char*);
 int s_logout(int, char*);
 int s_test(int, char*);
+int s_mouse(int, char*);
+int s_cpu(int, char*);
 
 #endif

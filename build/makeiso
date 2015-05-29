@@ -7,6 +7,7 @@ sudo rm -rf *
 echo "Compiling Kernel ASM files..."
 nasm -f aout ../../kernel/arch/i386/i386.asm -o i386.o
 nasm -f aout ../../kernel/arch/i386/start.asm -o loader.o
+nasm -f aout ../../kernel/arch/i386/cpuid.asm -o cpuid.o
 
 echo "Compiling Kernel C Files..."
 gcc -Wall -c ../../kernel/drivers/video.c -o video.o -fno-builtin
@@ -16,6 +17,7 @@ gcc -Wall -c ../../kernel/drivers/sound.c -o sound.o -fno-builtin
 gcc -Wall -c ../../kernel/drivers/timer.c -o timer.o -fno-builtin
 gcc -Wall -c ../../kernel/drivers/acpi.c -o acpi.o -fno-builtin
 gcc -Wall -c ../../kernel/drivers/smbios.c -o smbios.o -fno-builtin
+gcc -Wall -c ../../kernel/drivers/cpudet.c -o cpudet.o -fno-builtin
 gcc -Wall -c ../../kernel/mm/pmm.c -o pmm.o -fno-builtin
 gcc -Wall -c ../../kernel/mm/paging.c -o paging.o -fno-builtin
 gcc -Wall -c ../../kernel/mm/kheap.c -o kheap.o -fno-builtin
@@ -45,7 +47,7 @@ gcc -Wall -c ../../userland/shell.c -o shell.o -fno-builtin
 if [ -f ../img/alebianOS.img ]; then
 echo "Linkediting..."
 
-if ld -T ../link.ld -o kernel.bin i386.o loader.o video.o keyboard.o mouse.o sound.o timer.o acpi.o smbios.o pmm.o paging.o kheap.o main.o interrupts.o klib.o syscalls.o gdt.o idt.o panic.o events.o extras.o syscall.o ctype.o stdio.o stdlib.o string.o math.o ulib.o login.o shell.o ; then
+if ld -T ../link.ld -o kernel.bin i386.o loader.o cpuid.o video.o keyboard.o mouse.o sound.o timer.o acpi.o smbios.o cpudet.o pmm.o paging.o kheap.o main.o interrupts.o klib.o syscalls.o gdt.o idt.o panic.o events.o extras.o syscall.o ctype.o stdio.o stdlib.o string.o math.o ulib.o login.o shell.o ; then
 cd ..;
 
 echo "Updating Disk Image";

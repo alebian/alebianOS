@@ -35,7 +35,7 @@ int init_pmm(multiboot_info_t* mboot){
     if (!CHECK_BIT(mboot->flags, 6)){
       panic("Memory map not provided by GRUB.");
     }
-    //print_memory_map(mboot);
+    print_memory_map(mboot);
 
     nframes = ((mboot->mem_lower + mboot->mem_upper) * 1024) / PAGE_SIZE;
     pmm_stack_size = (nframes-(end/PAGE_SIZE)) * 4; // How many ints I need to store the max possible frames.
@@ -94,18 +94,18 @@ void pmm_paging_stop(){
 
 /* Prints on screen the memory map */
 void print_memory_map(multiboot_info_t* mboot){
-  	// unsigned long i = mboot->mmap_addr;
-   //  unsigned long final = mboot->mmap_addr + mboot->mmap_length;
-   //  k_printf("%s\n", "Memory map:");
-   //  while (i < final){
-   //      unsigned int* size = (unsigned int*) i;
-   //      unsigned long* base_addr = (unsigned long*) (i + 4);
-   //      unsigned long* length = (unsigned long*) (i + 12);
-   //      unsigned int* type = (unsigned int*) (i + 20);
-   //      k_printf("\tbase addr: 0x%x length: 0x%x type: %d\n", *base_addr, *length, *type);
-   //      i += *size + 4;
-   //  }
-   //  k_printf("%s%x%s\n", "Total memory: 0x", ((mboot->mem_lower + mboot->mem_upper) * 1024), " uint8_ts.");
-   //  k_printf("End of kernel addr: 0x%x\n", (uint32_t)&end);
+  	unsigned long i = mboot->mmap_addr;
+    unsigned long final = mboot->mmap_addr + mboot->mmap_length;
+    k_printf("%s\n", "Memory map:");
+    while (i < final){
+        unsigned int* size = (unsigned int*) i;
+        unsigned long* base_addr = (unsigned long*) (i + 4);
+        unsigned long* length = (unsigned long*) (i + 12);
+        unsigned int* type = (unsigned int*) (i + 20);
+        k_printf("\tbase addr: 0x%x length: 0x%x type: %d\n", *base_addr, *length, *type);
+        i += *size + 4;
+    }
+    k_printf("%s%x%s\n", "Total memory: 0x", ((mboot->mem_lower + mboot->mem_upper) * 1024), " bytes.");
+    k_printf("End of kernel addr: 0x%x\n", (uint32_t)&end);
     return;
 }

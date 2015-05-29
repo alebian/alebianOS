@@ -20,19 +20,19 @@
 #include "../../common.h"
 
 void s_beep(){
-	syscall(1100, 1, 0, 0); // Beep
+	syscall(SYS_SOUND, 1, 0, 0); // Beep
 	return;
 }
 
 void s_setKBlistener(int listener){
-	syscall(1200, 1, listener, 0);
+	syscall(SYS_EVENTS, 1, listener, 0);
 	return;
 }
 
 void s_printError(char* message){
 	int i = 0;
 	while(message[i]!=0){
-		syscall(1000, 9, (uint32_t)&message[i], S_CHAR_COLOR_RED);
+		syscall(SYS_VIDEO, 9, (uint32_t)&message[i], S_CHAR_COLOR_RED);
 		i++;
 	}
 	return;
@@ -41,7 +41,7 @@ void s_printError(char* message){
 void s_printAlert(char* message){
 	int i = 0;
 	while(message[i]!=0){
-		syscall(1000, 9, (uint32_t)&message[i], S_CHAR_COLOR_LIGHT_BROWN);
+		syscall(SYS_VIDEO, 9, (uint32_t)&message[i], S_CHAR_COLOR_LIGHT_BROWN);
 		i++;
 	}
 	return;
@@ -50,58 +50,68 @@ void s_printAlert(char* message){
 void s_printSuccess(char* message){
 	int i = 0;
 	while(message[i]!=0){
-		syscall(1000, 9, (uint32_t)&message[i], S_CHAR_COLOR_GREEN);
+		syscall(SYS_VIDEO, 9, (uint32_t)&message[i], S_CHAR_COLOR_GREEN);
 		i++;
 	}
 	return;
 }
 
 void s_sleep(int time){
-	syscall(1400, 1, 0, time);
+	syscall(SYS_TIMER, 1, 0, time);
 	return;
 }
 
 void s_clearScreen(){
-	syscall(1000, 1, 0, 0);
+	syscall(SYS_VIDEO, 1, 0, 0);
 	return;
 }
 
 void s_move_cursor_back(){
-	syscall(1000, 6, 0, 0);
+	syscall(SYS_VIDEO, 6, 0, 0);
 	return;
 }
 
 void s_move_cursor_forward(){
-	syscall(1000, 7, 0, 0);
+	syscall(SYS_VIDEO, 7, 0, 0);
 	return;
 }
 
 void s_setBackgroundColor(char color){
-	syscall(1000, 2, 0, (int)color);
+	syscall(SYS_VIDEO, 2, 0, (int)color);
 	return;
 }
 
 void s_switchTimeStyle(){
-	syscall(1400, 3, 0 ,0);
+	syscall(SYS_TIMER, 3, 0 ,0);
 	return;
 }
 
 void s_shutdown(){
-	syscall(1500, 1, 0, 0);
+	syscall(SYS_IO, 1, 0, 0);
 	return;
 }
 
 void s_reboot(){
-	syscall(1500, 2, 0 ,0);
+	syscall(SYS_IO, 2, 0 ,0);
 	return;
 }
 
 void s_scrolldown(){
-	syscall(1000, 8, 0, 0);
+	syscall(SYS_VIDEO, 8, 0, 0);
 	return;
 }
 
 void s_smb_BIOSinfo(){
-	syscall(1300, 1, 0, 0);
+	syscall(SYS_SMBIOS, 1, 0, 0);
+	return;
+}
+
+void s_setmousesensitivity(char s){
+	syscall(SYS_MOUSE, 1, 0, s);
+	return;
+}
+
+void s_processorinfo(){
+	syscall(SYS_CPU, 1, 0, 0);
 	return;
 }

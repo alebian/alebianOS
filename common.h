@@ -10,6 +10,18 @@
 #define EOF     -1
 #define NULL    0
 
+/* Syscalls numbers */
+#define SYS_READ 3
+#define SYS_WRITE 4
+#define SYS_VIDEO 1000
+#define SYS_SOUND 1100
+#define SYS_EVENTS 1200
+#define SYS_SMBIOS 1300
+#define SYS_TIMER 1400
+#define SYS_IO 1500
+#define SYS_MOUSE 1600
+#define SYS_CPU 1700
+
 /* Video constants */
 #define S_CHAR_COLOR_BLACK 0x00
 #define S_CHAR_COLOR_BLUE 0x01

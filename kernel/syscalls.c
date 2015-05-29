@@ -21,35 +21,41 @@
 void k_syscall(uint32_t syscall, uint32_t fd, uint32_t buffer, uint32_t edx){
 	switch(syscall){
 		/* Syscall: Read */
-		case 3:
+		case SYS_READ:
 			sys_read(fd, buffer, edx);
 			break;
 		/* Syscall: Write */
-		case 4:
+		case SYS_WRITE:
 			sys_write(fd, buffer, edx);
 			break;
 		/* Syscall: special video functions */
-		case 1000:
+		case SYS_VIDEO:
 			sys_video(fd, buffer, edx);
 			break;
 		/* Syscall: special sound functions */
-		case 1100:
+		case SYS_SOUND:
 			sys_sound(fd, buffer, edx);
 			break;
 		/* Syscall: set OS listeners */
-		case 1200:
-			sys_listeners(fd, buffer, edx);
+		case SYS_EVENTS:
+			sys_events(fd, buffer, edx);
 			break;
 		/* Syscall: special SMBIOS functions */
-		case 1300:
+		case SYS_SMBIOS:
 			sys_smbios(fd, buffer, edx);
 			break;
 		/* Syscall: special timer functions */
-		case 1400:
+		case SYS_TIMER:
 			sys_timer(fd, buffer, edx);
 			break;
-		case 1500:
+		case SYS_IO:
 			sys_io(fd, buffer, edx);
+			break;
+		case SYS_MOUSE:
+			sys_mouse(fd, buffer, edx);
+			break;
+		case SYS_CPU:
+			sys_cpu(fd, buffer, edx);
 			break;
 		default:
 			break;
@@ -155,13 +161,16 @@ void sys_sound(uint32_t func, uint32_t buffer, uint32_t esp){
 		case 3:
 			playNote(aux, esp);
 			break;
+		case 4:
+			song_pacman();
+			break;
 		default:
 			break;
 	}
 	return;
 }
 
-void sys_listeners(uint32_t func, uint32_t listener, uint32_t esp){
+void sys_events(uint32_t func, uint32_t listener, uint32_t esp){
 	switch(func){
 		case 1:
 			k_setKeyboardListener((klistener)listener);
@@ -239,6 +248,28 @@ void sys_io(uint32_t func, uint32_t buffer, uint32_t esp){
 			break;
 		case 2:
 			k_reboot();
+			break;
+		default:
+			break;
+	}
+	return;
+}
+
+void sys_mouse(uint32_t func, uint32_t buffer, uint32_t esp){
+	switch(func){
+		case 1:
+			setMouseSensitivity((char)esp);
+			break;
+		default:
+			break;
+	}
+	return;
+}
+
+void sys_cpu(uint32_t func, uint32_t buffer, uint32_t esp){
+	switch(func){
+		case 1:
+			detect_cpu();
 			break;
 		default:
 			break;

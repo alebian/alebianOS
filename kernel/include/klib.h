@@ -26,11 +26,13 @@
 
 #pragma pack (1)    /* Allign structures to 1 uint8_t */
 
-void k_printf(char* s);
-void k_printWithColor(char* s, char color);
-void k_printWarning(char* s);
-void k_printError(char* s);
-void k_printSuccess(char* s);
+void k_printf(char*, ...);
+void k_putchar(char);
+int k_puts(char*);
+void k_printWithColor(char*, char);
+void k_printWarning(char*);
+void k_printError(char*);
+void k_printSuccess(char*);
 void k_disable(void);
 void k_shutdown(void);
 void k_reboot(void);

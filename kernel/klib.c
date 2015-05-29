@@ -16,14 +16,60 @@
 */
 
 #include "include/system.h"
+#include "../userland/include/lib/stdarg.h"
+#include "../userland/include/lib/stdlib.h"
 
-void k_printf(char* s){
-	int i = 0;
-	while(s[i] != 0){
-		print(s[i]);
-		i++;
+void k_printf(char* fmt, ...){
+	va_list ap;
+	va_start(ap, fmt);
+	char *p, *sval;
+	int ival;
+	static char s[80];
+	for(p = fmt; *p; p++){
+	    if(*p != '%'){
+	    	k_putchar(*p);
+	        continue;   
+	    }
+	    switch(*++p){
+	        case 'd':
+	            ival = va_arg(ap, int);
+	            itoa(s, ival, 10);
+	            k_puts(s);
+	            break;
+	        case 'x':
+	            ival = va_arg(ap, int);
+	            itoa(s, ival, 16);
+	            k_puts(s);
+	            break;
+	        case 'c':
+	            ival = va_arg(ap, int);          
+	            k_putchar(ival);
+	            break;
+	        case 's':
+	            for(sval = va_arg(ap, char*); *sval; sval++){
+	                k_putchar(*sval);
+	            }
+	            break;
+	        default:
+	            k_putchar(*p);
+	        break;
+	    }
 	}
+	va_end(ap);
 	return;
+}
+
+void k_putchar(char c){
+	print(c);
+	return;
+}
+
+int k_puts(char* stream){
+    while(*stream){
+        print(*stream);
+        stream++;   
+    }
+    return 0;
 }
 
 void k_printWithColor(char* s, char color){
@@ -59,7 +105,9 @@ void k_disable(){
 void k_shutdown(){
 	k_disable();
 	k_shutdownScreen();
-	acpiPowerOff();
+	if(ACPIinitialized()){
+		acpiPowerOff();
+	}
 	_Cli();
 	while(1){}
 	return;

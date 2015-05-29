@@ -41,5 +41,6 @@ void mouse_handler(uint8_t);
 void disableMousePackets(void);
 void enableMousePackets(void);
 MousePosition getMousePosition(void);
+void setMouseSensitivity(char);
 
 #endif

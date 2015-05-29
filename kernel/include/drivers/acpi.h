@@ -38,5 +38,6 @@ int acpiCheckHeader(unsigned int*, char*);
 int acpiEnable(void);
 int init_ACPI(void);
 void acpiPowerOff(void);
+sint8_t ACPIinitialized();
 
 #endif

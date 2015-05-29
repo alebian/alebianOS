@@ -28,6 +28,7 @@ GLOBAL  _indw
 GLOBAL  _outb
 GLOBAL  _outw
 GLOBAL  _outdw
+GLOBAL _cpuid
 
 GLOBAL  _int_14_hand
 GLOBAL  _int_80h_hand

@@ -122,6 +122,6 @@ void init_IDT_entry (uint8_t num, uint8_t selector, sint32_t offset, uint8_t acc
 /* Sets the PIC masks */
 void setup_PIC(){
 	_outb(0x21, 0xF8);
-	_outb(0xA1, 0xEE);
+	_outb(0xA1, 0xEF);
 	return;
 }

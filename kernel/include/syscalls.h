@@ -26,9 +26,11 @@ uint32_t sys_write(uint32_t, uint32_t, uint32_t);
 uint32_t sys_read(uint32_t, uint32_t, uint32_t);
 void sys_video(uint32_t, uint32_t, uint32_t);
 void sys_sound(uint32_t, uint32_t, uint32_t);
-void sys_listeners(uint32_t, uint32_t, uint32_t);
+void sys_events(uint32_t, uint32_t, uint32_t);
 void sys_smbios(uint32_t, uint32_t, uint32_t);
 void sys_timer(uint32_t, uint32_t, uint32_t);
 void sys_io(uint32_t, uint32_t, uint32_t);
+void sys_mouse(uint32_t, uint32_t, uint32_t);
+void sys_cpu(uint32_t, uint32_t, uint32_t);
 
 #endif
