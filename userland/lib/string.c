@@ -35,15 +35,13 @@ void* memset(void* s, int c, int n){
 }
 
 int memcmp(const void *str1, const void *str2, int n){
-    int ans = 1;
     int i;
     for(i = 0 ; i < n ; i++){
         if(*((uint8_t*)str1 + i) != *((uint8_t*)str2 + i)){
-            ans = 0;
-            break;
+            return *((uint8_t*)str1 + i) - *((uint8_t*)str2 + i);
         }
     }
-    return ans;
+    return 0;
 }
 
 void* memsetw(void* s, int c, int n){

@@ -45,6 +45,5 @@ typedef struct {
 
 int init_SMBIOS(void);
 void smb_BIOSinfo(void);
-void smb_SystemSpeed(void);
 
 #endif

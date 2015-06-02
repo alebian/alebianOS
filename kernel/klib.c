@@ -105,17 +105,20 @@ void k_disable(){
 void k_shutdown(){
 	k_disable();
 	k_shutdownScreen();
+	// Just to appreciate the art
+	_Sti();
+	sleep(30);
 	if(ACPIinitialized()){
 		acpiPowerOff();
+	}else{
+		_Cli();
+		while(1){}
 	}
-	_Cli();
-	while(1){}
 	return;
 }
 
 void k_reboot(){
 	k_disable();
-	k_disableMouse();
 	k_rebootanimation();
 	_outb(0x64, 0xFE);
 	return;
@@ -138,15 +141,13 @@ void* k_memset(void* s, int c, int n){
 }
 
 int k_memcmp(const void *str1, const void *str2, int n){
-    int ans = 1;
     int i;
     for(i = 0 ; i < n ; i++){
         if(*((uint8_t*)str1 + i) != *((uint8_t*)str2 + i)){
-            ans = 0;
-            break;
+            return *((uint8_t*)str1 + i) - *((uint8_t*)str2 + i);
         }
     }
-    return ans;
+    return 0;
 }
 
 int k_strlen(char* s){

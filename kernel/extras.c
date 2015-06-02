@@ -103,7 +103,7 @@ void k_shutdownScreen(){
 	clearFullScreen();
 	setFullBackgroundColor(BACKGROUND_COLOR_BLACK);
 	set_vga_size(1,25);
-	k_printWarning("                         Please turn off your computer...");
+	k_printWarning("                         Turning off your computer...");
 	// 1 row
 	printSquare(28, 1, 0x44);
 	printSquare(32, 1, 0x44);

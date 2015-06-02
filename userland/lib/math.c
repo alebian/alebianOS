@@ -53,8 +53,9 @@ double sinh(double x){
 }
 
 double tan(double x){
-	double aux = 0;
-	return aux-1;
+	double s = sin(x);
+	double c = cos(x);
+	return s/c;
 }
 
 double tanh(double x){
@@ -86,7 +87,7 @@ double pow(double base, double exponent){
 		return base;
 	}
 	aux=base;
-	for(i = 0; i < exponent; i++){
+	for(i = 0; i < fabs(exponent); i++){
 	  aux = aux * base;
 	}
 	if(exponent>0){

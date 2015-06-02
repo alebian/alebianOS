@@ -36,12 +36,10 @@ unsigned int *acpiCheckRSDPtr(unsigned int *ptr)
 
       // found valid rsdpd   
       if (check == 0) {
-         /*
-          if (desc->Revision == 0)
-            k_printError("acpi 1");
-         else
-            k_printError("acpi 2");
-         */
+      //     if (bptr->Revision == 0)
+      //       k_printf("acpi 1");
+      //    else
+      //       k_printf("acpi 2");
          return (unsigned int *) rsdp->RsdtAddress;
       }
    }
@@ -123,7 +121,7 @@ int acpiEnable(void)
                sleep(10);
             }
          if (i<300) {
-            //printf("enabled acpi.\n");
+            //k_printf("enabled acpi.\n");
             return 0;
          } else {
             //k_printError("couldn't enable acpi.\n");
@@ -134,7 +132,7 @@ int acpiEnable(void)
          return -1;
       }
    } else {
-      //printf("acpi was already enabled.\n");
+      //k_printf("acpi was already enabled.\n");
       return 0;
    }
 }
@@ -253,7 +251,7 @@ void acpiPowerOff(void)
    if ( PM1b_CNT != 0 )
       _outw((unsigned int) PM1b_CNT, SLP_TYPb | SLP_EN );
 
-   k_printError("acpi poweroff failed.\n");
+   //k_printError("acpi poweroff failed.\n");
 }
 
 sint8_t ACPIinitialized(){

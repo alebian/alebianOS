@@ -83,20 +83,3 @@ void smb_BIOSinfo(){
 	}
 	return;
 }
-
-
-void smb_SystemSpeed(){
-	/*k_findSMBIOS();
-	sint16_t * mem = (sint16_t*) SMBIOS->TableAddress + SMBIOShead->Length;
-	k_printf("%s\n", "System speed:");
-	k_printf("\t%s", "External clock frequency: ");
-	k_printf("%d", mem[0x12]);
-	k_printf("%s\n", "Mhz");
-	k_printf("\t%s", "Maximum CPU speed: ");
-	k_printf("%d", mem[0x14]);
-	k_printf("%s\n", "Mhz");
-	k_printf("\t%s", "Current CPU speed: ");
-	k_printf("%d", mem[0x16]);
-	k_printf("%s\n", "Mhz");*/
-	return;
-}

@@ -77,7 +77,7 @@ void login_set_screen(){
 	printf(OS_VERSION);
 	printf("\n\n%s\n\n", "Please insert your username and password to login");
 	printf("%s\n", "If you don't have a user you can log in as guest:");
-	printf("\t%s\n", "* username: guest, with no password");
+	printf("\t%s", "* username: guest, with no password");
 	printf("\n%s", "________________________________________________________________________________");
 	return;
 }
