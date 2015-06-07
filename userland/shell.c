@@ -196,8 +196,8 @@ void shell_enter(){
 void shell_backspace(){
 	if(shellbuff.bpos > 0){
 		putchar('\b');
+		shellbuff.buffer[--shellbuff.bpos] = 0;
 	}
-	shellbuff.buffer[--shellbuff.bpos] = 0;
 	return;
 }
 
