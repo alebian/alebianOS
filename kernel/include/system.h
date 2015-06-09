@@ -41,5 +41,6 @@
 #include "events.h"
 #include "extras.h"
 #include "multiboot.h"
+#include "../../common/common.h"
 
 #endif

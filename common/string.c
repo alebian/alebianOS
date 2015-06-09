@@ -15,8 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "../include/lib/string.h"
-#include "../../common.h"
+#include "common.h"
 
 void* memcpy(void* s, const void* ct, int n){
     int i;

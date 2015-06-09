@@ -20,7 +20,7 @@
 
 #include "../../gdt.h"
 #include "../../idt.h"
-#include "../../../../common.h"
+#include "../../../../common/common.h"
 
 void	_lgdt (GDT_PTR*);
 void	_lidt (IDTR*);

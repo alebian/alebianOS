@@ -16,7 +16,7 @@
 */
 
 #include "include/system.h"
-#include "../common.h"
+#include "../common/common.h"
 
 void k_syscall(uint32_t syscall, uint32_t fd, uint32_t buffer, uint32_t edx){
 	switch(syscall){

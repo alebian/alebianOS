@@ -4,7 +4,7 @@
 #ifndef _ACPI_
 #define _ACPI_
 
-#include "../../../common.h"
+#include "../../../common/common.h"
 
 struct RSDPtr
 {

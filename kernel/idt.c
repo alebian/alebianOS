@@ -16,7 +16,7 @@
 */
 
 #include "include/system.h"
-#include "../common.h"
+#include "../common/common.h"
 
 static INT_DESCR idt[IDT_SIZE];
 static IDTR idtr;
@@ -51,7 +51,7 @@ void init_IDTR(){
 	idtr.limit = sizeof(idt) - 1;
 	_lidt(&idtr);
 	// start IDT with 0
-	k_memset(&idt, 0, sizeof(INT_DESCR)*IDT_SIZE);
+	memset(&idt, 0, sizeof(INT_DESCR)*IDT_SIZE);
 	return;
 }
 

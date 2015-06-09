@@ -36,9 +36,5 @@ void k_printSuccess(char*);
 void k_disable(void);
 void k_shutdown(void);
 void k_reboot(void);
-void* k_memcpy(void*, const void*, int);
-void* k_memset(void*, int, int);
-int k_memcmp(const void*, const void*, int);
-int k_strlen(char*);
 
 #endif

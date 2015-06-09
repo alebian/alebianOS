@@ -16,8 +16,7 @@
 */
 
 #include "include/system.h"
-#include "../userland/include/lib/stdarg.h"
-#include "../userland/include/lib/stdlib.h"
+#include "../common/stdarg.h"
 
 void k_printf(char* fmt, ...){
 	va_list ap;
@@ -122,38 +121,4 @@ void k_reboot(){
 	k_rebootanimation();
 	_outb(0x64, 0xFE);
 	return;
-}
-
-void* k_memcpy(void* s, const void* ct, int n){
-    int i;
-    for (i = 0; i < n; i++){
-        *((uint8_t*)s + i) = *((uint8_t*)ct + i);
-    }
-    return s;
-}
-
-void* k_memset(void* s, int c, int n){
-    int i;
-    for (i = 0; i < n; i++){
-        *((uint8_t*)s + i) = (uint8_t)c;
-    }
-    return s;
-}
-
-int k_memcmp(const void *str1, const void *str2, int n){
-    int i;
-    for(i = 0 ; i < n ; i++){
-        if(*((uint8_t*)str1 + i) != *((uint8_t*)str2 + i)){
-            return *((uint8_t*)str1 + i) - *((uint8_t*)str2 + i);
-        }
-    }
-    return 0;
-}
-
-int k_strlen(char* s){
-    int i=0;
-    while( s[i] != 0 ){
-        i++;
-    }
-    return i;
 }

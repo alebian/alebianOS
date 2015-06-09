@@ -19,7 +19,7 @@
 #ifndef _mouse_
 #define _mouse_
 
-#include "../../../common.h"
+#include "../../../common/common.h"
 
 typedef struct{
 	int actual_x;

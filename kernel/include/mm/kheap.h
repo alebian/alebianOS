@@ -19,7 +19,7 @@
 #ifndef _kheap_
 #define _kheap_
 
-#include "../../../common.h"
+#include "../../../common/common.h"
 
 /**
    Allocate a chunk of memory, sz in size. If align == 1,

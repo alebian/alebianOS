@@ -19,7 +19,7 @@
 #define _idt_
 
 #include "system.h"
-#include "../../common.h"
+#include "../../common/common.h"
 
 #define IDT_SIZE 256
 #define PIC1_CMD                    0x20

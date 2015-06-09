@@ -20,7 +20,7 @@
 #define _gdt_
 
 #include "system.h"
-#include "../../common.h"
+#include "../../common/common.h"
 
 #define GDT_SIZE 5
 

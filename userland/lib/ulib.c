@@ -15,9 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "../include/lib/ulib.h"
 #include "../include/syscall.h"
-#include "../../common.h"
+#include "../../common/common.h"
 
 void s_beep(){
 	syscall(SYS_SOUND, 1, 0, 0); // Beep

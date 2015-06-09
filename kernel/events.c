@@ -16,7 +16,7 @@
 */
 
 #include "include/system.h"
-#include "../common.h"
+#include "../common/common.h"
 
 static klistener keyboard_listener = &k_OSkblistener;
 static clicklistener lclick_listener = &k_OSlclcklistener;
@@ -70,7 +70,7 @@ void k_OSkblistener(){
 
 void k_OSlclcklistener(int x, int y){
 	if(y==0){
-		if(x>=0 && x<k_strlen(START_LOGO)){
+		if(x>=0 && x<strlen(START_LOGO)){
 			if(!k_sbarmenuopened()){
 				k_openStartMenu();
 				return;

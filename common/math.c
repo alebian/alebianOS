@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "../include/lib/math.h"
+#include "common.h"
 
 double acos(double x){
 	double aux = 0;

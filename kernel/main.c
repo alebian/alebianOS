@@ -78,12 +78,12 @@ void k_loading_log(int ret, char* completed, char* error){
 void k_initStartBar(){
 	sbar.menu_opened = 0;
 	k_enableSbar();
-	k_memset(&sbar.firstline, ' ', 80);
+	memset(&sbar.firstline, ' ', 80);
 	sbar.firstline[80] = 0;
-	k_memset(&sbar.secondline, '_', 80);
+	memset(&sbar.secondline, '_', 80);
 	sbar.secondline[80] = 0;
-	k_memcpy(&sbar.firstline, &START_LOGO, k_strlen(START_LOGO));
-	k_memcpy(&sbar.firstline[67], get_time(), 13);
+	memcpy(&sbar.firstline, &START_LOGO, strlen(START_LOGO));
+	memcpy(&sbar.firstline[67], get_time(), 13);
 	k_printWithColor(sbar.firstline, CHAR_COLOR_BLACK);
 	k_printWithColor(sbar.secondline, CHAR_COLOR_BLACK);
 	return;
@@ -91,7 +91,7 @@ void k_initStartBar(){
 
 void k_updateStartBar(){
 	if(sbar.enabled){
-		k_memcpy(&sbar.firstline[67], get_time(), 13);
+		memcpy(&sbar.firstline[67], get_time(), 13);
 		printLine(1, sbar.firstline);
 	}
 	return;
@@ -102,9 +102,9 @@ void k_set_start_menu(){
 	/* Shutdown   | */
 	/* Reboot     | */
 	/* ------------ */
-	k_memcpy(&start_menu.firstline,  "S h u t d o w n       ||", START_MENU_SIZE);
-	k_memcpy(&start_menu.secondline, "R e b o o t           ||", START_MENU_SIZE);
-	k_memcpy(&start_menu.thirdline,  "------------------------", START_MENU_SIZE);
+	memcpy(&start_menu.firstline,  "S h u t d o w n       ||", START_MENU_SIZE);
+	memcpy(&start_menu.secondline, "R e b o o t           ||", START_MENU_SIZE);
+	memcpy(&start_menu.thirdline,  "------------------------", START_MENU_SIZE);
 	for(i = 1; i < START_MENU_SIZE ; i+=2){
 		start_menu.firstline[i] = BACKGROUND_COLOR_LIGHT_GREY + CHAR_COLOR_BLACK;
 		start_menu.secondline[i] = BACKGROUND_COLOR_LIGHT_GREY + CHAR_COLOR_BLACK;

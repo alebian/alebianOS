@@ -15,12 +15,10 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "../../common/stdarg.h"
+#include "../../common/common.h"
 #include "../include/lib/stdio.h"
-#include "../include/lib/stdarg.h"
-#include "../include/lib/stdlib.h"
-#include "../include/lib/ctype.h"
 #include "../include/syscall.h"
-#include "../../common.h"
 
 /* Input */
 

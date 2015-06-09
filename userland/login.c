@@ -19,9 +19,7 @@
 #include "include/shell.h"
 #include "include/lib/stdio.h"
 #include "include/lib/ulib.h"
-#include "include/lib/ctype.h"
-#include "include/lib/string.h"
-#include "../common.h"
+#include "../common/common.h"
 
 static int logout;
 static char username[USERNAME_MAX_SIZE];

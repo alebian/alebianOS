@@ -18,7 +18,7 @@
 #ifndef _shell_
 #define _shell_
 
-#include "../../common.h"
+#include "../../common/common.h"
 
 #define SHELL_BUFFER_SIZE 128
 #define SHELL_COMMAND_SIZE 16

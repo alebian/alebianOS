@@ -18,7 +18,7 @@
 #ifndef _paging_
 #define _paging_
 
-#include "../../../common.h"
+#include "../../../common/common.h"
 
 #define PAGE_SIZE 4096 // 4096b = 4kb
 #define MAX_PAGES 1024*1024 //4GB, 4kb/page

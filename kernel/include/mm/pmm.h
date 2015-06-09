@@ -20,7 +20,7 @@
 #define _pmm_
 
 #include "../multiboot.h"
-#include "../../../common.h"
+#include "../../../common/common.h"
 
 int init_pmm(multiboot_info_t*);
 uint32_t pmm_alloc_page(void);

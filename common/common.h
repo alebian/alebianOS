@@ -1,6 +1,11 @@
 #ifndef _common_
 #define _common_
 
+#include "ctype.h"
+#include "math.h"
+#include "stdlib.h"
+#include "string.h"
+
 #define OS_VERSION "0.2"
 #define OS_NAME "alebianOS"
 #define START_LOGO "aOS"

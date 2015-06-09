@@ -18,11 +18,9 @@
 #include "include/shell.h"
 #include "include/login.h"
 #include "include/lib/stdio.h"
-#include "include/lib/stdlib.h"
 #include "include/lib/ulib.h"
-#include "include/lib/string.h"
 #include "include/syscall.h"
-#include "../common.h"
+#include "../common/common.h"
 
 static shell_buffer shellbuff;
 static session_data sdata;

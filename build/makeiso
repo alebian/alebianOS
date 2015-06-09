@@ -36,14 +36,16 @@ echo "Compiling Userland ASM files..."
 nasm -f aout ../../userland/syscall.asm -o syscall.o
 
 echo "Compiling Userland C Files..."
-gcc -Wall -c ../../userland/lib/ctype.c -o ctype.o -fno-builtin
 gcc -Wall -c ../../userland/lib/stdio.c -o stdio.o -fno-builtin
-gcc -Wall -c ../../userland/lib/stdlib.c -o stdlib.o -fno-builtin
-gcc -Wall -c ../../userland/lib/string.c -o string.o -fno-builtin
-gcc -Wall -c ../../userland/lib/math.c -o math.o -fno-builtin
 gcc -Wall -c ../../userland/lib/ulib.c -o ulib.o -fno-builtin
 gcc -Wall -c ../../userland/login.c -o login.o -fno-builtin
 gcc -Wall -c ../../userland/shell.c -o shell.o -fno-builtin
+
+echo "Compiling Common C Files..."
+gcc -Wall -c ../../common/ctype.c -o ctype.o -fno-builtin
+gcc -Wall -c ../../common/stdlib.c -o stdlib.o -fno-builtin
+gcc -Wall -c ../../common/string.c -o string.o -fno-builtin
+gcc -Wall -c ../../common/math.c -o math.o -fno-builtin
 
 if [ -f ../img/alebianOS.img ]; then
 echo "Linkediting..."

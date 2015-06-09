@@ -366,19 +366,19 @@ void printSquare(int x, int y, char color){
 
 void print_start_menu(startmenu* start_menu){
 	/* Save first */
-	k_memcpy(&start_menu->savedfirstline, (char*)VGA_PORT+(160*2), START_MENU_SIZE);
-	k_memcpy(&start_menu->savedsecondline, (char*)VGA_PORT+(160*3), START_MENU_SIZE);
-	k_memcpy(&start_menu->savedthirdline, (char*)VGA_PORT+(160*4), START_MENU_SIZE);
+	memcpy(&start_menu->savedfirstline, (char*)VGA_PORT+(160*2), START_MENU_SIZE);
+	memcpy(&start_menu->savedsecondline, (char*)VGA_PORT+(160*3), START_MENU_SIZE);
+	memcpy(&start_menu->savedthirdline, (char*)VGA_PORT+(160*4), START_MENU_SIZE);
 	// /* Then print */
-	k_memcpy((char*)VGA_PORT+(160*2), &start_menu->firstline, START_MENU_SIZE);
-	k_memcpy((char*)VGA_PORT+(160*3), &start_menu->secondline, START_MENU_SIZE);
-	k_memcpy((char*)VGA_PORT+(160*4), &start_menu->thirdline, START_MENU_SIZE);
+	memcpy((char*)VGA_PORT+(160*2), &start_menu->firstline, START_MENU_SIZE);
+	memcpy((char*)VGA_PORT+(160*3), &start_menu->secondline, START_MENU_SIZE);
+	memcpy((char*)VGA_PORT+(160*4), &start_menu->thirdline, START_MENU_SIZE);
 	return;
 }
 
 void clear_start_menu(startmenu* start_menu){
-	k_memcpy((char*)VGA_PORT+(160*2), &start_menu->savedfirstline, START_MENU_SIZE);
-	k_memcpy((char*)VGA_PORT+(160*3), &start_menu->savedsecondline, START_MENU_SIZE);
-	k_memcpy((char*)VGA_PORT+(160*4), &start_menu->savedthirdline, START_MENU_SIZE);
+	memcpy((char*)VGA_PORT+(160*2), &start_menu->savedfirstline, START_MENU_SIZE);
+	memcpy((char*)VGA_PORT+(160*3), &start_menu->savedsecondline, START_MENU_SIZE);
+	memcpy((char*)VGA_PORT+(160*4), &start_menu->savedthirdline, START_MENU_SIZE);
 	return;
 }

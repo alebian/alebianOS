@@ -15,9 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "../include/lib/stdlib.h"
-#include "../include/lib/ctype.h"
-#include "../include/lib/string.h"
+#include "common.h"
 
 int atoi(const char* s){
     int i, n, sign;

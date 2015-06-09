@@ -19,7 +19,7 @@
 #define _syscalls_
 
 #include "system.h"
-#include "../../common.h"
+#include "../../common/common.h"
 
 void k_syscall(uint32_t, uint32_t, uint32_t, uint32_t);
 uint32_t sys_write(uint32_t, uint32_t, uint32_t);
