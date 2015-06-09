@@ -1,4 +1,4 @@
-ENTRY (start)
+ENTRY (loader)
 SECTIONS{
     . = 1M;
 

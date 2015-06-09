@@ -1,10 +1,7 @@
-;Based on code from Bran's kernel development tutorials.
 ;*****************************************************
-; start.asm
-;
 ; Img entry point.
 ; Multiboot header.
-;******************************************************
+;*****************************************************
 
 MULTIBOOT_PAGE_ALIGN	equ 1<<0
 MULTIBOOT_MEMORY_INFO	equ 1<<1        
@@ -22,7 +19,8 @@ EXTERN code, bss, end ; Defined in link.ld
 
 ;**************************************************************
 ; GRUB header
-;**************************************************************;
+;**************************************************************
+
 ALIGN 4
 mboot:
 	dd MULTIBOOT_HEADER_MAGIC  ; Header's identity number, must be 0x1BADB002
@@ -33,15 +31,12 @@ mboot:
 	dd code		; Text segment start point.
 	dd bss		; Segment final point. ( a.out format)
 	dd end
-	dd start	; Img entry point.
+	dd loader	; Img entry point.
 
-GLOBAL start		; making entry point visible to linker
+GLOBAL loader		; making entry point visible to linker
 EXTERN kmain		; _main is defined elsewhere
 
-[GLOBAL start]
-[EXTERN kmain] ; in main.c
-
-start:
+loader:
     mov  esp, stack_end  ; Set the stack pointer
 	push eax		; pass Multiboot magic number
 	push ebx		; pass Multiboot info structure

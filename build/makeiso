@@ -6,7 +6,7 @@ sudo rm -rf *
 
 echo "Compiling Kernel ASM files..."
 nasm -f aout ../../kernel/arch/i386/i386.asm -o i386.o
-nasm -f aout ../../kernel/arch/i386/start.asm -o loader.o
+nasm -f aout ../../kernel/arch/i386/loader.asm -o loader.o
 nasm -f aout ../../kernel/arch/i386/cpuid.asm -o cpuid.o
 
 echo "Compiling Kernel C Files..."
