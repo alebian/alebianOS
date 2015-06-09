@@ -59,37 +59,37 @@ void init_IDTR(){
 void init_IDT_content(){
 	remapIRQ();
 	//	Divide error
-	init_IDT_entry(0, 0x08, (sint32_t) &int_00, ACS_EXC);
+	init_IDT_entry(0, 0x08, (sint32_t) &exc_00, ACS_EXC);
 	//	Debug Exceptions
-	init_IDT_entry(1, 0x08, (sint32_t) &int_01, ACS_EXC);
+	init_IDT_entry(1, 0x08, (sint32_t) &exc_01, ACS_EXC);
 	//	Non maskable interrupt
-	init_IDT_entry(2, 0x08, (sint32_t) &int_02, ACS_EXC);
+	init_IDT_entry(2, 0x08, (sint32_t) &exc_02, ACS_EXC);
 	//	Breakpoint
-	init_IDT_entry(3, 0x08, (sint32_t) &int_03, ACS_EXC);
+	init_IDT_entry(3, 0x08, (sint32_t) &exc_03, ACS_EXC);
 	//	Overflow
-	init_IDT_entry(4, 0x08, (sint32_t) &int_04, ACS_EXC);
+	init_IDT_entry(4, 0x08, (sint32_t) &exc_04, ACS_EXC);
 	//	Bounds Check
-	init_IDT_entry(5, 0x08, (sint32_t) &int_05, ACS_EXC);
+	init_IDT_entry(5, 0x08, (sint32_t) &exc_05, ACS_EXC);
 	//	Invalid Opcode
-	init_IDT_entry(6, 0x08, (sint32_t) &int_06, ACS_EXC);
+	init_IDT_entry(6, 0x08, (sint32_t) &exc_06, ACS_EXC);
 	//	Coprocessor Not Available
-	init_IDT_entry(7, 0x08, (sint32_t) &int_07, ACS_EXC);
+	init_IDT_entry(7, 0x08, (sint32_t) &exc_07, ACS_EXC);
 	//	Double Fault
-	init_IDT_entry(8, 0x08, (sint32_t) &int_08, ACS_EXC);
+	init_IDT_entry(8, 0x08, (sint32_t) &exc_08, ACS_EXC);
 	//	Coprocessor Segment Overrun
-	init_IDT_entry(9, 0x08, (sint32_t) &int_09, ACS_EXC);
+	init_IDT_entry(9, 0x08, (sint32_t) &exc_09, ACS_EXC);
 	//	Invalid TSS
-	init_IDT_entry(10, 0x08, (sint32_t) &int_10, ACS_EXC);
+	init_IDT_entry(10, 0x08, (sint32_t) &exc_10, ACS_EXC);
 	//	Segment Not Present
-	init_IDT_entry(11, 0x08, (sint32_t) &int_11, ACS_EXC);
+	init_IDT_entry(11, 0x08, (sint32_t) &exc_11, ACS_EXC);
 	//	Stack Exception
-	init_IDT_entry(12, 0x08, (sint32_t) &int_12, ACS_EXC);
+	init_IDT_entry(12, 0x08, (sint32_t) &exc_12, ACS_EXC);
 	//	General Protection Exception(Triple Fault)
-	init_IDT_entry(13, 0x08, (sint32_t) &int_13, ACS_EXC);
+	init_IDT_entry(13, 0x08, (sint32_t) &exc_13, ACS_EXC);
 	//	Page Fault
-	init_IDT_entry(14, 0x08, (sint32_t) &_int_14_hand, ACS_EXC);
+	init_IDT_entry(14, 0x08, (sint32_t) &_exc_14_hand, ACS_EXC);
 	//	Coprocessor Error
-	init_IDT_entry(16, 0x08, (sint32_t) &int_16, ACS_EXC);
+	init_IDT_entry(16, 0x08, (sint32_t) &exc_16, ACS_EXC);
 	//	Syscalls
 	init_IDT_entry(0x80, 0x08, (sint32_t) &_int_80h_hand, ACS_EXC);
 	//	IRQ0: timer tick

@@ -34,7 +34,7 @@ void	_Cli(void);
 void	_Sti(void);
 
 /* Interrupt handlers */
-void	_int_14_hand(void);
+void	_exc_14_hand(void);
 void	_int_80h_hand(void);
 void	_irq_00_hand(void);
 void	_irq_01_hand(void);

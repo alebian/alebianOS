@@ -30,13 +30,13 @@ GLOBAL  _outw
 GLOBAL  _outdw
 GLOBAL _cpuid
 
-GLOBAL  _int_14_hand
+GLOBAL  _exc_14_hand
 GLOBAL  _int_80h_hand
 GLOBAL  _irq_00_hand
 GLOBAL  _irq_01_hand
 GLOBAL  _irq_12_hand
 
-EXTERN  int_14
+EXTERN  exc_14
 EXTERN  int_80h
 EXTERN  irq_00
 EXTERN  irq_01
@@ -173,12 +173,12 @@ _outdw:
     pop     ebp
     ret
 
-_int_14_hand:           ; Page fault handler
+_exc_14_hand:           ; Page fault handler
     pusha
 
     mov     eax, cr2
     push    eax
-    call    int_14
+    call    exc_14
     pop     eax
     
     popa

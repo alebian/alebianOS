@@ -15,25 +15,9 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _ints_
-#define _ints_
+#ifndef _interruptions_
+#define _interruptions_
 
-void int_00(void);
-void int_01(void);
-void int_02(void);
-void int_03(void);
-void int_04(void);
-void int_05(void);
-void int_06(void);
-void int_07(void);
-void int_08(void);
-void int_09(void);
-void int_10(void);
-void int_11(void);
-void int_12(void);
-void int_13(void);
-void int_14(int, int);
-void int_16(void);
 void int_80h(int, int, int, int);
 void irq_00(void);
 void irq_01(int);

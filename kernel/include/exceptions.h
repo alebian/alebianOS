@@ -1,5 +1,5 @@
 /*
-* Copyright 2014, 2015 Alejandro Bezdjian
+* Copyright 2015 Alejandro Bezdjian
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -15,31 +15,24 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _system_
-#define _system_
+#ifndef _exceptions_
+#define _exceptions_
 
-#include "main.h"
-#include "arch/i386/i386.h"
-#include "drivers/video.h"
-#include "drivers/keyboard.h"
-#include "drivers/mouse.h"
-#include "drivers/sound.h"
-#include "drivers/timer.h"
-#include "drivers/acpi.h"
-#include "drivers/smbios.h"
-#include "drivers/cpudet.h"
-#include "klib.h"
-#include "syscalls.h"
-#include "gdt.h"
-#include "idt.h"
-#include "mm/pmm.h"
-#include "mm/paging.h"
-#include "mm/kheap.h"
-#include "interrupts.h"
-#include "exceptions.h"
-#include "panic.h"
-#include "events.h"
-#include "extras.h"
-#include "multiboot.h"
+void exc_00(void);
+void exc_01(void);
+void exc_02(void);
+void exc_03(void);
+void exc_04(void);
+void exc_05(void);
+void exc_06(void);
+void exc_07(void);
+void exc_08(void);
+void exc_09(void);
+void exc_10(void);
+void exc_11(void);
+void exc_12(void);
+void exc_13(void);
+void exc_14(int, int);
+void exc_16(void);
 
 #endif
