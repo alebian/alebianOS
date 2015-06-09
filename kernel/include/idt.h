@@ -22,6 +22,26 @@
 #include "../../common.h"
 
 #define IDT_SIZE 256
+#define PIC1_CMD                    0x20
+#define PIC1_DATA                   0x21
+#define PIC2_CMD                    0xA0
+#define PIC2_DATA                   0xA1
+#define PIC_READ_IRR                0x0a    /* OCW3 irq ready next CMD read */
+#define PIC_READ_ISR                0x0b    /* OCW3 irq service next CMD read */
+
+#define IRQ_PIT 					0
+#define IRQ_KEYBOARD 				1
+#define IRQ_CASCADE 				2
+#define IRQ_COM2	 				3
+#define IRQ_COM1	 				4
+#define IRQ_LPT2	 				5
+#define IRQ_FLOPPY	 				6
+#define IRQ_LPT1	 				7
+#define IRQ_CMOS	 				8
+#define IRQ_MOUSE	 				12
+#define IRQ_FPU		 				13
+#define IRQ_MASTER_DISK				14
+#define IRQ_SLAVE_DISK 				15
 
 /* Interrupt descriptor */
 typedef struct {
@@ -43,6 +63,8 @@ void init_IDT_content(void);
 void remapIRQ(void);
 void init_IDT_entry(uint8_t, uint8_t, sint32_t, uint8_t);
 void init_IDTR(void);
-void setup_PIC(void);
+void restart_PIC(void);
+void IRQ_set_mask(unsigned char);
+void IRQ_clear_mask(unsigned char);
 
 #endif

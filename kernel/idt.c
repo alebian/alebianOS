@@ -16,6 +16,7 @@
 */
 
 #include "include/system.h"
+#include "../common.h"
 
 static INT_DESCR idt[IDT_SIZE];
 static IDTR idtr;
@@ -32,8 +33,14 @@ int init_IDT(){
 	init_IDTR();
 	/* Loads IDT */
 	init_IDT_content();
-	/* Set PIC masks */
-	setup_PIC();
+	/* Restart PIC masks */
+	restart_PIC();
+	/* Set required IRQ's */
+	IRQ_clear_mask(IRQ_PIT);
+	IRQ_clear_mask(IRQ_KEYBOARD);
+	IRQ_clear_mask(IRQ_CASCADE);
+	IRQ_clear_mask(IRQ_MOUSE);
+
 	_Sti();
 	return IDT_SIZE;
 }
@@ -119,9 +126,43 @@ void init_IDT_entry (uint8_t num, uint8_t selector, sint32_t offset, uint8_t acc
   	idt[num].zero = 0;
 }
 
-/* Sets the PIC masks */
-void setup_PIC(){
-	_outb(0x21, 0xF8);
-	_outb(0xA1, 0xEF);
+/* Restarts the PIC masks */
+void restart_PIC(){
+	_outb(0x21, 0xFF);
+	_outb(0xA1, 0xFF);
 	return;
+}
+
+/* Disables the desired IRQ */
+void IRQ_set_mask(unsigned char IRQline){
+    uint16_t port;
+    uint8_t value;
+ 
+    if(IRQline >= 0 && IRQline < 8) {
+        port = PIC1_DATA;
+    } 
+    else if(IRQline >= 8 && IRQline < 16){
+        port = PIC2_DATA;
+        IRQline -= 8;
+    }
+    value = _inb(port) | (1 << IRQline);
+    _outb(port, value);
+    return;
+}
+ 
+/* Enables the desired IRQ */
+void IRQ_clear_mask(unsigned char IRQline){
+    uint16_t port;
+    uint8_t value;
+ 
+    if(IRQline >= 0 && IRQline < 8) {
+        port = PIC1_DATA;
+    } 
+    else if(IRQline >= 8 && IRQline < 16){
+        port = PIC2_DATA;
+        IRQline -= 8;
+    }
+    value = _inb(port) & ~(1 << IRQline);
+    _outb(port, value);
+    return;
 }
