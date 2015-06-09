@@ -17,6 +17,9 @@
 
 #include "include/system.h"
 
+static start_bar sbar;
+static startmenu start_menu;
+
 void k_showLoadingScreen(){
 	/* Prepare screen to show the loading screen */
 	char color = CHAR_COLOR_DARK_GREY;
@@ -35,6 +38,86 @@ void k_showLoadingScreen(){
 	k_printWithColor(" is loading\n", color);
 	set_vga_size(12, 25);
 	setCharacterColor(CHAR_COLOR_WHITE);
+	return;
+}
+
+void k_set_desktop(){
+	set_vga_size(1, 25);
+	clearScreen();
+	setBackgroundColor(BACKGROUND_COLOR_LIGHT_GREY);
+	setAllCharacterColor(CHAR_COLOR_BLACK);
+	k_initStartBar();
+	k_set_start_menu();
+	set_vga_size(3, 25);	
+	k_enableMouse();
+	return;
+}
+
+void k_initStartBar(){
+	sbar.menu_opened = 0;
+	k_enableSbar();
+	memset(&sbar.firstline, ' ', 80);
+	sbar.firstline[80] = 0;
+	memset(&sbar.secondline, '_', 80);
+	sbar.secondline[80] = 0;
+	memcpy(&sbar.firstline, &START_LOGO, strlen(START_LOGO));
+	memcpy(&sbar.firstline[67], get_time(), 13);
+	k_printWithColor(sbar.firstline, CHAR_COLOR_BLACK);
+	k_printWithColor(sbar.secondline, CHAR_COLOR_BLACK);
+	return;
+}
+
+void k_updateStartBar(){
+	if(sbar.enabled){
+		memcpy(&sbar.firstline[67], get_time(), 13);
+		printLine(1, sbar.firstline);
+	}
+	return;
+}
+
+void k_set_start_menu(){
+	int i;
+	/* Shutdown   | */
+	/* Reboot     | */
+	/* ------------ */
+	memcpy(&start_menu.firstline,  "S h u t d o w n       ||", START_MENU_SIZE);
+	memcpy(&start_menu.secondline, "R e b o o t           ||", START_MENU_SIZE);
+	memcpy(&start_menu.thirdline,  "------------------------", START_MENU_SIZE);
+	for(i = 1; i < START_MENU_SIZE ; i+=2){
+		start_menu.firstline[i] = BACKGROUND_COLOR_LIGHT_GREY + CHAR_COLOR_BLACK;
+		start_menu.secondline[i] = BACKGROUND_COLOR_LIGHT_GREY + CHAR_COLOR_BLACK;
+		start_menu.thirdline[i] = BACKGROUND_COLOR_LIGHT_GREY + CHAR_COLOR_BLACK;
+	}
+	return;
+}
+
+void k_openStartMenu(){
+	sbar.menu_opened = 1;
+	print_start_menu(&start_menu);
+	return;
+}
+
+void k_closeStartMenu(){
+	sbar.menu_opened = 0;
+	clear_start_menu(&start_menu);
+	return;
+}
+
+int k_sbarmenuopened(){
+	return (int)sbar.menu_opened;
+}
+
+int k_isSbarEnabled(){
+	return (int)sbar.enabled;
+}
+
+void k_enableSbar(){
+	sbar.enabled = 1;
+	return;
+}
+
+void k_disableSbar(){
+	sbar.enabled = 0;
 	return;
 }
 

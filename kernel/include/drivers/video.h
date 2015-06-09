@@ -18,7 +18,7 @@
 #ifndef _video_
 #define _video_
 
-#include "../main.h"
+#include "../extras.h"
 
 #define VGA_PORT 0xB8000
 #define VGA_BACKUP 0x200000

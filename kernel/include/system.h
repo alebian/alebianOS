@@ -28,6 +28,7 @@
 #include "drivers/acpi.h"
 #include "drivers/smbios.h"
 #include "drivers/cpudet.h"
+#include "drivers/installer.h"
 #include "klib.h"
 #include "syscalls.h"
 #include "gdt.h"

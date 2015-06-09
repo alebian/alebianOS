@@ -1,5 +1,5 @@
 /*
-* Copyright 2014, 2015 Alejandro Bezdjian
+* Copyright 2015 Alejandro Bezdjian
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -15,11 +15,10 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _main_
-#define _main_
+#ifndef _driver_installer_
+#define _driver_installer_
 
-#include "multiboot.h"
-
-int kmain(multiboot_info_t*, int);
+void k_install_drivers(void);
+void k_loading_log(int, char*, char*);
 
 #endif

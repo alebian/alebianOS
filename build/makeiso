@@ -18,6 +18,7 @@ gcc -Wall -c ../../kernel/drivers/timer.c -o timer.o -fno-builtin
 gcc -Wall -c ../../kernel/drivers/acpi.c -o acpi.o -fno-builtin
 gcc -Wall -c ../../kernel/drivers/smbios.c -o smbios.o -fno-builtin
 gcc -Wall -c ../../kernel/drivers/cpudet.c -o cpudet.o -fno-builtin
+gcc -Wall -c ../../kernel/drivers/installer.c -o installer.o -fno-builtin
 gcc -Wall -c ../../kernel/mm/pmm.c -o pmm.o -fno-builtin
 gcc -Wall -c ../../kernel/mm/paging.c -o paging.o -fno-builtin
 gcc -Wall -c ../../kernel/mm/kheap.c -o kheap.o -fno-builtin
@@ -50,7 +51,7 @@ gcc -Wall -c ../../common/math.c -o math.o -fno-builtin
 if [ -f ../img/alebianOS.img ]; then
 echo "Linkediting..."
 
-if ld -T ../link.ld -o kernel.bin i386.o loader.o cpuid.o video.o keyboard.o mouse.o sound.o timer.o acpi.o smbios.o cpudet.o pmm.o paging.o kheap.o main.o interrupts.o exceptions.o klib.o syscalls.o gdt.o idt.o panic.o events.o extras.o syscall.o ctype.o stdio.o stdlib.o string.o math.o ulib.o login.o shell.o ; then
+if ld -T ../link.ld -o kernel.bin i386.o loader.o cpuid.o video.o keyboard.o mouse.o sound.o timer.o acpi.o smbios.o cpudet.o installer.o pmm.o paging.o kheap.o main.o interrupts.o exceptions.o klib.o syscalls.o gdt.o idt.o panic.o events.o extras.o syscall.o ctype.o stdio.o stdlib.o string.o math.o ulib.o login.o shell.o ; then
 cd ..;
 
 echo "Updating Disk Image";

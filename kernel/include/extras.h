@@ -18,7 +18,40 @@
 #ifndef _extras_
 #define _extras_
 
+#define START_MENU_SIZE 24
+
+typedef struct{
+	char firstline[81];
+	char secondline[81];
+	char enabled;
+	char menu_opened;
+} start_bar;
+
+typedef struct{
+	/* Shutdown   | */
+	/* Reboot     | */
+	/* Logout     | */
+	/* Theme: 0000| */
+	/* ------------ */
+	char firstline[START_MENU_SIZE];
+	char secondline[START_MENU_SIZE];
+	char thirdline[START_MENU_SIZE];
+	char savedfirstline[START_MENU_SIZE];
+	char savedsecondline[START_MENU_SIZE];
+	char savedthirdline[START_MENU_SIZE];
+} startmenu;
+
 void k_showLoadingScreen(void);
+int k_isLoading(void);
+void k_initStartBar(void);
+void k_updateStartBar(void);
+void k_set_start_menu(void);
+void k_openStartMenu(void);
+void k_closeStartMenu(void);
+int k_sbarmenuopened(void);
+void k_set_desktop(void);
+void k_enableSbar(void);
+void k_disableSbar(void);
 void k_LoadingScreenAnimation(void);
 void k_rebootanimation(void);
 void k_shutdownScreen(void);
