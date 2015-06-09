@@ -30,7 +30,19 @@ int kmain(multiboot_info_t* mboot, int multiboot_magic){
 		return 0xDEADC0DE;
 	}
 	k_showLoadingScreen();
-	k_install_drivers();
+	
+	k_loading_log(init_GDT(), "GDT initialized.", "Unable to initialize GDT.");
+	k_loading_log(init_IDT(), "IDT initialized.", "Unable to initialize IDT.");
+	k_loading_log(set_frecuency(20), "PIC initialized.", "Unable to initialize PIC.");
+	k_loading_log(init_pmm(mboot), "Memory manager initialized.", "Unable to initialize memory manager.");
+	//k_loading_log(init_paging(mboot), "Paging initialized.", "Unable to initialize paging.");
+	k_loading_log(init_keyboard(), "Keyboard driver initialized.", "Unable to initialize keyboard driver.");
+	k_loading_log(init_mouse(), "Mouse driver initialized.", "Unable to initialize mouse driver.");
+	k_loading_log(init_ACPI(), "ACPI loaded.", "Unable to load ACPI.");
+	k_loading_log(init_SMBIOS(), "SMBIOS loaded.", "Unable to load SMBIOS.");
+
+	sleep(30); // Just to see if everything went well
+
 	// Prepare screen for applications
 	k_set_desktop();
 	while(1){
@@ -39,4 +51,21 @@ int kmain(multiboot_info_t* mboot, int multiboot_magic){
 		//shell("test", "x86");
 	}
 	return 0xDEADC0DE;
+}
+
+void k_loading_log(int ret, char* completed, char* error){
+	if(ret != -1){
+		k_printf("[");
+		k_printSuccess("OK");
+		k_printf("] ");
+		k_printf(completed);
+		k_printf("\n");
+	}else{
+		k_printf("[");
+		k_printError("X");
+		k_printf("] ");
+		k_printf(error);
+		k_printf("\n");
+	}
+	return;
 }

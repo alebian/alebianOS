@@ -35,7 +35,7 @@ int init_pmm(multiboot_info_t* mboot){
     if (!CHECK_BIT(mboot->flags, 6)){
       panic("Memory map not provided by GRUB.");
     }
-    print_memory_map(mboot);
+    //print_memory_map(mboot);
 
     nframes = ((mboot->mem_lower + mboot->mem_upper) * 1024) / PAGE_SIZE;
     pmm_stack_size = (nframes-(end/PAGE_SIZE)) * 4; // How many ints I need to store the max possible frames.

@@ -21,5 +21,6 @@
 #include "multiboot.h"
 
 int kmain(multiboot_info_t*, int);
+void k_loading_log(int, char*, char*);
 
 #endif
